@@ -1,3 +1,5 @@
+<img src="/../develop/img/dataskylinelogo.png?raw=true" alt="Dataskyline logo" width="20%" align="left"/>
+<img src="/../develop/img/rebelliousllamaslogo.png?raw=true" alt="Rebellious Llamas logo" width="10%" align="right"/>
 # Dataskyline CMS
 Dataskyline CMS biedt een content management systeem voor de Dataskyline, waarmee eenvoudig weergaves aan de Dataskyline toegevoegd kunnen worden. Dataskyline CMS verzorgt ook een omgeving voor eindgebruikers, waarmee zij kunnen kiezen welke thema's er op het scherm verschijnen.
 
