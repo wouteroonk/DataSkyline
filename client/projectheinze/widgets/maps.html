@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Circle</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+      
+  </head>
+  <body>
+    <div id="iframeOverlay"></div> 
+    <iframe id="mapiframe" height="99%" width="99%" src="http://tracker.geops.ch/?z=14&s=1&x=768659.2851&y=6839974.7819&l=here"></iframe>
+     
+    <script src="../libs/d3.min.js"></script>
+    <script src="../libs/jquery-1.7.1.min.js"></script>
+    <script src="../js/vis.js"></script>
+    <script src="../js/circleVis.js"></script>
+    <script src="../js/iconVis.js"></script>
+    <script>
+
+        var listURL = [
+            "http://tracker.geops.ch/?z=14&s=1&x=768659.2851&y=6839974.7819&l=here",
+            "maps/traffic.html"
+        ];
+        
+        var index =0;
+    
+    $(function(){
+        
+//        $( "div:hidden:first" ).fadeIn( "slow" );
+        
+    });
+        
+    setInterval(function(){ 
+        
+        index++;
+        if(index >= listURL.length){
+            index=0;
+        }
+        
+        $( "#iframeOverlay" ).fadeIn( 2000, function() {
+            
+            loadIframe("mapiframe",listURL[index]);
+            $("#mapframe").ready(function(){
+            $( "#iframeOverlay" ).fadeOut(2000);
+        })
+//            $("#mapframe").attr("src",listURL[index]);
+            
+            
+        });
+        
+    }, 20000);
+    
+        
+    function loadIframe(iframeName, url) {
+        var $iframe = $('#' + iframeName);
+        if ( $iframe.length ) {
+            $iframe.attr('src',url);   
+            return false;
+        }
+        return true;
+    }    
+        
+    </script>
+  </body>
+</html>

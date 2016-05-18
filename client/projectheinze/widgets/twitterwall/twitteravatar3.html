@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <title>Tweets</title>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+      <style>
+          html,body{
+              padding: 0;
+              overflow: hidden;
+              height:100%;
+          }
+          img{
+              width:100%;
+              height:100%;
+          }
+      </style>
+  </head>
+  <body>
+    <div id="example1"></div>
+
+    <!-- moment.js only needed for Query 6 example -->
+    <script type="text/javascript" src="../../libs/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../../libs/twitterFetcher_min.js"></script>
+      <script>
+            var config8 = {
+              "id": '719154974421303297',
+              "dataOnly": true,
+              "enableLinks": true,
+              "showUser": false,
+              "maxTweets": 10,
+              "customCallback": populateTpl
+            };
+
+            twitterFetcher.fetch(config8);
+
+            function populateTpl(tweets){
+               
+                    var index = 0;
+                    var element = document.getElementById('example1');
+                        var tweetObject = tweets[index];
+                        var html = '<p class="tweet-content">' + tweetObject.author + '</p>';
+                        element.innerHTML = html;
+                        var avatar = $("img").attr("src",$("img").attr("src").replace("_bigger",""));
+                        $("#example1").html(avatar);
+                    var index = 1;
+                    var maxIndex = tweets.length;
+                    var interval = window.setInterval(function(){
+
+                        var element = document.getElementById('example1');
+                        var tweetObject = tweets[index];
+                        var html = '<p class="tweet-content">' + tweetObject.author + '</p>';
+                        element.innerHTML = html;
+                        var avatar = $("img").attr("src",$("img").attr("src").replace("_bigger",""));
+                        $("#example1").html(avatar);
+                        
+                        index++;
+                        if(index >= maxIndex){
+                            index = 0;
+                            window.clearInterval(interval);
+                            twitterFetcher.fetch(config8);
+                        }
+                    
+                    },10000);
+                
+            }
+      </script>
+  </body>
+</html>

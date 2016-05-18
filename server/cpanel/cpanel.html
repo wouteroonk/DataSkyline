@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Data Skyline Config panel</title>
+<!-- 
+		Kan gebruikt worden om config files aan te passen, maar kan ook handmatig gebeuren.
+		Kan evt. uitgebreid worden om configs op afstand aan te passen (indien nodig)
+-->
+	<link rel="stylesheet" href="cpanel/cpanel.css">
+</head>
+<body>
+	<div id="messagebox"></div>
+	<h1>Data Skyline config panel</h1>
+	<div id="readme">
+		Use this control panel to access &amp; edit the config json files stored on the server. <br />
+		These config files can then be loaded to the Data Skyline using the touch application. <br />
+		See also the example touch.html application.
+	</div>
+
+	<div id="configs">
+		<i>Loading configs, please wait...</i>
+	</div>
+	
+	<div id="controls">
+		<a href="javascript:getConfigs();">Refresh list</a>
+		<a href="#" id="showForm">Create new config</a>
+	</div>
+
+	<div id="createForm">
+		<h4>Create new config</h4>
+      <label for="name">Config name:</label>
+      <input type="text" id="name" placeholder="Config3">
+      <label for="name" id="json">.json</label><br /><br/>
+      <label for="leftscreen">Left screen:</label>
+      <input type="text" id="leftscreen" placeholder="Left screen URL"><br />
+      <label for="midscreen">Middle screen:</label>
+      <input type="text" id="midscreen" placeholder="Middle screen URL"><br />
+      <label for="rightscreen">Right screen:</label>
+      <input type="text" id="rightscreen" placeholder="Right screen URL"><br />
+      <label for="ledscreen">LED screen:</label>
+      <input type="text" id="ledscreen" placeholder="LED screen URL"><br />
+      <br /><br />
+      <a href="#" onclick="createConfig()">Create new config</a>
+      <br />
+      <a href="#" id="cancelCreate">Cancel</a>
+	</div>
+
+
+  <script type="text/javascript" src="cpanel/getIP.js"></script>
+  <script type="text/javascript" src="cpanel/client.js"></script>
+  <script type="text/javascript" src="cpanel/cpanel.js"></script>
+</body>
+</html>

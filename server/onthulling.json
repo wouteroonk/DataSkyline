@@ -1,0 +1,6 @@
+{
+  "leftscreen": "../projectheinze/framework/template_links_test.html",
+  "midscreen": "../projectheinze/widgets/maps.html",
+  "rightscreen": "../projectheinze/framework/template_rechts_test.html",
+  "ledscreen": "templates/template_led.html"
+}

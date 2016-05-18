@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Circle</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+      
+  </head>
+  <body onload="init()">
+    <svg id="svg"></svg>
+    <div id="svgbackup"></div>  
+    <script src="../libs/d3.min.js"></script>
+    <script src="../libs/jquery-1.7.1.min.js"></script>
+    <script src="../libs/tabletop.js"></script>
+    <script src="../js/vis.js"></script>
+    <script src="../js/spreadsheetBasis.js"></script>
+    <script src="../js/spreadsheetLineFacebook.js"></script>
+    <script>
+    var widget;
+function init(){
+  
+    var keyUrl = "1WQeoIQaUnvrQZE9B_Y57ZIeEs7mPcnlZnFiWoCWlds4"; 
+    // Build widget    
+    widget = new SpreadsheetLineVis(d3.select("#svg"),keyUrl);
+    // Getting the max value from the url is async, so callback construction is needed.
+    widget.getData();
+
+}
+    </script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <title>Tweets</title>
+    <link href="../../css/style.css" rel="stylesheet" type="text/css" />
+      <style>
+          html,body{
+              padding:10px;
+              font-size: 1.85em;
+              overflow: hidden
+          }
+      </style>
+  </head>
+  <body>
+    <div id="example1"></div>
+
+    <!-- moment.js only needed for Query 6 example -->
+    
+    <script type="text/javascript" src="../../libs/twitterFetcher_min.js"></script>
+      <script>
+            var config8 = {
+              "id": '718773662518808576',
+              "dataOnly": true,
+              "enableLinks": true,
+              "showUser": false,
+              "maxTweets": 10,
+              "customCallback": populateTpl
+            };
+
+            twitterFetcher.fetch(config8);
+
+            function populateTpl(tweets){
+               
+                    var index = 0;
+                    var element = document.getElementById('example1');
+                        var tweetObject = tweets[index];
+                        var html = tweetObject.tweet;
+                        element.innerHTML = html;
+                    var index = 1;
+                
+                    var maxIndex = tweets.length;
+                    var interval = window.setInterval(function(){
+
+                        var element = document.getElementById('example1');
+                        var tweetObject = tweets[index];
+                        var html = tweetObject.tweet;
+                        element.innerHTML = html;
+                        index++;
+                        if(index >= maxIndex){
+                            index = 0;
+                            window.clearInterval(interval);
+                            twitterFetcher.fetch(config8);
+                        }
+                    
+                    },10000);
+                
+            }
+      </script>
+  </body>
+</html>
