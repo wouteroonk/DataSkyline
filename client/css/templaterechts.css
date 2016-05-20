@@ -1,0 +1,95 @@
+/* --- General grid setup ---  */
+
+body {
+	background: #fff;
+  cursor: none;
+}
+
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding:0;
+  margin: 0;
+  overflow: hidden;
+}
+
+[class*='col-'] {
+  float: left;
+}	
+
+[class*='col-']:last-of-type {
+  margin-right: 0; /*Clear right padding for last column*/
+}
+
+.grid {
+  margin-top: 47px;
+  margin-left: 50px;
+  overflow: hidden;
+}
+
+.grid:after {
+  content: "";
+  display: table;
+  clear: both; /*Clear collapsing height */
+}
+
+[class*='col-'] div {
+	font-family: Arial,sans-serif;
+	font-size: 24px;
+	color: #fff;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* --- Start individual column styles --- */
+
+/* First column */
+.col-1 {
+  width: 438px;
+   margin-right: 298px;  /* Gutter width */
+}
+.col-1 div {
+	border-radius: 50%;
+  background: #333;
+  height: 438px;
+  margin-bottom: 110px;
+}
+
+/* Second column */
+.col-2 {
+  width: 1026px;
+  margin-right: 299px;  /* Gutter width */
+}
+.col-2 div {
+  background: #333;
+  height: 438px;
+  margin-bottom: 110px;
+}
+
+/* Third column */
+.col-3 {
+  width: 438px;
+  margin-right: 375px;  /* Gutter width */
+}
+.col-3 div {
+  border-radius: 50%;
+  background: #555;
+  height: 438px;
+  margin-bottom: 109px;
+}
+
+/* Fourth column */
+.col-4 {
+  width: 870px;
+  margin-right: 0;  /* Gutter width */
+}
+.col-4 div {
+  background: #333;
+  height: 438px;
+  margin-bottom: 110px;
+}
+
+[class*='col-'] div:last-of-type {
+  margin-bottom: 0; /*Clear bottom margin for last div in column*/
+}

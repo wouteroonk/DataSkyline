@@ -1,0 +1,22 @@
+* {
+	margin:0;
+	padding:0;
+	cursor: none!important;
+}
+
+#mainframe{
+	position:absolute; top:0; left:0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: #fff;
+  overflow:hidden;
+  border: 0;
+  cursor: none!important;
+}
+
+iframe {
+	border: 0!important;
+	cursor: none!important;
+}

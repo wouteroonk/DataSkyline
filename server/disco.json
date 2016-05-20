@@ -1,6 +1,0 @@
-{ 
-  "leftscreen": "templates/template_leftdisco.html",
-  "midscreen": "templates/template_middisco.html",
-  "rightscreen": "templates/template_rightdisco.html",
-  "ledscreen": "templates/template_leddisco.html"
-}

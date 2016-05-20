@@ -1,0 +1,24 @@
+body{
+  background: #eee;
+}
+
+iframe {
+  border: 0!important;
+}
+
+*, *:after, *:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding:0;
+  margin: 0;
+  overflow: hidden;
+  cursor: none;
+}
+
+.grid {
+  width: 3840px;
+  height:  2160px;
+  overflow: hidden;
+  background: #fff;
+}

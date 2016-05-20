@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Data Skyline Mainframe</title>
+<!--
+    Mainframe voor Data Skyline clients
+    getIP.js & client.js voor connectie websocket server
+-->
+  <link rel="stylesheet" href="css/mainframe.css">
+</head>
+<body>
+
+<iframe id="mainframe" src="" height="100%" width="100%" scrolling="no" frameborder="0"></iframe>
+
+<script type="text/javascript" src="js/getIP.js"></script>
+<script type="text/javascript" src="js/client.js"></script>
+<script type="text/javascript">setInterval(function(){location.reload();},600000);</script><!-- Auto refresh elke 10 min. voor animaties :) -->
+</html>
