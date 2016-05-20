@@ -1,53 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="dataskylineControlApp">
+
 <head>
-  <title>Data Skyline Config panel</title>
-<!-- 
-		Kan gebruikt worden om config files aan te passen, maar kan ook handmatig gebeuren.
-		Kan evt. uitgebreid worden om configs op afstand aan te passen (indien nodig)
--->
-	<link rel="stylesheet" href="cpanel/cpanel.css">
+  <title>DataSkyline Config panel</title>
+
+  <!-- =========== -->
+  <!-- Stylesheets -->
+  <!-- =========== -->
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+  <!-- Custom -->
+  <link rel="stylesheet" href="cpanel/css/cpanel.css">
+
+  <!-- ========== -->
+  <!-- Javascript -->
+  <!-- ========== -->
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+  <!-- AngularJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+  <!-- Custom -->
+  <script type="text/javascript" src="cpanel/js/globalcpanel.js"></script>
+  <script type="text/javascript" src="cpanel/js/ctrl/modulesCtrl.js"></script>
+  <script type="text/javascript" src="cpanel/js/ctrl/screensCtrl.js"></script>
+
 </head>
+
 <body>
-	<div id="messagebox"></div>
-	<h1>Data Skyline config panel</h1>
-	<div id="readme">
-		Use this control panel to access &amp; edit the config json files stored on the server. <br />
-		These config files can then be loaded to the Data Skyline using the touch application. <br />
-		See also the example touch.html application.
-	</div>
 
-	<div id="configs">
-		<i>Loading configs, please wait...</i>
-	</div>
-	
-	<div id="controls">
-		<a href="javascript:getConfigs();">Refresh list</a>
-		<a href="#" id="showForm">Create new config</a>
-	</div>
+  <!-- ========== -->
+  <!-- Navigation -->
+  <!-- ========== -->
 
-	<div id="createForm">
-		<h4>Create new config</h4>
-      <label for="name">Config name:</label>
-      <input type="text" id="name" placeholder="Config3">
-      <label for="name" id="json">.json</label><br /><br/>
-      <label for="leftscreen">Left screen:</label>
-      <input type="text" id="leftscreen" placeholder="Left screen URL"><br />
-      <label for="midscreen">Middle screen:</label>
-      <input type="text" id="midscreen" placeholder="Middle screen URL"><br />
-      <label for="rightscreen">Right screen:</label>
-      <input type="text" id="rightscreen" placeholder="Right screen URL"><br />
-      <label for="ledscreen">LED screen:</label>
-      <input type="text" id="ledscreen" placeholder="LED screen URL"><br />
-      <br /><br />
-      <a href="#" onclick="createConfig()">Create new config</a>
-      <br />
-      <a href="#" id="cancelCreate">Cancel</a>
-	</div>
+  <nav class="navbar navbar-default" ng-controller="NavigationCtrl">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">DataSkyline control</a>
+      </div>
+      <!-- Main content for navbar, will be hidden on mobile -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <!-- Left aligned -->
+        <ul class="nav navbar-nav">
+          <li ng-class="{active: isActive('/modules')}"><a href="#">Modules</a></li>
+          <li ng-class="{active: isActive('/screens')}"><a href="#">Screens</a></li>
+        </ul>
+        <!-- Right aligned -->
+        <ul class="nav navbar-nav navbar-right">
+        </ul>
+      </div>
+    </div>
+  </nav>
 
+  <!-- ============ -->
+  <!-- Main content -->
+  <!-- ============ -->
 
-  <script type="text/javascript" src="cpanel/getIP.js"></script>
-  <script type="text/javascript" src="cpanel/client.js"></script>
-  <script type="text/javascript" src="cpanel/cpanel.js"></script>
+  <div id="wrap">
+    <div ng-view></div>
+  </div>
 </body>
+
 </html>
