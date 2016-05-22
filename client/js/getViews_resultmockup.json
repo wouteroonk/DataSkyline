@@ -1,0 +1,28 @@
+{
+  "screenName": "center",
+  "views": [
+    {
+      "parentModule": "parking spaces",
+      "managerUrl": "js/parking.js",
+      "windows": [
+        {
+          "name": "garageLogo",
+          "type": "elipse",
+          "pixelWidth": 200,
+          "pixelHeight": 200,
+          "htmlUrl": "logoshower.html"
+        },
+        {
+          "name": "availability",
+          "type": "rectangle",
+          "pixelWidth": 500,
+          "pixelHeight": 200,
+          "htmlUrl": "availability.html"
+        }
+      ]
+    },
+    {
+
+    }
+  ]
+}
