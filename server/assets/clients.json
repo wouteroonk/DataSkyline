@@ -1,0 +1,5 @@
+[
+	{"Name":"Left_Panel", "Address":"192.168.1.100"},
+	{"Name":"Center_Panel", "Address":"192.168.1.101"},
+	{"Name":"Right_Panel", "Address":"192.168.1.102"}
+]
