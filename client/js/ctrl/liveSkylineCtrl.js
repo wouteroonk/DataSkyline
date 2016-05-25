@@ -12,9 +12,12 @@
         screen to show the module on, amount and size of views;
       - VIEWS are send to clients and are basically mini websites.
 */
-app.controller('LiveSkylineCtrl', function($scope) {
-    // TODO: Subscribe to WS
+dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, dscmsWebSocket) {
     // TODO: Get views to show from WS
     // TODO: Instantiate views
     // TODO: Listen for updates from WS
+    dscmsWebSocket.subscribe(function(message) {
+      // For testing purposes
+      console.dir(data);
+    });
 });

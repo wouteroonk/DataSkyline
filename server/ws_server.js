@@ -152,6 +152,10 @@ wsServer.on('request', function(request) {
         // TODO: Fix method name
         fetchConfigs();
       }
+      // Test
+      else if (message.utf8Data.substring(0, 5) == "/test") {
+        broadcastMessage("test", "this is only a test");
+      }
       // Update config files
       else if (message.utf8Data.substring(0, 14) == "/updateconfig ") {
         //incomingData contains everything after the '/updateconfig ' (should be config name & body)
