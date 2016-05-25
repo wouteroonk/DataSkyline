@@ -18,6 +18,6 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, dscmsWebSocket) {
     // TODO: Listen for updates from WS
     dscmsWebSocket.subscribe(function(message) {
       // For testing purposes
-      console.dir(data);
+      console.dir(message);
     });
 });
