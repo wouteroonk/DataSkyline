@@ -16,8 +16,35 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, dscmsWebSocket) {
     // TODO: Get views to show from WS
     // TODO: Instantiate views
     // TODO: Listen for updates from WS
+    // Subscribe to websocket updates
     dscmsWebSocket.subscribe(function(message) {
-      // For testing purposes
-      console.dir(message);
+      var commands = message.data.split(' ');
+      // Respond to various messages from server
+      switch (commands.shift()) {
+        // The windowinfo message contains information about the windows that should be shown,
+        // such as:
+        //  * Size, shape and position
+        //  * Javascript file
+        //  * HTML layout files
+        case "windowinfo":
+          // TODO: Fill screen, instantiate views
+          console.log("Received a windowinfo message containing " + message.data.substring(message.data.indexOf(' ') + 1));
+          break;
+
+        // The test message is used for testing purposes and should be deleted.
+        case "test":
+          console.log(message.data.substring(message.data.indexOf(' ') + 1));
+          break;
+
+        default:
+          console.error("Unknown message received: " + message.data);
+          console.dir(message);
+      }
+    });
+
+    // Get own IP to send to server
+    dscmsWebSocket.requestOwnLocalIP(function(ip) {
+      // Ask server to send window info, handled by callback defined above
+      dscmsWebSocket.requestWindowsForIP(ip);
     });
 });
