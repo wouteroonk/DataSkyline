@@ -1,0 +1,5 @@
+{
+	"window_name":"Avatar Window",
+	"window_description":"Display Twitter profile avatar",
+	"window_html_reference":"com.example.twitter/tweetbox/avatarwindow/avatar.html"
+}
