@@ -29,6 +29,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, dscmsWebSocket) {
         //  * HTML layout files
         case "windowinfo":
           // TODO: Fill screen, instantiate views
+          console.log(message.data.substring(message.data.indexOf(' ') + 1));
           initWindow(message.data.substring(message.data.indexOf(' ') + 1));
           break;
 

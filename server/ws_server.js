@@ -133,63 +133,100 @@ wsServer.on('request', function(request) {
 
   // When a message is received
   connection.on('message', function(message) {
-
-    if (message.type === 'utf8') {
-      console.log((new Date()) + ' - Received Message: ' + message.utf8Data);
-
-      //If '/change' command is received
-      if (message.utf8Data.substring(0, 8) == "/change ") {
-        //configName contains everything after the '/change ' (should be configname.json)
-        var configName = message.utf8Data.substring(8, message.utf8Data.Length);
-
-        // Load json config & broadcast message when loaded
-        // TODO: Method name does not really make you assume JSON is being broadcast
-        loadJSON(localPathToConfigs + configName, true);
-
-      }
-      // Show all existing configs
-      else if (message.utf8Data.substring(0, 11) == "/getconfigs") {
-        // TODO: Fix method name
-        fetchConfigs();
-      }
-      // Test
-      else if (message.utf8Data.substring(0, 5) == "/test") {
-        broadcastMessage("test", "this is only a test");
-      }
-      // Update config files
-      else if (message.utf8Data.substring(0, 14) == "/updateconfig ") {
-        //incomingData contains everything after the '/updateconfig ' (should be config name & body)
-        // TODO: Rename var to "newConfigData" or something like that
-        var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
-
-        updateConfig(incomingData);
-      }
-      // Delete a config file
-      else if (message.utf8Data.substring(0, 14) == "/deleteconfig ") {
-        // TODO: Rename var to "filenameToDelete" or something like that
-        var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
-
-        deleteConfig(incomingData);
-      }
-      // Reject output
-      else {
-        console.log("Error: Unknown command: " + message.utf8Data);
-        connection.sendUTF("Error: Unknown command: " + message.utf8Data);
+    var data = message.utf8Data.split(' ');
+    var ip;
+    for(var i = 0; i < data.length; i++) {
+      if (data[i] === 'requestwindows') {
+        ip = data[i + 1];
       }
     }
+    console.log("IP: " + ip);
+    var json = readJsonInDirectory("config.json");
+    console.dir(json);
+    switch(ip) {
+      case "192.168.1.100":
+        console.log("Address found!");
+        connection.send("windowinfo "+JSON.stringify(json));
+            break;
+      case "192.168.1.101":
+        console.log("Address found!");
+        connection.send("windowinfo "+JSON.stringify(json));
+            break;
+      case "192.168.1.102":
+        console.log("Address found!");
+        connection.send("windowinfo "+JSON.stringify(json));
+            break;
+      case "192.168.1.103":
+        console.log("Address found!");
+        connection.send("windowinfo "+JSON.stringify(json));
+            break;
+      case "145.136.77.66":
 
-    // We are receiving weird data.
-    // TODO: Is it really neccessary to check if data is binary when we are going to throw an error anyway?
-    else if (message.type === 'binary') {
-      console.log("Error: received binary data of " + message.binaryData.length + " bytes");
-      connection.sendUTF("Error: received binary data");
+          console.log("Address found!");
+          connection.send("windowinfo "+JSON.stringify(json));
+            break;
+      default:
+            console.log("Error: Unknown IP address");
+            connection.sendUTF("Error: received unknown IP address");
+            break;
     }
+    /*    if (message.type === 'utf8') {
+     console.log((new Date()) + ' - Received Message: ' + message.utf8Data);
+     }
+     else {
+     console.log("Error: received unknown data type");
+     connection.sendUTF("Error: received unknown data type");
+     }*/
+
+
+    /*      //If '/change' command is received
+     if (message.utf8Data.substring(0, 8) == "/change ") {
+     //configName contains everything after the '/change ' (should be configname.json)
+     var configName = message.utf8Data.substring(8, message.utf8Data.Length);
+
+     // Load json config & broadcast message when loaded
+     // TODO: Method name does not really make you assume JSON is being broadcast
+     loadJSON(localPathToConfigs + configName, true);
+
+     }
+     // Show all existing configs
+     else if (message.utf8Data.substring(0, 11) == "/getconfigs") {
+     // TODO: Fix method name
+     fetchConfigs();
+     }
+     // Test
+     else if (message.utf8Data.substring(0, 5) == "/test") {
+     broadcastMessage("test", "this is only a test");
+     }
+     // Update config files
+     else if (message.utf8Data.substring(0, 14) == "/updateconfig ") {
+     //incomingData contains everything after the '/updateconfig ' (should be config name & body)
+     // TODO: Rename var to "newConfigData" or something like that
+     var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
+
+     updateConfig(incomingData);
+     }
+     // Delete a config file
+     else if (message.utf8Data.substring(0, 14) == "/deleteconfig ") {
+     // TODO: Rename var to "filenameToDelete" or something like that
+     var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
+
+     deleteConfig(incomingData);
+     }
+     // Reject output
+     else {
+     console.log("Error: Unknown command: " + message.utf8Data);
+     connection.sendUTF("Error: Unknown command: " + message.utf8Data);
+     }
+     }
+
+     // We are receiving weird data.
+     // TODO: Is it really neccessary to check if data is binary when we are going to throw an error anyway?
+     else if (message.type === 'binary') {
+     console.log("Error: received binary data of " + message.binaryData.length + " bytes");
+     connection.sendUTF("Error: received binary data");
+     }*/
     // Still receiving weird data.
-    else {
-      console.log("Error: received unknown data type");
-      connection.sendUTF("Error: received unknown data type");
-    }
-
   });
 
   // Client disconnects
@@ -316,5 +353,46 @@ function deleteConfig(incomingData) {
 
     // TODO: Let caller of updateConfig choose to call fetchConfigs himself
     fetchConfigs();
+  });
+}
+
+
+function readJsonFromPath(path,filename, callback) {
+  var listing;
+  fs.readdir(path,function(err,list) {
+    if(err) {
+      console.log(err);
+    } else {
+      for(var i = 0 ; i < list.length; i++) {
+        if(list[i] === filename){
+          var file = fs.readFileSync(path+"/"+list[i]);
+          var json = JSON.parse(file);
+          listing = json;
+        }
+      }
+    }
+    return callback(listing);
+  });
+}
+
+function readJsonInDirectory(filename) {
+  var json = require("./"+filename);
+  return json;
+}
+
+function readDirectories(path, callback) {
+  var listing = [];
+  fs.readdir(path,function(err,list) {
+    if(err) {
+      console.log(err);
+    } else {
+      for(var i = 0 ; i < list.length; i++) {
+        var item = list[i];
+        if(fs.lstatSync(path+"/"+item).isDirectory()){
+          listing.push(item);
+        }
+      }
+    }
+    return callback(listing);
   });
 }
