@@ -1,0 +1,80 @@
+[
+	{
+		"screen_name":"Scherm 1",
+		"screen_description":"Left screen",
+		"screen_address":"192.168.1.100",
+		"screen_width":"",
+		"screen_height":"",
+		"screen_windows": [
+			{
+				"window_identifier":"Sample Text",
+				"window_coord_x":"",
+				"window_coord_y":"",
+				"window_pixel_width":"",
+				"window_pixel_height":"",
+				"window_shape":"Circle"
+			},
+			{
+				"window_identifier":"Sample Text",
+				"window_coord_x":"",
+				"window_coord_y":"",
+				"window_pixel_width":"",
+				"window_pixel_height":"",
+				"window_shape":"Circle"
+			}
+		]
+		"screen_views": [
+			{
+				"screen_name":"",
+				"screen_parent_module":"",
+				"screen_config_file":"",
+				"screen_key-value_pairs":""
+			},
+			{
+				"screen_name":"",
+				"screen_parent_module":"",
+				"screen_config_file":"",
+				"screen_key-value_pairs":""
+			}
+		]
+	},
+	{
+		"screen_name":"Scherm 2",
+		"screen_description":"Middle screen",
+		"screen_address":"192.168.1.101",
+		"screen_width":"",
+		"screen_height":"",
+		"screen_windows": [
+			{
+				"window_identifier":"Sample Text",
+				"window_coord_x":"",
+				"window_coord_y":"",
+				"window_pixel_width":"",
+				"window_pixel_height":"",
+				"window_shape":"Circle"
+			},
+			{
+				"window_identifier":"Sample Text",
+				"window_coord_x":"",
+				"window_coord_y":"",
+				"window_pixel_width":"",
+				"window_pixel_height":"",
+				"window_shape":"Circle"
+			}
+		]
+		"screen_views": [
+			{
+				"screen_name":"",
+				"screen_parent_module":"",
+				"screen_config_file":"",
+				"screen_key-value_pairs":""
+			},
+			{
+				"screen_name":"",
+				"screen_parent_module":"",
+				"screen_config_file":"",
+				"screen_key-value_pairs":""
+			}
+		]
+	}
+]
