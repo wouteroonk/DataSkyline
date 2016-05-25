@@ -32,20 +32,23 @@ dscms.app.config(function($routeProvider) {
 dscms.app.factory('dscmsWebSocket', function() {
     var functions = {};
     // TODO: Provide methods for sending commands to WS
+    // TODO: Implement stuff on server so we can do something here
     var callbackMethods = {};
     var callbackIterator = 0;
+    // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
     var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
 
     ws.onopen = function() {
       // TODO: Should we do something here?
       console.log("Connected to socket");
+      ws.send("/test");
     };
 
     ws.onmessage = function(message) {
       // Execute all callback methods and pass message to them
       // TODO: Pre-processing?
-      for (var callback in callbackMethods) {
-        callback(message);
+      for (var i in callbackMethods) {
+        callbackMethods[i](message);
       }
     };
 

@@ -13,11 +13,11 @@
       - VIEWS are send to clients and are basically mini websites.
 */
 dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, dscmsWebSocket) {
-    // TODO: Subscribe to WS
     // TODO: Get views to show from WS
     // TODO: Instantiate views
     // TODO: Listen for updates from WS
-    dscmsWebSocket.subscribe(function(data) {
-      console.log("Received data");
+    dscmsWebSocket.subscribe(function(message) {
+      // For testing purposes
+      console.dir(data);
     });
 });
