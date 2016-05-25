@@ -44,8 +44,16 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   // TODO: Implement stuff on server so we can do something here
   var callbackMethods = {};
   var callbackIterator = 0;
+
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
   var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
+
+  var waitForWS = function() {
+    while (ws.readyState !== 1) {
+      if (ws.readyState >= 2) return false;
+    }
+    return true;
+  };
 
   ws.onopen = function() {
     // TODO: Should we do something here?
@@ -79,7 +87,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
 
   // Ask the server to send window info for IP
   functions.requestWindowsForIP = function(ip) {
-    ws.send("requestwindows " + ip);
+    if(waitForWS()) ws.send("requestwindows " + ip);
   };
 
   // Damn, this is way too hacky
