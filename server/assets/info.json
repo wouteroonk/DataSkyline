@@ -1,0 +1,9 @@
+{
+	"client_amount":"3",
+	"clients":[
+		{"name":"Left_Panel", "address":"192.168.1.100"},
+		{"name":"Center_Panel", "address":"192.168.1.101"},
+		{"name":"Right_Panel", "address":"192.168.1.102"}
+	]
+}
+
