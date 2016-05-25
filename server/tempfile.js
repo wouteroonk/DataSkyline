@@ -6,7 +6,7 @@ module.exports = {
         var listing = [];
         fs.readdir("modules",function(err,list) {
             if(err) {
-                console.log("Error");
+                console.log(err);
             } else {
                 for(var i = 0 ; i < list.length; i++) {
                     var item = list[i];
@@ -21,26 +21,31 @@ module.exports = {
 
     readAllClients : function(callback) {
         var info = require("./assets/info.json");
-        var names = [];
+        var clients = [];
         var addresses = [];
         console.log("Amount of clients: " + info.client_amount);
         for(var i = 0; i < info.client_amount; i++){
-            names.push(info.clients[i].name);
-            addresses.push(info.clients[i].address);
-            //.log(info.clients[i].name + " With IP: " + info.clients[i].address);
+            var client = new Client(info.clients[i].name,info.clients[i].address);
+            clients.push(client);
         }
-        return callback(names,addresses);
+        return callback(clients);
     }
 };
 
 var temp = require("./tempfile.js");
 
-temp.readAllClients(function(names,addresses){
-    console.dir(names);
-    console.dir(addresses);
+temp.readAllClients(function(names){
+    for(var i = 0 ; i < names.length ; i++){
+        console.log(names[i].name + " with IP: " + names[i].address);
+    }
 });
 console.log("---");
 
 temp.readModules(function(list) {
     console.dir(list);
 });
+
+function Client(name, address) {
+    this.name = name;
+    this.address = address;
+}
