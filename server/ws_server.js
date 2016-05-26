@@ -6,6 +6,7 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
 var request = require("request"); //To make an http GET request to external json file
+var iplist = [];
 
 // list of currently connected clients (users)
 var clients = [];
@@ -76,6 +77,7 @@ var server = http.createServer(function(request, response) {
 // Make the HTTP server listen on port 8080
 server.listen(8080, function() {
   console.log((new Date()) + ' Server is listening on port 8080');
+  iplist = storeAddressesInList();
 });
 
 // Create a websocket server.
@@ -133,63 +135,107 @@ wsServer.on('request', function(request) {
 
   // When a message is received
   connection.on('message', function(message) {
+    var data = message.utf8Data.split(' ');
+    var ip;
+    // Find ip data from requestwindows
+    for(var i = 0; i < data.length; i++) {
 
-    if (message.type === 'utf8') {
-      console.log((new Date()) + ' - Received Message: ' + message.utf8Data);
+      // REQUEST WINDOWS
+      if (data[i] === 'requestwindows') {
+        ip = data[i + 1];
+        // Go through ip list and check if
+        var foundIP = false;
+        for(var i = 0 ; i < iplist.length; i++){
+          if(iplist[i] === ip){
+            foundIP = true;
+            console.log((new Date()) + " received valid connection from "+ ip);
+            var jsonfile;
+            var jsonlist = readJsonInDirectory("config.json");
+            // Get the correct JSON object from the JSON file and store in jsonfile.
+            for(var j = 0; j < jsonlist.length; j++){
+              if(jsonlist[j].screenAddress === ip){
+                jsonfile = jsonlist[i];
+              }
+            }
+            // Make sure the JSON file contains data
+            if(jsonfile !== undefined){
 
-      //If '/change' command is received
-      if (message.utf8Data.substring(0, 8) == "/change ") {
-        //configName contains everything after the '/change ' (should be configname.json)
-        var configName = message.utf8Data.substring(8, message.utf8Data.Length);
+              var finalObject = makeJsonViewFile(jsonfile);
+              connection.send("windowinfo "+JSON.stringify(finalObject));
+            } else {
+              // If this error is thrown it means that the JSON file couldn't find the IP address
+              throw new Error("Can't find ip address in json file");
+            }
+          }
+        }
+        // Check if there was a valid IP address, if not tell the console that an unknown IP address tried to connect
+        if(!foundIP) {
+          console.log((new Date()) + " received connection from unknown ip address "+ ip);
+          connection.sendUTF("Error: Unknown ip address " + ip);
+        }
 
-        // Load json config & broadcast message when loaded
-        // TODO: Method name does not really make you assume JSON is being broadcast
-        loadJSON(localPathToConfigs + configName, true);
-
-      }
-      // Show all existing configs
-      else if (message.utf8Data.substring(0, 11) == "/getconfigs") {
-        // TODO: Fix method name
-        fetchConfigs();
-      }
-      // Test
-      else if (message.utf8Data.substring(0, 5) == "/test") {
-        broadcastMessage("test", "this is only a test");
-      }
-      // Update config files
-      else if (message.utf8Data.substring(0, 14) == "/updateconfig ") {
-        //incomingData contains everything after the '/updateconfig ' (should be config name & body)
-        // TODO: Rename var to "newConfigData" or something like that
-        var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
-
-        updateConfig(incomingData);
-      }
-      // Delete a config file
-      else if (message.utf8Data.substring(0, 14) == "/deleteconfig ") {
-        // TODO: Rename var to "filenameToDelete" or something like that
-        var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
-
-        deleteConfig(incomingData);
-      }
-      // Reject output
-      else {
-        console.log("Error: Unknown command: " + message.utf8Data);
-        connection.sendUTF("Error: Unknown command: " + message.utf8Data);
+      } else if (data[i] === 'something else') {
+          // Do something
       }
     }
 
-    // We are receiving weird data.
-    // TODO: Is it really neccessary to check if data is binary when we are going to throw an error anyway?
-    else if (message.type === 'binary') {
-      console.log("Error: received binary data of " + message.binaryData.length + " bytes");
-      connection.sendUTF("Error: received binary data");
-    }
+    /*    if (message.type === 'utf8') {
+     console.log((new Date()) + ' - Received Message: ' + message.utf8Data);
+     }
+     else {
+     console.log("Error: received unknown data type");
+     connection.sendUTF("Error: received unknown data type");
+     }*/
+
+
+    /*      //If '/change' command is received
+     if (message.utf8Data.substring(0, 8) == "/change ") {
+     //configName contains everything after the '/change ' (should be configname.json)
+     var configName = message.utf8Data.substring(8, message.utf8Data.Length);
+
+     // Load json config & broadcast message when loaded
+     // TODO: Method name does not really make you assume JSON is being broadcast
+     loadJSON(localPathToConfigs + configName, true);
+
+     }
+     // Show all existing configs
+     else if (message.utf8Data.substring(0, 11) == "/getconfigs") {
+     // TODO: Fix method name
+     fetchConfigs();
+     }
+     // Test
+     else if (message.utf8Data.substring(0, 5) == "/test") {
+     broadcastMessage("test", "this is only a test");
+     }
+     // Update config files
+     else if (message.utf8Data.substring(0, 14) == "/updateconfig ") {
+     //incomingData contains everything after the '/updateconfig ' (should be config name & body)
+     // TODO: Rename var to "newConfigData" or something like that
+     var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
+
+     updateConfig(incomingData);
+     }
+     // Delete a config file
+     else if (message.utf8Data.substring(0, 14) == "/deleteconfig ") {
+     // TODO: Rename var to "filenameToDelete" or something like that
+     var incomingData = message.utf8Data.substring(14, message.utf8Data.Length);
+
+     deleteConfig(incomingData);
+     }
+     // Reject output
+     else {
+     console.log("Error: Unknown command: " + message.utf8Data);
+     connection.sendUTF("Error: Unknown command: " + message.utf8Data);
+     }
+     }
+
+     // We are receiving weird data.
+     // TODO: Is it really neccessary to check if data is binary when we are going to throw an error anyway?
+     else if (message.type === 'binary') {
+     console.log("Error: received binary data of " + message.binaryData.length + " bytes");
+     connection.sendUTF("Error: received binary data");
+     }*/
     // Still receiving weird data.
-    else {
-      console.log("Error: received unknown data type");
-      connection.sendUTF("Error: received unknown data type");
-    }
-
   });
 
   // Client disconnects
@@ -317,4 +363,102 @@ function deleteConfig(incomingData) {
     // TODO: Let caller of updateConfig choose to call fetchConfigs himself
     fetchConfigs();
   });
+}
+
+
+function readJsonFromPath(path,filename, callback) {
+  var listing;
+  fs.readdir(path,function(err,list) {
+    if(err) {
+      console.log(err);
+    } else {
+      for(var i = 0 ; i < list.length; i++) {
+        if(list[i] === filename){
+          var file = fs.readFileSync(path+"/"+list[i]);
+          var json = JSON.parse(file);
+          listing = json;
+        }
+      }
+    }
+    return callback(listing);
+  });
+}
+
+function readJsonInDirectory(filename) {
+  var json = require("./"+filename);
+  return json;
+}
+
+function readDirectories(path, callback) {
+  var listing = [];
+  fs.readdir(path,function(err,list) {
+    if(err) {
+      console.log(err);
+    } else {
+      for(var i = 0 ; i < list.length; i++) {
+        var item = list[i];
+        if(fs.lstatSync(path+"/"+item).isDirectory()){
+          listing.push(item);
+        }
+      }
+    }
+    return callback(listing);
+  });
+}
+
+function storeAddressesInList() {
+  var json = readJsonInDirectory("config.json");
+  var list = [];
+  for(var i = 0 ; i < json.length; i++ ) {
+      list.push(json[i].screenAddress);
+  }
+  return list;
+}
+
+function makeJsonViewFile(jsonfile){
+  var obj = {
+    "screenName":jsonfile.screenName,
+    "views": allViews(jsonfile)
+  };
+  return obj;
+}
+
+function allViews(jsonfile) {
+  var results = [];
+  for(var i = 0 ; i < jsonfile.screenViews.length ; i ++){
+    var viewjson = readJsonInDirectory("modules/"+jsonfile.screenViews[i].screenParentModule+"/"+jsonfile.screenViews[i].viewName+"/info.json");
+    var obj= {
+      "viewName":jsonfile.screenViews[i].viewName,
+      "parentModule":jsonfile.screenViews[i].screenParentModule,
+      "managerUrl":viewjson.view_javascript_reference,
+      "windows":allWindows(jsonfile.screenViews[i], jsonfile)
+    };
+    results.push(obj);
+  }
+  return results;
+}
+
+function allWindows(jsonSC, jsonfile) {
+  var results = [];
+  for(var i = 0 ; i < jsonSC.screenComponents.length ; i ++){
+    var windowjson = readJsonInDirectory("modules/"+ jsonSC.screenComponents[i].viewWindow +"/info.json");
+    var screenjson = undefined;
+
+    for(var j = 0 ; j < jsonfile.screenWindows.length; j++) {
+      if(jsonfile.screenWindows[j].windowIdentifier === jsonSC.screenComponents[i].dsWindow){
+        screenjson = jsonfile.screenWindows[j];
+      }
+    }
+    var obj= {
+      "name": windowjson.window_name,
+      "type": screenjson.windowShape,
+      "pixelWidth": screenjson.windowPixelWidth,
+      "pixelHeight": screenjson.windowPixelHeight,
+      "coordX":screenjson.windowCoordX,
+      "coordY":screenjson.windowCoordY,
+      "htmlUrl":windowjson.window_html_reference
+    };
+    results.push(obj);
+  }
+  return results;
 }
