@@ -1,435 +1,448 @@
 [
 	{
-		"screen_name":"Left",
-		"screen_description":"Left screen",
-		"screen_address":"192.168.1.101",
-		"screen_width":"2160",
-		"screen_height":"3840",
-		"screen_windows": [
+		"screenName":"Left",
+		"screenDescription":"Left screen",
+		"screenAddress":"192.168.1.101",
+		"screenWidth":"2160",
+		"screenHeight":"3840",
+		"screenWindows": [
 			{
-				"window_identifier":"1",
-				"window_coord_x":"39",
-				"window_coord_y":"37",
-				"window_pixel_width":"557",
-				"window_pixel_height":"704",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"1",
+				"windowCoordX":"39",
+				"windowCoordY":"37",
+				"windowPixelWidth":"557",
+				"windowPixelHeight":"704",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"2",
-				"window_coord_x":"39",
-				"window_coord_y":"894",
-				"window_pixel_width":"557",
-				"window_pixel_height":"571",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"2",
+				"windowCoordX":"39",
+				"windowCoordY":"894",
+				"windowPixelWidth":"557",
+				"windowPixelHeight":"571",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"3",
-				"window_coord_x":"39",
-				"window_coord_y":"1618",
-				"window_pixel_width":"557",
-				"window_pixel_height":"571",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"3",
+				"windowCoordX":"39",
+				"windowCoordY":"1618",
+				"windowPixelWidth":"557",
+				"windowPixelHeight":"571",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"4",
-				"window_coord_x":"39",
-				"window_coord_y":"2342",
-				"window_pixel_width":"557",
-				"window_pixel_height":"571",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"4",
+				"windowCoordX":"39",
+				"windowCoordY":"2342",
+				"windowPixelWidth":"557",
+				"windowPixelHeight":"571",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"5",
-				"window_coord_x":"39",
-				"window_coord_y":"3066",
-				"window_pixel_width":"557",
-				"window_pixel_height":"704",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"5",
+				"windowCoordX":"39",
+				"windowCoordY":"3066",
+				"windowPixelWidth":"557",
+				"windowPixelHeight":"704",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"6",
-				"window_coord_x":"775",
-				"window_coord_y":"37",
-				"window_pixel_width":"583",
-				"window_pixel_height":"819",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"6",
+				"windowCoordX":"775",
+				"windowCoordY":"37",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"819",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"7",
-				"window_coord_x":"775",
-				"window_coord_y":"1009",
-				"window_pixel_width":"583",
-				"window_pixel_height":"819",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"7",
+				"windowCoordX":"775",
+				"windowCoordY":"1009",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"819",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"8",
-				"window_coord_x":"775",
-				"window_coord_y":"1981",
-				"window_pixel_width":"583",
-				"window_pixel_height":"819",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"8",
+				"windowCoordX":"775",
+				"windowCoordY":"1981",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"819",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"9",
-				"window_coord_x":"775",
-				"window_coord_y":"2953",
-				"window_pixel_width":"583",
-				"window_pixel_height":"819",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"9",
+				"windowCoordX":"775",
+				"windowCoordY":"2953",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"819",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"10",
-				"window_coord_x":"1506",
-				"window_coord_y":"37",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"10",
+				"windowCoordX":"1506",
+				"windowCoordY":"37",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"11",
-				"window_coord_x":"1506",
-				"window_coord_y":"523",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"11",
+				"windowCoordX":"1506",
+				"windowCoordY":"523",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"12",
-				"window_coord_x":"1506",
-				"window_coord_y":"1009",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"12",
+				"windowCoordX":"1506",
+				"windowCoordY":"1009",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"13",
-				"window_coord_x":"1506",
-				"window_coord_y":"1495",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"13",
+				"windowCoordX":"1506",
+				"windowCoordY":"1495",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"14",
-				"window_coord_x":"1506",
-				"window_coord_y":"1981",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"14",
+				"windowCoordX":"1506",
+				"windowCoordY":"1981",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"15",
-				"window_coord_x":"1506",
-				"window_coord_y":"2467",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"15",
+				"windowCoordX":"1506",
+				"windowCoordY":"2467",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"16",
-				"window_coord_x":"1506",
-				"window_coord_y":"2953",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"16",
+				"windowCoordX":"1506",
+				"windowCoordY":"2953",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"17",
-				"window_coord_x":"1506",
-				"window_coord_y":"3439",
-				"window_pixel_width":"583",
-				"window_pixel_height":"333",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"17",
+				"windowCoordX":"1506",
+				"windowCoordY":"3439",
+				"windowPixelWidth":"583",
+				"windowPixelHeight":"333",
+				"windowShape":"Rectangle"
 			}
 		],
-		"screen_views": [
+		"screenViews": [
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
-			},
-			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"tweetbox",
+				"screenParentModule":"com.example.twitter",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+						"dsWindow": "1"
+					},
+					{
+						"viewWindow": "com.example.twitter/tweetbox/textwindow",
+						"dsWindow": "2"
+					}
+				]
 			}
 		]
 	},
 	{
-		"screen_name":"Middle",
-		"screen_description":"Middle screen",
-		"screen_address":"192.168.1.102",
-		"screen_width":"3840",
-		"screen_height":"2160",
-		"screen_windows": [
+		"screenName":"Middle",
+		"screenDescription":"Middle screen",
+		"screenAddress":"192.168.1.102",
+		"screenWidth":"3840",
+		"screenHeight":"2160",
+		"screenWindows": [
 			{
-				"window_identifier":"1",
-				"window_coord_x":"0",
-				"window_coord_y":"0",
-				"window_pixel_width":"",
-				"window_pixel_height":"",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"1",
+				"windowCoordX":"0",
+				"windowCoordY":"0",
+				"windowPixelWidth":"",
+				"windowPixelHeight":"",
+				"windowShape":"Rectangle"
 			}
 		],
-		"screen_views": [
+		"screenViews": [
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			},
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			}
 		]
 	},
 	{
-		"screen_name":"Right",
-		"screen_description":"Right screen",
-		"screen_address":"192.168.1.103",
-		"screen_width":"3840",
-		"screen_height":"2160",
-		"screen_windows": [
+		"screenName":"Right",
+		"screenDescription":"Right screen",
+		"screenAddress":"192.168.1.103",
+		"screenWidth":"3840",
+		"screenHeight":"2160",
+		"screenWindows": [
 			{
-				"window_identifier":"1",
-				"window_coord_x":"50",
-				"window_coord_y":"47",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"1",
+				"windowCoordX":"50",
+				"windowCoordY":"47",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"2",
-				"window_coord_x":"50",
-				"window_coord_y":"595",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"2",
+				"windowCoordX":"50",
+				"windowCoordY":"595",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"3",
-				"window_coord_x":"50",
-				"window_coord_y":"1143",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"3",
+				"windowCoordX":"50",
+				"windowCoordY":"1143",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"4",
-				"window_coord_x":"50",
-				"window_coord_y":"1691",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"4",
+				"windowCoordX":"50",
+				"windowCoordY":"1691",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"5",
-				"window_coord_x":"786",
-				"window_coord_y":"47",
-				"window_pixel_width":"1026",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"5",
+				"windowCoordX":"786",
+				"windowCoordY":"47",
+				"windowPixelWidth":"1026",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"6",
-				"window_coord_x":"786",
-				"window_coord_y":"595",
-				"window_pixel_width":"1026",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"6",
+				"windowCoordX":"786",
+				"windowCoordY":"595",
+				"windowPixelWidth":"1026",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"7",
-				"window_coord_x":"786",
-				"window_coord_y":"1143",
-				"window_pixel_width":"1026",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"7",
+				"windowCoordX":"786",
+				"windowCoordY":"1143",
+				"windowPixelWidth":"1026",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"8",
-				"window_coord_x":"786",
-				"window_coord_y":"1691",
-				"window_pixel_width":"1026",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"8",
+				"windowCoordX":"786",
+				"windowCoordY":"1691",
+				"windowPixelWidth":"1026",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"9",
-				"window_coord_x":"2111",
-				"window_coord_y":"47",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"9",
+				"windowCoordX":"2111",
+				"windowCoordY":"47",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"10",
-				"window_coord_x":"2111",
-				"window_coord_y":"595",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"10",
+				"windowCoordX":"2111",
+				"windowCoordY":"595",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"11",
-				"window_coord_x":"2111",
-				"window_coord_y":"1143",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"11",
+				"windowCoordX":"2111",
+				"windowCoordY":"1143",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"12",
-				"window_coord_x":"2111",
-				"window_coord_y":"1691",
-				"window_pixel_width":"438",
-				"window_pixel_height":"438",
-				"window_shape":"Circle"
+				"windowIdentifier":"12",
+				"windowCoordX":"2111",
+				"windowCoordY":"1691",
+				"windowPixelWidth":"438",
+				"windowPixelHeight":"438",
+				"windowShape":"Circle"
 			},
 			{
-				"window_identifier":"13",
-				"window_coord_x":"2924",
-				"window_coord_y":"47",
-				"window_pixel_width":"870",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"13",
+				"windowCoordX":"2924",
+				"windowCoordY":"47",
+				"windowPixelWidth":"870",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"14",
-				"window_coord_x":"2924",
-				"window_coord_y":"595",
-				"window_pixel_width":"870",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"14",
+				"windowCoordX":"2924",
+				"windowCoordY":"595",
+				"windowPixelWidth":"870",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"15",
-				"window_coord_x":"2924",
-				"window_coord_y":"1143",
-				"window_pixel_width":"870",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"15",
+				"windowCoordX":"2924",
+				"windowCoordY":"1143",
+				"windowPixelWidth":"870",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			},
 			{
-				"window_identifier":"16",
-				"window_coord_x":"2924",
-				"window_coord_y":"1691",
-				"window_pixel_width":"870",
-				"window_pixel_height":"438",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"16",
+				"windowCoordX":"2924",
+				"windowCoordY":"1691",
+				"windowPixelWidth":"870",
+				"windowPixelHeight":"438",
+				"windowShape":"Rectangle"
 			}
 		],
-		"screen_views": [
+		"screenViews": [
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			},
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			}
 		]
 	},
 	{
-		"screen_name":"LED",
-		"screen_description":"Led screen",
-		"screen_address":"192.168.1.104",
-		"screen_width":"1920",
-		"screen_height":"1080",
-		"screen_windows": [
+		"screenName":"LED",
+		"screenDescription":"Led screen",
+		"screenAddress":"192.168.1.104",
+		"screenWidth":"1920",
+		"screenHeight":"1080",
+		"screenWindows": [
 			{
-				"window_identifier":"1",
-				"window_coord_x":"0",
-				"window_coord_y":"0",
-				"window_pixel_width":"1920",
-				"window_pixel_height":"1080",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"1",
+				"windowCoordX":"0",
+				"windowCoordY":"0",
+				"windowPixelWidth":"1920",
+				"windowPixelHeight":"1080",
+				"windowShape":"Rectangle"
 			}
 		],
-		"screen_views": [
+		"screenViews": [
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			},
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			}
 		]
 		
 	},
 	{
-		"screen_name":"Touch",
-		"screen_description":"Touch screen",
-		"screen_address":"192.168.1.100",
-		"screen_width":"1920",
-		"screen_height":"1080",
-		"screen_windows": [
+		"screenName":"Touch",
+		"screenDescription":"Touch screen",
+		"screenAddress":"192.168.1.100",
+		"screenWidth":"1920",
+		"screenHeight":"1080",
+		"screenWindows": [
 			{
-				"window_identifier":"1",
-				"window_coord_x":"0",
-				"window_coord_y":"0",
-				"window_pixel_width":"1920",
-				"window_pixel_height":"1080",
-				"window_shape":"Rectangle"
+				"windowIdentifier":"1",
+				"windowCoordX":"0",
+				"windowCoordY":"0",
+				"windowPixelWidth":"1920",
+				"windowPixelHeight":"1080",
+				"windowShape":"Rectangle"
 			}
 		],
-		"screen_views": [
+		"screenViews": [
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			},
 			{
-				"screen_name":"",
-				"screen_parent_module":"",
-				"screen_config_file":"",
-				"screen_key-value_pairs": {
-					"Kies een goeie naam hiervoor":"com.example.twitter/view/window",
-					"identifier":"1.1"
-				}
+				"viewName":"",
+				"screenParentModule":"",
+				"screenConfigFile":"",
+				"screenComponents": [
+					{
+						"viewWindow": "com.example.product/view/window",
+						"dsWindow": "1.1"
+					}
+				]
 			}
 		]
 		

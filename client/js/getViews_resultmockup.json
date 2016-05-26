@@ -2,6 +2,7 @@
   "screenName": "center",
   "views": [
     {
+      "viewName": "",
       "parentModule": "parking spaces",
       "managerUrl": "com.steynpotze.twitter/parking/js/parking.js",
       "windows": [
@@ -10,6 +11,8 @@
           "type": "elipse",
           "pixelWidth": 200,
           "pixelHeight": 200,
+          "coordX":10,
+          "coordY":10,
           "htmlUrl": "logoshower.html"
         },
         {
@@ -17,6 +20,8 @@
           "type": "rectangle",
           "pixelWidth": 500,
           "pixelHeight": 200,
+          "coordX":10,
+          "coordY":10,
           "htmlUrl": "availability.html"
         }
       ]

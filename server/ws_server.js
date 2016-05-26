@@ -6,6 +6,7 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
 var request = require("request"); //To make an http GET request to external json file
+var iplist = [];
 
 // list of currently connected clients (users)
 var clients = [];
@@ -76,6 +77,7 @@ var server = http.createServer(function(request, response) {
 // Make the HTTP server listen on port 8080
 server.listen(8080, function() {
   console.log((new Date()) + ' Server is listening on port 8080');
+  iplist = storeAddressesInList();
 });
 
 // Create a websocket server.
@@ -135,41 +137,48 @@ wsServer.on('request', function(request) {
   connection.on('message', function(message) {
     var data = message.utf8Data.split(' ');
     var ip;
+    // Find ip data from requestwindows
     for(var i = 0; i < data.length; i++) {
+
+      // REQUEST WINDOWS
       if (data[i] === 'requestwindows') {
         ip = data[i + 1];
+        // Go through ip list and check if
+        var foundIP = false;
+        for(var i = 0 ; i < iplist.length; i++){
+          if(iplist[i] === ip){
+            foundIP = true;
+            console.log((new Date()) + " received valid connection from "+ ip);
+            var jsonfile;
+            var jsonlist = readJsonInDirectory("config.json");
+            // Get the correct JSON object from the JSON file and store in jsonfile.
+            for(var j = 0; j < jsonlist.length; j++){
+              if(jsonlist[j].screenAddress === ip){
+                jsonfile = jsonlist[i];
+              }
+            }
+            // Make sure the JSON file contains data
+            if(jsonfile !== undefined){
+
+              var finalObject = makeJsonViewFile(jsonfile);
+              connection.send("windowinfo "+JSON.stringify(finalObject));
+            } else {
+              // If this error is thrown it means that the JSON file couldn't find the IP address
+              throw new Error("Can't find ip address in json file");
+            }
+          }
+        }
+        // Check if there was a valid IP address, if not tell the console that an unknown IP address tried to connect
+        if(!foundIP) {
+          console.log((new Date()) + " received connection from unknown ip address "+ ip);
+          connection.sendUTF("Error: Unknown ip address " + ip);
+        }
+
+      } else if (data[i] === 'something else') {
+          // Do something
       }
     }
-    console.log("IP: " + ip);
-    var json = readJsonInDirectory("config.json");
-    console.dir(json);
-    switch(ip) {
-      case "192.168.1.100":
-        console.log("Address found!");
-        connection.send("windowinfo "+JSON.stringify(json));
-            break;
-      case "192.168.1.101":
-        console.log("Address found!");
-        connection.send("windowinfo "+JSON.stringify(json));
-            break;
-      case "192.168.1.102":
-        console.log("Address found!");
-        connection.send("windowinfo "+JSON.stringify(json));
-            break;
-      case "192.168.1.103":
-        console.log("Address found!");
-        connection.send("windowinfo "+JSON.stringify(json));
-            break;
-      case "145.136.77.66":
 
-          console.log("Address found!");
-          connection.send("windowinfo "+JSON.stringify(json));
-            break;
-      default:
-            console.log("Error: Unknown IP address");
-            connection.sendUTF("Error: received unknown IP address");
-            break;
-    }
     /*    if (message.type === 'utf8') {
      console.log((new Date()) + ' - Received Message: ' + message.utf8Data);
      }
@@ -395,4 +404,61 @@ function readDirectories(path, callback) {
     }
     return callback(listing);
   });
+}
+
+function storeAddressesInList() {
+  var json = readJsonInDirectory("config.json");
+  var list = [];
+  for(var i = 0 ; i < json.length; i++ ) {
+      list.push(json[i].screenAddress);
+  }
+  return list;
+}
+
+function makeJsonViewFile(jsonfile){
+  var obj = {
+    "screenName":jsonfile.screenName,
+    "views": allViews(jsonfile)
+  };
+  return obj;
+}
+
+function allViews(jsonfile) {
+  var results = [];
+  for(var i = 0 ; i < jsonfile.screenViews.length ; i ++){
+    var viewjson = readJsonInDirectory("modules/"+jsonfile.screenViews[i].screenParentModule+"/"+jsonfile.screenViews[i].viewName+"/info.json");
+    var obj= {
+      "viewName":jsonfile.screenViews[i].viewName,
+      "parentModule":jsonfile.screenViews[i].screenParentModule,
+      "managerUrl":viewjson.view_javascript_reference,
+      "windows":allWindows(jsonfile.screenViews[i], jsonfile)
+    };
+    results.push(obj);
+  }
+  return results;
+}
+
+function allWindows(jsonSC, jsonfile) {
+  var results = [];
+  for(var i = 0 ; i < jsonSC.screenComponents.length ; i ++){
+    var windowjson = readJsonInDirectory("modules/"+ jsonSC.screenComponents[i].viewWindow +"/info.json");
+    var screenjson = undefined;
+
+    for(var j = 0 ; j < jsonfile.screenWindows.length; j++) {
+      if(jsonfile.screenWindows[j].windowIdentifier === jsonSC.screenComponents[i].dsWindow){
+        screenjson = jsonfile.screenWindows[j];
+      }
+    }
+    var obj= {
+      "name": windowjson.window_name,
+      "type": screenjson.windowShape,
+      "pixelWidth": screenjson.windowPixelWidth,
+      "pixelHeight": screenjson.windowPixelHeight,
+      "coordX":screenjson.windowCoordX,
+      "coordY":screenjson.windowCoordY,
+      "htmlUrl":windowjson.window_html_reference
+    };
+    results.push(obj);
+  }
+  return results;
 }
