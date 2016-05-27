@@ -395,10 +395,12 @@ function readJsonFromPath(path, filename, callback) {
 
 function readJsonInDirectory(filename) {
   try {
-    var json = require("./" + filename);
-    return json;
+      var filename = pathing.resolve('./'+ filename);
+      delete require.cache[filename];
+      var json = require(filename);
+      return json;
   } catch(err) {
-    return undefined;
+      return undefined;
   }
 
 
@@ -423,8 +425,7 @@ function readDirectories(path, callback) {
 
 function storeAddressesInList() {
     console.log("Reading addresses from JSON");
-    var filename = pathing.resolve('./config.json');
-    delete require.cache[filename];
+
     var json = readJsonInDirectory("config.json");
     var list = [];
     for (var i = 0; i < json.length; i++) {
