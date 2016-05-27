@@ -35,10 +35,8 @@ body{
   height: 100%;
 }
 
-#area{
-  height: 400px;
-  width: 100%;
-  background-color: black;
+.active{
+  box-shadow: 0 0 20px 0px rgba(0,0,0,1.15), 0 0 20px 0px rgba(0,0,0,1.17)!important;
 }
 
 h1 {
