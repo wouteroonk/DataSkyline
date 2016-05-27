@@ -415,6 +415,7 @@ function storeAddressesInList() {
   return list;
 }
 
+// Generates a result JSON file given a JSON object containing data which is needed to compress
 function makeJsonViewFile(jsonfile){
   var obj = {
     "screenName":jsonfile.screenName,
@@ -423,6 +424,7 @@ function makeJsonViewFile(jsonfile){
   return obj;
 }
 
+// Returns a list (JSON FORMAT) containing all views given a JSON object
 function allViews(jsonfile) {
   var results = [];
   for(var i = 0 ; i < jsonfile.screenViews.length ; i ++){
@@ -438,6 +440,7 @@ function allViews(jsonfile) {
   return results;
 }
 
+// Returns a list (JSON FORMAT) containing all windows given a JSON object
 function allWindows(jsonSC, jsonfile) {
   var results = [];
   for(var i = 0 ; i < jsonSC.screenComponents.length ; i ++){
