@@ -1,32 +1,43 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
-  var colors = ["bgBlue","bgGreen","bgPink","bgOrange","bgPurple"];
+    //Default colours of the dataskyline
+    var colors = ["bgBlue", "bgGreen", "bgPink", "bgOrange", "bgPurple"];
 
-  // function drag(e) {
-  //     e.dataTransfer.setData("text", e.target.dataset.id);
-  // }
+    //Temp buttons for demo
+    var buttons = ["Verkeer", "Weer", "Bezoekers", "Nieuws"];
 
-  var j=0;
-  while(j<3){
-    $("#container").append("<div id='button_"+ j +"' class='button " + colors[j % colors.length] + "'>Button " + j + "</div>");
-    j++;
-  }
+    //Create buttons
+    var j = 0;
+    while (j < buttons.length) {
+        $("#container").append("<div id='button_" + j + "' class='button " + colors[j % colors.length] + "'>" + buttons[j] + "</div>");
+        j++;
+    }
 
-  $(".button").throwable({
-    gravity:{x:0,y:0},
-    bounce:1,
-    impulse:{
-      f:100,
-      p:{x:3,y:3}
-    },
-    shape: "circle"
-  });
+    //Activate the first button
+    $(".button").first().addClass("active");
 
-  $( ".button" ).click(function(){
+    //Make the buttons throwable (moveable)
+    $(".button").throwable({
+        gravity: {
+            x: 0,
+            y: 0
+        },
+        bounce: 1,
+        impulse: {
+            f: 100,
+            p: {
+                x: 3,
+                y: 3
+            }
+        },
+        shape: "circle"
+    });
 
-    $(".active").removeClass("active")
+    //Button click
+    $(".button").click(function() {
 
-    $(this).addClass("active");
-  });
+        $(".active").removeClass("active")
+        $(this).addClass("active");
+    });
 
 });
