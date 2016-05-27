@@ -154,23 +154,24 @@ wsServer.on('request', function(request) {
                 ip = data[i + 1];
                 // Go through ip list and check if
                 var foundIP = false;
-                // TODO: Fix this? i is already defined in parent for loop!
-                for (var i = 0; i < iplist.length; i++) {
-                    if (iplist[i] === ip) {
+
+                for (var j = 0; j < iplist.length; j++) {
+                    if (iplist[j] === ip) {
                         foundIP = true;
                         console.log((new Date()) + " received valid connection from " + ip);
                         var jsonfile;
                         var jsonlist = readJsonInDirectory("config.json");
                         // Get the correct JSON object from the JSON file and store in jsonfile.
-                        for (var j = 0; j < jsonlist.length; j++) {
-                            if (jsonlist[j].screenAddress === ip) {
-                                jsonfile = jsonlist[i];
+                        for (var k = 0; k < jsonlist.length; k++) {
+                            if (jsonlist[k].screenAddress === ip) {
+                                jsonfile = jsonlist[k];
                             }
                         }
                         // Make sure the JSON file contains data
                         if (jsonfile !== undefined) {
-
+                            console.dir(jsonfile);
                             var finalObject = makeJsonViewFile(jsonfile);
+                            //console.log("JSON has been made");
                             connection.send("windowinfo " + JSON.stringify(finalObject));
                         } else {
                             // If this error is thrown it means that the JSON file couldn't find the IP address
@@ -395,8 +396,13 @@ function readJsonFromPath(path, filename, callback) {
 }
 
 function readJsonInDirectory(filename) {
-    var json = require("./" + filename);
-    return json;
+    try {
+      console.log(filename);
+      var json = require("./" + filename);
+      return json;
+    } catch (e) {
+      console.log("Oops");
+    }
 }
 
 function readDirectories(path, callback) {

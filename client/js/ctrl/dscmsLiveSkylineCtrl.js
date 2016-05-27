@@ -18,6 +18,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
     // TODO: Listen for updates from WS
     // Subscribe to websocket updates
     dscmsWebSocket.subscribe(function(message) {
+        console.log(message);
         var commands = message.data.split(' ');
         // Respond to various messages from server
         switch (commands.shift()) {
