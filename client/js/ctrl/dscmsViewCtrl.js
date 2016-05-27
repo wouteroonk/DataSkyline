@@ -26,8 +26,8 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
             $('#' + windowIdentifier).css('position', 'absolute');
             $('#' + windowIdentifier).css('top', $scope.dscmsView.windows[i].coordY + "px");
             $('#' + windowIdentifier).css('left', $scope.dscmsView.windows[i].coordX + "px");
-            // Testing (move to css file when done)
-            $('#' + windowIdentifier).css('border', 'solid 1px');
+            // Testing (so we can see window borders)
+            $('#' + windowIdentifier).css('border', 'dashed 1px');
 
             // Load HTML
             dscmsAddHTMLToWindow(windowIdentifier, $scope.dscmsView.windows[i].htmlUrl);
@@ -35,10 +35,11 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
         }
 
         // TODO: Integrate JS into this controller, without using eval()
+        // TODO: Make this execute in view scope
         $('head').append("<script type='text/javascript' src='http://localhost:8080/modules/" + $scope.dscmsView.managerUrl + "'></script>");
     }
 
-    // Downloads HTML and adds it to the window with the specified ID
+    // Download HTML and add it to the window with the specified ID
     function dscmsAddHTMLToWindow(windowId, htmlUrl) {
       $http({
         method: 'GET',

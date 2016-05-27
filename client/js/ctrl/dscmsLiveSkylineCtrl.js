@@ -13,9 +13,6 @@
       - VIEWS are send to clients and are basically mini websites.
 */
 dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compile, dscmsWebSocket) {
-    // TODO: Get views to show from WS
-    // TODO: Instantiate views
-    // TODO: Listen for updates from WS
     // Subscribe to websocket updates
     dscmsWebSocket.subscribe(function(message) {
         console.log(message);
@@ -29,7 +26,6 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
             //  * Javascript file
             //  * HTML layout files
             case "windowinfo":
-                // TODO: Fill screen, instantiate views
                 var returnedJSON;
                 try {
                     returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -62,12 +58,22 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
     var initWindow = function(data) {
         // Update the title because we now know which screen we are
         $rootScope.title = "DataSkyline - " + data.screenName;
+        $scope.$apply();
 
-        // Loop through views to initiate them
-        $scope.views = data.views;
-        for (var i = 0; i < $scope.views.length; i++) {
-            // Further initialisation is handled by dscmsViewCtrl
-            $('#dscms-modules').append($compile("<dscms-view id='dscms-view-" + i + "' dscms-data-object='views' dscms-view-id='" + i + "'>test</dscms-view>")($scope));
-        }
+        // Fade out the previous contents, if there were any
+        $('#dscms-modules').fadeOut(2000, function() {
+            // Remove previous content
+            $('#dscms-modules').empty();
+
+            // Loop through views to initiate them
+            $scope.views = data.views;
+            for (var i = 0; i < $scope.views.length; i++) {
+                // Further initialisation is handled by dscmsViewCtrl
+                $('#dscms-modules').append($compile("<dscms-view id='dscms-view-" + i + "' dscms-data-object='views' dscms-view-id='" + i + "'>test</dscms-view>")($scope));
+            }
+
+            // Make views visible again
+            $('#dscms-modules').show();
+        });
     };
 });
