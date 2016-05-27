@@ -461,7 +461,7 @@ function allViews(jsonfile) {
         var obj = {
             "viewName": jsonfile.screenViews[i].viewName,
             "parentModule": jsonfile.screenViews[i].screenParentModule,
-            "managerUrl": viewjson.view_javascript_reference,
+            "managerUrl": viewjson.viewJavascriptReference,
             "windows": allWindows(jsonfile.screenViews[i], jsonfile)
         };
         results.push(obj);
@@ -473,6 +473,7 @@ function allWindows(jsonSC, jsonfile) {
     var results = [];
     for (var i = 0; i < jsonSC.screenComponents.length; i++) {
         var windowjson = readJsonInDirectory("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
+        if(windowjson === undefined) continue;
         var screenjson = undefined;
 
         for (var j = 0; j < jsonfile.screenWindows.length; j++) {
@@ -481,13 +482,13 @@ function allWindows(jsonSC, jsonfile) {
             }
         }
         var obj = {
-            "name": windowjson.window_name,
+            "name": windowjson.windowName,
             "type": screenjson.windowShape,
             "pixelWidth": screenjson.windowPixelWidth,
             "pixelHeight": screenjson.windowPixelHeight,
             "coordX": screenjson.windowCoordX,
             "coordY": screenjson.windowCoordY,
-            "htmlUrl": windowjson.window_html_reference
+            "htmlUrl": windowjson.windowHtmlReference
         };
         results.push(obj);
     }

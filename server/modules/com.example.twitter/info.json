@@ -1,6 +1,6 @@
 {
-	"module_name":"Twitter Module",
-	"module_description":"Displays Tweets by various users",
-	"module_developer":"Donald Trump",
-	"module_license":"None defined"	
+	"moduleName":"Twitter Module",
+	"moduleDescription":"Displays Tweets by various users",
+	"moduleDeveloper":"Donald Trump",
+	"moduleLicense":"None defined"
 }

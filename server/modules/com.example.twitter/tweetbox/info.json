@@ -1,5 +1,5 @@
 {
-	"view_name":"Avatar View",
-	"view_description":"Display Twitter profile avatar (Circle)",
-	"view_javascript_reference":"com.example.twitter/tweetbox/tb.js"
+	"viewName":"Avatar View",
+	"viewDescription":"Display Twitter profile avatar (Circle)",
+	"viewJavascriptReference":"com.example.twitter/tweetbox/tb.js"
 }

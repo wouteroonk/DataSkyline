@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "dependencies": {
     "websocket": "latest",
-    "request": "latest"
+    "request": "latest",
+    "mime": "latest",
+    "multer": "latest",
+    "adm-zip": "latest",
+    "rmdir": "latest",
+    "mkdirp": "latest"
   }
 }
