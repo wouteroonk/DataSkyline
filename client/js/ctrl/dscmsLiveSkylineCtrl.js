@@ -67,12 +67,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
         $scope.views = data.views;
         for (var i = 0; i < $scope.views.length; i++) {
             // Further initialisation is handled by dscmsViewCtrl
-            $scope.tempID = "dscms-view-" + i;
-            $scope.tempDataBundle = {
-                "id": $scope.tempID,
-                "view": $scope.views[i]
-            };
-            $('#dscms-modules').append($compile("<dscms-view id='{{tempID}}' dscms-data-object='tempDataBundle'>test</dscms-view>")($scope));
+            $('#dscms-modules').append($compile("<dscms-view id='dscms-view-" + i + "' dscms-data-object='views' dscms-view-id='" + i + "'>test</dscms-view>")($scope));
         }
     };
 });

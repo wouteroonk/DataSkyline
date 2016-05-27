@@ -1,7 +1,6 @@
 dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile) {
     // <dscms-view dscms-view-name="" dscms-view-manager-src="http://example.com/com.company.module/view/manager.js"></dscms-view>
-    $scope.dscmsViewId = $scope.dscmsDataObject.id;
-    $scope.dscmsView = $scope.dscmsDataObject.view;
+    $scope.dscmsView = $scope.dscmsDataObject[$scope.dscmsViewId];
 
     // For some reason the dscms-view element cannot be found without this
     // TODO: Find out why
@@ -10,14 +9,14 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     function dscmsStartView() {
         // TODO: Add windows to screen
         for (var i = 0; i < $scope.dscmsView.windows.length; i++) {
-            var windowIdentifier = "dscms-" + $scope.dscmsView.parentModule.split('.').join('-') + "-" + i;
+            var windowIdentifier = "dscms-" + $scope.dscmsView.parentModule.split('.').join('-') + "-" + $scope.dscmsView.viewName.split(' ').join('-') + "-" + $scope.dscmsViewId + "-" + i;
 
             // Create window
-            $('#' + $scope.dscmsViewId).append("<div id='" + windowIdentifier + "'></div>");
+            $('#dscms-view-' + $scope.dscmsViewId).append("<div id='" + windowIdentifier + "'></div>");
 
             // Change shape to ellipse if view requires it
             // Default is rectangle
-            if ($scope.dscmsView.windows[i].shape === "ellipse") {
+            if ($scope.dscmsView.windows[i].type === "ellipse") {
               $('#' + windowIdentifier).addClass("dscmsEllipse");
             }
             // Size

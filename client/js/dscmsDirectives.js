@@ -3,7 +3,8 @@ dscms.app.directive('dscmsView', function() {
   return {
     restrict: 'E',
     scope: {
-      dscmsDataObject : '='
+      dscmsDataObject : '=',
+      dscmsViewId : '='
     },
     templateUrl: 'partials/dscmsView.html',
     controller: 'dscmsViewCtrl'

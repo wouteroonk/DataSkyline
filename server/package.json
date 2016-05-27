@@ -1,0 +1,18 @@
+{
+  "name": "dataskyline-cms-server",
+  "description": "This program starts an http and websocket server and provides modules and control for the Dataskyline CMS.",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "websocket": "latest",
+    "http": "latest",
+    "fs": "latest",
+    "request": "latest",
+    "path": "latest",
+    "multer": "latest",
+    "mime": "latest",
+    "adm-zip": "latest",
+    "rmdir": "latest",
+    "mkdirp": "latest"
+  }
+}

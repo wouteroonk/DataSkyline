@@ -287,20 +287,27 @@
         "windowShape": "rectangle"
     }],
     "screenViews": [{
-        "viewName": "",
-        "screenParentModule": "",
+        "viewName": "tweetbox",
+        "screenParentModule": "com.example.twitter",
         "screenConfigFile": "",
         "screenComponents": [{
-            "viewWindow": "com.example.product/view/window",
-            "dsWindow": "1.1"
+            "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+            "dsWindow": "1"
+        }, {
+            "viewWindow": "com.example.twitter/tweetbox/textwindow",
+            "dsWindow": "5"
         }]
-    }, {
-        "viewName": "",
-        "screenParentModule": "",
+    },
+    {
+        "viewName": "tweetbox",
+        "screenParentModule": "com.example.twitter",
         "screenConfigFile": "",
         "screenComponents": [{
-            "viewWindow": "com.example.product/view/window",
-            "dsWindow": "1.1"
+            "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+            "dsWindow": "2"
+        }, {
+            "viewWindow": "com.example.twitter/tweetbox/textwindow",
+            "dsWindow": "6"
         }]
     }]
 }, {
