@@ -16,6 +16,8 @@ var mkdirp = require("mkdirp");
 // list of currently connected clients (users)
 var clients = [];
 
+var connectionList = [];
+
 //Where we store our local config json files
 // C:/Users/Gebruiker/Desktop/DataSkyline/server/ on production DataSkyline
 var localPathToConfigs = "C:/Users/Gebruiker/Desktop/DataSkyline/server/";
@@ -155,19 +157,20 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         var data = message.utf8Data.split(' ');
         var ip;
-        var iplist = storeAddressesInList();
         // Find ip data from requestwindows
         for (var i = 0; i < data.length; i++) {
             // REQUEST WINDOWS
             if (data[i] === 'requestwindows') {
                 ip = data[i + 1];
-                // Go through ip list and check if
+                var iplist = storeAddressesInList();
+                sendJsonToIP(iplist, connection,ip, index);
+/*                // Go through ip list and check if ip matches with JSON file
                 var foundIP = false;
-
                 for (var j = 0; j < iplist.length; j++) {
                     if (iplist[j] === ip) {
                         foundIP = true;
                         console.log((new Date()) + " received valid connection from " + ip);
+                        connectionList.push(new ConnectionObject(connection,ip));
                         var jsonfile;
                         var jsonlist = readJsonInDirectory("config.json");
                         // Get the correct JSON object from the JSON file and store in jsonfile.
@@ -179,7 +182,6 @@ wsServer.on('request', function(request) {
                         // Make sure the JSON file contains data
                         if (jsonfile !== undefined) {
                             var finalObject = makeJsonViewFile(jsonfile);
-                            //console.log("JSON has been made");
                             connection.send("windowinfo " + JSON.stringify(finalObject));
                         } else {
                             // If this error is thrown it means that the JSON file couldn't find the IP address
@@ -191,7 +193,7 @@ wsServer.on('request', function(request) {
                 if (!foundIP) {
                     console.log((new Date()) + " received connection from unknown ip address " + ip);
                     connection.sendUTF("Error: Unknown ip address " + ip);
-                }
+                }*/
 
             } else if (data[i] === 'something else') {
                 // Do something
@@ -261,17 +263,63 @@ wsServer.on('request', function(request) {
     connection.on('close', function(reasonCode, description) {
         console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
         clients[index] = null;
+        connectionList[index] = null;
         // TODO: Shouldn't we lower globalIndex?
         logClientList();
     });
 
 });
 
+function sendJsonToIP(iplist, connection,ip, index) {
+    var foundIP = false;
+    for (var j = 0; j < iplist.length; j++) {
+        if (iplist[j] === ip) {
+            foundIP = true;
+            console.log((new Date()) + " received valid connection from " + ip);
+            connectionList[index] = new ConnectionObject(connection,ip);
+            var jsonfile;
+            var jsonlist = readJsonInDirectory("config.json");
+            // Get the correct JSON object from the JSON file and store in jsonfile.
+            for (var k = 0; k < jsonlist.length; k++) {
+                if (jsonlist[k].screenAddress === ip) {
+                    jsonfile = jsonlist[k];
+                }
+            }
+            // Make sure the JSON file contains data
+            if (jsonfile !== undefined) {
+                var finalObject = makeJsonViewFile(jsonfile);
+                connection.send("windowinfo " + JSON.stringify(finalObject));
+            } else {
+                // If this error is thrown it means that the JSON file couldn't find the IP address
+                throw new Error("Can't find ip address in json file");
+            }
+        }
+    }
+    // Check if there was a valid IP address, if not tell the console that an unknown IP address tried to connect
+    if (!foundIP) {
+        console.log((new Date()) + " received connection from unknown ip address " + ip);
+        connection.sendUTF("Error: Unknown ip address " + ip);
+    }
+
+}
+
 //Broadcast message to all connected clients
 function broadcastMessage(command, message) {
     for (var i = 0; i < clients.length; i++) {
         if (clients[i]) {
             clients[i].sendUTF(command + " " + message);
+        }
+    }
+}
+
+
+// Deze functie update ALLE schermen !
+function sendUpdateNotification() {
+    var iplist = storeAddressesInList();
+    for (var i = 0; i < connectionList.length; i++) {
+        if (connectionList[i]) {
+            console.dir("Connection " + i);
+            sendJsonToIP(iplist, connectionList[i].connection,connectionList[i].address);
         }
     }
 }
@@ -406,7 +454,7 @@ function readJsonFromPath(path, filename, callback) {
 function readJsonInDirectory(filename) {
   try {
       var filename = pathing.resolve('./'+ filename);
-      delete require.cache[filename];
+      delete require.cache[filename]; // Clear cache (otherwise files won't update)
       var json = require(filename);
       return json;
   } catch(err) {
@@ -457,7 +505,7 @@ function allViews(jsonfile) {
     var results = [];
     for (var i = 0; i < jsonfile.screenViews.length; i++) {
         var viewjson = readJsonInDirectory("modules/" + jsonfile.screenViews[i].screenParentModule + "/" + jsonfile.screenViews[i].viewName + "/info.json");
-        if(viewjson === undefined) continue;
+        if(viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next 
         var obj = {
             "viewName": jsonfile.screenViews[i].viewName,
             "parentModule": jsonfile.screenViews[i].screenParentModule,
@@ -473,7 +521,7 @@ function allWindows(jsonSC, jsonfile) {
     var results = [];
     for (var i = 0; i < jsonSC.screenComponents.length; i++) {
         var windowjson = readJsonInDirectory("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
-        if(windowjson === undefined) continue;
+        if(windowjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next 
         var screenjson = undefined;
 
         for (var j = 0; j < jsonfile.screenWindows.length; j++) {
@@ -627,4 +675,10 @@ function removeDir(path){
 //sends a respond to a user.
 function notifyUser(message, res){
   res.end("<script>alert('"+ message+"'); window.location = '/';</script>");
+}
+
+
+function ConnectionObject(connection, address){
+    this.connection = connection;
+    this.address = address;
 }
