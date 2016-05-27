@@ -7,6 +7,11 @@ var http = require('http');
 var fs = require("fs"); //Access local filesystem
 var request = require("request"); //To make an http GET request to external json file
 var pathing = require("path");
+var multer = require("multer");
+var mime = require("mime"); // for adding an extension to a file.
+var AdmZip  = require("adm-zip");
+var rmdir = require("rmdir");
+var mkdirp = require("mkdirp");
 
 // list of currently connected clients (users)
 var clients = [];
@@ -36,8 +41,13 @@ var server = http.createServer(function(request, response) {
     // We need to filter the url because browsers might send parameters, which we don't support.
     var filteredUrl = request.url.split('?')[0];
 
-    // Serve control panel when root is accessed
-    if (filteredUrl === '/') {
+    //Handles all the post messages sent to the server.
+  if(request.method == 'POST'){
+    //for now there is no check for which path, it is assumed that all post requests are module uploads.
+    handleModuleUpload(request, response);
+  }
+  // Serve control panel when root is accessed
+  else if(filteredUrl === '/') {
         fs.readFile('cpanel/cpanel.html', 'utf8', function(err, data) {
             if (err) {
                 response.writeHead(404);
@@ -482,4 +492,138 @@ function allWindows(jsonSC, jsonfile) {
         results.push(obj);
     }
     return results;
+}
+
+//handles an upload of a new module
+function handleModuleUpload(req, res){
+  upload(req,res,function(err) {
+       if(err) {
+          //emptyTmp(fileName);
+          notifyUser("an error occured while uploading the file, please try again! Error-Code: UP01", res);
+          return;
+       }
+       unzipFile(req.file.filename, res);
+       return;
+   });
+}
+
+//register the zip format.
+mime.define({
+    'application/x-zip-compressed': ['zip']
+});
+
+var storage =   multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './tmp');
+  },
+  filename: function (req, file, callback) {
+    var name = file.fieldname + '-' + Date.now() + '.' + mime.extension(file.mimetype);
+    callback(null, name);
+  }
+});
+var upload = multer({ storage : storage}).single('new-module');
+
+
+//unzips a zip file to tmp folder.
+function unzipFile(fileName, res){
+  var fromPath = 'tmp/'+ fileName;
+
+  //check to see if the file uploaded is a zip file.
+  var splitFileName = fileName.split('.');
+  if(splitFileName[splitFileName.length-1] != 'zip'){
+    //the file uploaded is not a zip file.
+    removeFile(fromPath);
+    notifyUser(splitFileName[splitFileName.length-1] + ' type is not supported, only zip type files are currently supported(see documentation'
+      +' for more information).', res);
+    return;
+  }
+  //the file is a zip
+  var dir = './tmp/' + fileName + 'folder';
+  mkdirp(dir, function(err) {
+    if(err){
+      console.log(err);
+      notifyUser("an error occured while uploading the file, please try again! Error-code: UP02", res);
+    } else {
+      simpleUnzip(fromPath, dir);
+      removeFile(fromPath); // removes the zip file.
+      validateModule(dir, res);
+    }
+  });
+}
+//validates a module for a given path
+function validateModule(pathToModule, res){
+  console.log("validating module " + pathToModule );
+  //reads the content of the folder
+  fs.readdir(pathToModule, function(err, files){
+    if(err){
+      console.log(err);
+      notifyUser("An error occured while uploading the file, please try again! Error-code: UP03", res);
+      return;
+    }
+    //Checks to see if it is a valid module
+    if(files.length != 1){
+      console.log("Error invalid module structure: files are not in the same folder");
+      removeDir(pathToModule);
+      notifyUser("Error the structure of the module is not valid, the top level of the archive can only contain one folder (and no files)."
+      +"See the documentation for more information.", res);
+      return;
+    }
+    //check to see if the module already exists in the system
+    fs.stat('modules/'+ files[0], function(err, stats){
+      if(err){
+        //succes module doesnt exist.
+        fs.rename(pathToModule+'/'+files[0], 'modules/'+files[0], function(err){ //optionnaly change to name in info.json
+          if(err){
+            console.log(err);
+            notifyUser("An error has occured while uploading your module. Error-code: UP04",res);
+
+          } else {
+            //module is added to the system
+            notifyUser("The module: "+files[0]+ " is added to the system and ready for use.",res);
+          }
+          removeDir(pathToModule); //remove the leftover files from the tmp folder.
+
+        })
+        return;
+      }
+
+      console.log("module already exists!");
+      removeDir(pathToModule);
+      notifyUser("A module with this name already exists, consider re-naming this module or removing the existing module.",res);
+
+    });
+  });
+}
+//unzips a zip file to a given path.
+function simpleUnzip(fromPath, toPath){
+  var zip = new AdmZip(fromPath);
+  zip.extractAllTo(toPath, true);
+}
+//removes a single file.
+function removeFile(fromPath){
+  fs.unlink(fromPath, function(err){
+    if(err) console.log(err);
+  })
+}
+//can be used to remove an empty dir.
+function removeEmptyDir(path){
+  fs.rmdir(path, function(err){
+    if(err) console.log(err);
+  });
+}
+//removes a dir with the content within this dir.
+function removeDir(path){
+  rmdir(path, function (err, dirs, files) {
+  if(err){
+    console.log(err);
+  }
+  console.log(dirs);
+  console.log(files);
+  console.log('all files are removed');
+  });
+}
+
+//sends a respond to a user.
+function notifyUser(message, res){
+  res.end("<script>alert('"+ message+"'); window.location = '/';</script>");
 }

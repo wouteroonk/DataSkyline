@@ -1,0 +1,3 @@
+ + In deze map worden modules tijdelijk opgeslagen en geinspecteerd.
+ + Na het inspecteren worden de overgebleven bestanden verwijderd.
+ + Deze map mag dus niet verwijderd worden, ookal is de map leeg.
