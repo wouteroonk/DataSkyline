@@ -1,2 +1,2 @@
-app.controller('ScreensCtrl', function($scope) {
+dscms.app.controller('dscmsScreensCtrl', function($scope) {
 });

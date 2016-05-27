@@ -1,2 +1,2 @@
-app.controller('ModulesCtrl', function($scope) {
+dscms.app.controller('dscmsModulesCtrl', function($scope) {
 });
