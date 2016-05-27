@@ -1,7 +1,7 @@
 [{
     "screenName": "Left",
     "screenDescription": "Left screen",
-    "screenAddress": "192.168.1.101",
+    "screenAddress": "145.136.77.66",
     "screenWidth": "2160",
     "screenHeight": "3840",
     "screenWindows": [{

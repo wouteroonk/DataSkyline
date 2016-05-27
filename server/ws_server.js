@@ -6,7 +6,6 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
 var request = require("request"); //To make an http GET request to external json file
-var iplist = [];
 
 // list of currently connected clients (users)
 var clients = [];
@@ -86,7 +85,6 @@ var server = http.createServer(function(request, response) {
 // Make the HTTP server listen on port 8080
 server.listen(8080, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
-    iplist = storeAddressesInList();
 });
 
 // Create a websocket server.
@@ -146,9 +144,9 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         var data = message.utf8Data.split(' ');
         var ip;
+        var iplist = storeAddressesInList();
         // Find ip data from requestwindows
         for (var i = 0; i < data.length; i++) {
-
             // REQUEST WINDOWS
             if (data[i] === 'requestwindows') {
                 ip = data[i + 1];
@@ -396,13 +394,14 @@ function readJsonFromPath(path, filename, callback) {
 }
 
 function readJsonInDirectory(filename) {
-    try {
-      console.log(filename);
-      var json = require("./" + filename);
-      return json;
-    } catch (e) {
-      console.log("Oops");
-    }
+  try {
+    var json = require("./" + filename);
+    return json;
+  } catch(err) {
+    return undefined;
+  }
+
+
 }
 
 function readDirectories(path, callback) {
@@ -443,6 +442,7 @@ function allViews(jsonfile) {
     var results = [];
     for (var i = 0; i < jsonfile.screenViews.length; i++) {
         var viewjson = readJsonInDirectory("modules/" + jsonfile.screenViews[i].screenParentModule + "/" + jsonfile.screenViews[i].viewName + "/info.json");
+        if(viewjson === undefined) continue;
         var obj = {
             "viewName": jsonfile.screenViews[i].viewName,
             "parentModule": jsonfile.screenViews[i].screenParentModule,
