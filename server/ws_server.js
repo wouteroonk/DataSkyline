@@ -6,6 +6,7 @@ var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
 var request = require("request"); //To make an http GET request to external json file
+var pathing = require("path");
 
 // list of currently connected clients (users)
 var clients = [];
@@ -167,7 +168,6 @@ wsServer.on('request', function(request) {
                         }
                         // Make sure the JSON file contains data
                         if (jsonfile !== undefined) {
-                            console.dir(jsonfile);
                             var finalObject = makeJsonViewFile(jsonfile);
                             //console.log("JSON has been made");
                             connection.send("windowinfo " + JSON.stringify(finalObject));
@@ -422,11 +422,15 @@ function readDirectories(path, callback) {
 }
 
 function storeAddressesInList() {
+    console.log("Reading addresses from JSON");
+    var filename = pathing.resolve('./config.json');
+    delete require.cache[filename];
     var json = readJsonInDirectory("config.json");
     var list = [];
     for (var i = 0; i < json.length; i++) {
         list.push(json[i].screenAddress);
     }
+    console.dir(list);
     return list;
 }
 
