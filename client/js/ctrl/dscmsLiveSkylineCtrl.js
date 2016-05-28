@@ -15,7 +15,6 @@
 dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compile, dscmsWebSocket) {
     // Subscribe to websocket updates
     dscmsWebSocket.subscribe(function(message) {
-        console.log(message);
         var commands = message.data.split(' ');
         // Respond to various messages from server
         switch (commands.shift()) {
@@ -61,7 +60,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
         $scope.$apply();
 
         // Fade out the previous contents, if there were any
-        $('#dscms-modules').fadeOut(2000, function() {
+        $('#dscms-modules').fadeOut($('#dscms-modules').is(':empty') ? 0 : 2000, function() {
             // Remove previous content
             $('#dscms-modules').empty();
 
