@@ -163,7 +163,6 @@ wsServer.on('request', function(request) {
     // Get the message type and perform matching action
     switch (data.shift()) {
       case "requestwindows":
-        // TODO: Check if IP is valid
         var ipAddress = data.shift();
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
@@ -187,6 +186,7 @@ wsServer.on('request', function(request) {
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip) {
   var validIPs = getScreenIPs();
+  // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
   // Get screen where screenAddress is equal to ip
   var json = getJSONfromPath("config.json").filter(function(screen) {
@@ -210,7 +210,7 @@ function broadcastMessage(command, message) {
 
 // This function updates all screens!
 // TODO: This function currently does not work.
-// This function does not work, because we don't know the IP address for a connection.
+// This function does not work, because we don't know the IP address for a connection. TODO:(we DO actually have the connection with an IP)
 // Proposed fix:
 //  * add setmyip message for clients in which they set their IP
 //  * expand requestwindows message with zero parameters variant, where the connections set IP is used.
@@ -240,10 +240,9 @@ function logClientList() {
 
 function getJSONfromPath(filename) {
   try {
-    // TODO: Filename is already defined in parameter, please choose other name
-    var filename = pathing.resolve('./' + filename);
-    delete require.cache[filename]; // Clear cache (otherwise files won't update)
-    var json = require(filename);
+    var file = pathing.resolve('./' + filename);
+    delete require.cache[file]; // Clear cache (otherwise files won't update)
+    var json = require(file);
     return json;
   } catch (err) {
     return undefined;
