@@ -24,9 +24,8 @@ var connectionList = [];
 // TODO: Is this still needed?
 var localPathToConfigs = "C:/Users/Gebruiker/Desktop/DataSkyline/server/";
 
-// TODO: Find out what this var is for so we can give it a better name
-// TODO: Change to current connected users???
-var globalIndex = 0;
+//Count of currently connected clients
+var connectionCount = 0;
 
 //Max amount of connected clients allowed
 var maxConnections = 7;
@@ -122,18 +121,18 @@ function originIsAllowed(origin) {
 
   //Loop through clients list and insert connection at next free index
   //Reject connection if max connections is reached
-  while (clients[globalIndex]) {
-    if (globalIndex >= maxConnections - 1) {
+  while (clients[connectionCount]) {
+    if (connectionCount >= maxConnections - 1) {
       if (checked) {
         console.log("Rejecting connection: too many connections");
         allowed = false;
         checked = false;
         break;
       }
-      globalIndex = -1;
+      connectionCount = -1;
       checked = true;
     }
-    globalIndex++;
+    connectionCount++;
   }
 
   return allowed;
@@ -151,7 +150,7 @@ wsServer.on('request', function(request) {
 
   // TODO: What is "echo-protocol"?
   var connection = request.accept('echo-protocol', request.origin);
-  var index = globalIndex; //Assign index to new connection
+  var index = connectionCount; //Assign index to new connection
   clients[index] = connection; //Add to client list
 
   console.log((new Date()) + ' - Connection accepted from ' + connection.remoteAddress + " with index " + index);
@@ -179,7 +178,7 @@ wsServer.on('request', function(request) {
     console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
     clients[index] = null;
     connectionList[index] = null;
-    // TODO: Shouldn't we lower globalIndex?
+    // TODO: Shouldn't we lower connectionCount?
     logClientList();
   });
 
