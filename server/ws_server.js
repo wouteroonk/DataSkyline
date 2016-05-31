@@ -2,7 +2,6 @@
  // Global variables
 
 // Require other nodes
-// TODO: Create package file for auto install - See docs for update https://docs.npmjs.com/cli/init
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
