@@ -164,6 +164,7 @@ wsServer.on('request', function(request) {
     switch (data.shift()) {
       case "requestwindows":
         var ipAddress = data.shift();
+        connectionList[index] = new ConnectionObject(connection,ipAddress);
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
       default:
@@ -216,10 +217,11 @@ function broadcastMessage(command, message) {
 //  * expand requestwindows message with zero parameters variant, where the connections set IP is used.
 function sendUpdateNotification() {
   var iplist = getScreenIPs();
+  console.log("CONNECTIONLIST: " + connectionList);
   for (var i = 0; i < connectionList.length; i++) {
     if (connectionList[i]) {
       console.dir("Connection " + i);
-      sendJsonToIP(iplist, connectionList[i].connection, connectionList[i].address);
+      sendWindowInfoForIPToClient(connectionList[i].connection, connectionList[i].address);
     }
   }
 }
