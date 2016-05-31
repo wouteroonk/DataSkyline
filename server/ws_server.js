@@ -2,7 +2,7 @@
  // Global variables
 
 // Require other nodes
-// TODO: Create package file for auto install
+// TODO: Create package file for auto install - See docs for update https://docs.npmjs.com/cli/init
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
@@ -25,6 +25,7 @@ var connectionList = [];
 var localPathToConfigs = "C:/Users/Gebruiker/Desktop/DataSkyline/server/";
 
 // TODO: Find out what this var is for so we can give it a better name
+// TODO: Change to current connected users???
 var globalIndex = 0;
 
 //Max amount of connected clients allowed
