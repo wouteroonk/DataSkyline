@@ -140,31 +140,23 @@
     "screenName": "Middle",
     "screenDescription": "Middle screen",
     "screenAddress": "192.168.1.102",
-    "screenWidth": "3840",
-    "screenHeight": "2160",
+    "screenWidth": "1920",
+    "screenHeight": "1080",
     "screenWindows": [{
         "windowIdentifier": "1",
         "windowCoordX": "0",
         "windowCoordY": "0",
-        "windowPixelWidth": "",
-        "windowPixelHeight": "",
+        "windowPixelWidth": "1920",
+        "windowPixelHeight": "1080",
         "windowShape": "rectangle"
     }],
     "screenViews": [{
-        "viewName": "",
-        "screenParentModule": "",
+        "viewName": "touchinterface",
+        "screenParentModule": "com.dscms.touchinterface",
         "screenConfigFile": "",
         "screenComponents": [{
-            "viewWindow": "com.example.product/view/window",
-            "dsWindow": "1.1"
-        }]
-    }, {
-        "viewName": "",
-        "screenParentModule": "",
-        "screenConfigFile": "",
-        "screenComponents": [{
-            "viewWindow": "com.example.product/view/window",
-            "dsWindow": "1.1"
+            "viewWindow": "com.dscms.touchinterface/touchinterface/mainwindow",
+            "dsWindow": "1"
         }]
     }]
 }, {
