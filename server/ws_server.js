@@ -334,7 +334,8 @@ function allWindows(jsonSC, jsonfile) {
   return results;
 }
 
-//handles an upload of a new module
+// handles an upload of a new module
+// This method should always be called when the config.json file is needed
 function handleModuleUpload(req, res) {
   upload(req, res, function(err) {
     if (err) {
@@ -445,12 +446,7 @@ function removeFile(fromPath) {
     if (err) console.log(err);
   });
 }
-//can be used to remove an empty dir.
-function removeEmptyDir(path) {
-  fs.rmdir(path, function(err) {
-    if (err) console.log(err);
-  });
-}
+
 //removes a dir with the content within this dir.
 function removeDir(path) {
   rmdir(path, function(err, dirs, files) {
@@ -468,7 +464,58 @@ function notifyUser(message, res) {
   res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
+//TODO: Make these methods
+// LOW PRIORITY
 
+function addScreen(json) {
+  var config = getJSONfromPath("config.json");
+}
+// LOW PRIORITY
+function editScreen(screenID, json) {
+  var config = getJSONfromPath("config.json");
+}
+// LOW PRIORITY
+function removeScreen(screenID){
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function addModule(json) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function removeModule(moduleID) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function addTheme(themename) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function removeTheme(themename) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function addViewToTheme(themename, json) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function editViewInTheme(themename, viewID, json) {
+  var config = getJSONfromPath("config.json");
+}
+// HIGH PRIORITY
+function removeViewInTheme(themename, viewID) {
+  var config = getJSONfromPath("config.json");
+}
+
+
+function turnJSONIntoFile(json, filename) {
+  fs.writeFile(filename,json, function(err) {
+    if(err) return console.log(err);
+    console.log(filename+" created!");
+  });
+}
+
+// "Object" for connections
 function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
