@@ -2,7 +2,6 @@
  // Global variables
 
 // Require other nodes
-// TODO: Create package file for auto install
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var fs = require("fs"); //Access local filesystem
@@ -24,8 +23,8 @@ var connectionList = [];
 // TODO: Is this still needed?
 var localPathToConfigs = "C:/Users/Gebruiker/Desktop/DataSkyline/server/";
 
-// TODO: Find out what this var is for so we can give it a better name
-var globalIndex = 0;
+//Count of currently connected clients
+var connectionCount = 0;
 
 //Max amount of connected clients allowed
 var maxConnections = 7;
@@ -121,18 +120,18 @@ function originIsAllowed(origin) {
 
   //Loop through clients list and insert connection at next free index
   //Reject connection if max connections is reached
-  while (clients[globalIndex]) {
-    if (globalIndex >= maxConnections - 1) {
+  while (clients[connectionCount]) {
+    if (connectionCount >= maxConnections - 1) {
       if (checked) {
         console.log("Rejecting connection: too many connections");
         allowed = false;
         checked = false;
         break;
       }
-      globalIndex = -1;
+      connectionCount = -1;
       checked = true;
     }
-    globalIndex++;
+    connectionCount++;
   }
 
   return allowed;
@@ -150,7 +149,7 @@ wsServer.on('request', function(request) {
 
   // TODO: What is "echo-protocol"?
   var connection = request.accept('echo-protocol', request.origin);
-  var index = globalIndex; //Assign index to new connection
+  var index = connectionCount; //Assign index to new connection
   clients[index] = connection; //Add to client list
 
   console.log((new Date()) + ' - Connection accepted from ' + connection.remoteAddress + " with index " + index);
@@ -163,8 +162,8 @@ wsServer.on('request', function(request) {
     // Get the message type and perform matching action
     switch (data.shift()) {
       case "requestwindows":
-        // TODO: Check if IP is valid
         var ipAddress = data.shift();
+        connectionList[index] = new ConnectionObject(connection,ipAddress);
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
       default:
@@ -178,7 +177,7 @@ wsServer.on('request', function(request) {
     console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
     clients[index] = null;
     connectionList[index] = null;
-    // TODO: Shouldn't we lower globalIndex?
+    // TODO: Shouldn't we lower connectionCount?
     logClientList();
   });
 
@@ -187,6 +186,7 @@ wsServer.on('request', function(request) {
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip) {
   var validIPs = getScreenIPs();
+  // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
   // Get screen where screenAddress is equal to ip
   var json = getJSONfromPath("config.json").filter(function(screen) {
@@ -210,16 +210,17 @@ function broadcastMessage(command, message) {
 
 // This function updates all screens!
 // TODO: This function currently does not work.
-// This function does not work, because we don't know the IP address for a connection.
+// This function does not work, because we don't know the IP address for a connection. TODO:(we DO actually have the connection with an IP)
 // Proposed fix:
 //  * add setmyip message for clients in which they set their IP
 //  * expand requestwindows message with zero parameters variant, where the connections set IP is used.
 function sendUpdateNotification() {
   var iplist = getScreenIPs();
+  console.log("CONNECTIONLIST: " + connectionList);
   for (var i = 0; i < connectionList.length; i++) {
     if (connectionList[i]) {
       console.dir("Connection " + i);
-      sendJsonToIP(iplist, connectionList[i].connection, connectionList[i].address);
+      sendWindowInfoForIPToClient(connectionList[i].connection, connectionList[i].address);
     }
   }
 }
@@ -240,10 +241,9 @@ function logClientList() {
 
 function getJSONfromPath(filename) {
   try {
-    // TODO: Filename is already defined in parameter, please choose other name
-    var filename = pathing.resolve('./' + filename);
-    delete require.cache[filename]; // Clear cache (otherwise files won't update)
-    var json = require(filename);
+    var file = pathing.resolve('./' + filename);
+    delete require.cache[file]; // Clear cache (otherwise files won't update)
+    var json = require(file);
     return json;
   } catch (err) {
     return undefined;

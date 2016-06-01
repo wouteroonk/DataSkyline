@@ -36,7 +36,8 @@ body{
 }
 
 .active{
-  box-shadow: 0 0 20px 0px rgba(0,0,0,1.15), 0 0 20px 0px rgba(0,0,0,1.17)!important;
+  /*box-shadow: 0 0 20px 0px rgba(0,0,0,1.15), 0 0 20px 0px rgba(0,0,0,1.17)!important;*/
+  border: 10px solid #FFF;
 }
 
 h1 {
@@ -48,16 +49,16 @@ h1 {
 }
 
 .button {
-  width: 400px;
-  height: 400px;
+  width: 200px;
+  height: 200px;
 
   border-radius: 50%;
   box-shadow: 0 0 20px 0px rgba(0,0,0,0.15), 0 0 20px 0px rgba(0,0,0,0.17);
 
   text-align: center;
-  line-height: 400px;
+  line-height: 200px;
 
-  font-size: 40px;
+  font-size: 30px;
   color: #fff;
 }
 
