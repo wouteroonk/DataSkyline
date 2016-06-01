@@ -144,7 +144,7 @@
 }, {
     "screenName": "Right",
     "screenDescription": "Right screen",
-    "screenAddress": "192.168.1.103",
+    "screenAddress": "192.168.102.1",
     "screenWidth": "3840",
     "screenHeight": "2160",
     "screenIdentifier": "3",
@@ -327,13 +327,13 @@
                 "screenConfigFile": "",
                 "screenComponents": [{
                     "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
-                    "dsWindow": "3.3"
+                    "dsWindow": "3.2"
                 }, {
                 "viewWindow": "com.example.twitter/tweetbox/textwindow",
                     "dsWindow": "3.6"
                 }                                   
                 ]
             }]
-            }
+            },{}
     ]
 }
