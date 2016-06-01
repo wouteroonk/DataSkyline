@@ -1,0 +1,5 @@
+{
+	"windowName":"Touch Window",
+	"windowDescription":"Display Touchscreen UI",
+	"windowHtmlReference":"com.dscms.touchinterface/touchinterface/mainwindow/touch.html"
+}
