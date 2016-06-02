@@ -14,16 +14,16 @@ dscms.app.run(function($rootScope) {
 */
 dscms.app.config(function($routeProvider) {
   $routeProvider.
-  when('/modules', {
-    templateUrl: 'cpanel/pages/modules.html',
-    controller: 'dscmsModulesCtrl'
+  when('/', {
+    templateUrl: 'cpanel/pages/home.html',
+    controller: 'dscmsHomeCtrl'
   }).
   when('/screens', {
     templateUrl: 'cpanel/pages/screens.html',
     controller: 'dscmsScreensCtrl'
   }).
   otherwise({
-    redirectTo: '/modules'
+    redirectTo: '/'
   });
 
 });
@@ -89,6 +89,10 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   functions.requestWindowsForIP = function(ip) {
     if(waitForWS()) ws.send("requestwindows " + ip);
   };
+
+  functions.requestThemeList = function() {
+    if(waitForWS()) ws.send("getcurrentthemes");
+  }
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.
