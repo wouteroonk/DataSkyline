@@ -167,13 +167,12 @@ wsServer.on('request', function(request) {
     switch (data.shift()) {
       case "requestwindows":
         var ipAddress = data.shift();
-          console.log("IPADDRESS RECEIVED: " + ipAddress);
         connectionList[index] = new ConnectionObject(connection,ipAddress);
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
-      case "getcurrentthemes":
+      case "getthemes":
           var themes = JSON.stringify(getThemeList());
-          connection.send("currentthemes" + themes);
+          connection.send("allthemes" + themes);
             break;
       default:
         // Handle false message
@@ -512,6 +511,7 @@ function addTheme(themename, themedescription) {
   assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
   assert.notEqual(themedescription, null, "You must construct additional pilons!");
   assert.notEqual(themedescription, "","You must construct additional pilons!");
+
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
@@ -602,7 +602,8 @@ function getThemeList() {
   var themes = getJSONfromPath(configPath).themes;
   var list = [];
   for(var i = 0 ; i < themes.length ; i++) {
-    list.push(themes[i].themeName);
+    var listitem = {"name" : themes[i].themeName};
+    list.push(listitem);
   }
   var obj = {
     "themes": list
