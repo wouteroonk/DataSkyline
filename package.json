@@ -8,6 +8,7 @@
     "multer": "latest",
     "adm-zip": "latest",
     "rmdir": "latest",
-    "mkdirp": "latest"
+    "mkdirp": "latest",
+    "assert": "latest"
   }
 }

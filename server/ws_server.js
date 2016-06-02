@@ -12,6 +12,7 @@ var mime = require("mime"); // for adding an extension to a file.
 var AdmZip = require("adm-zip");
 var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
+var assert = require('assert'); // For assertions
 
 // list of currently connected clients (users)
 var clients = [];
