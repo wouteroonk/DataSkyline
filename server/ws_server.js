@@ -12,11 +12,12 @@ var mime = require("mime"); // for adding an extension to a file.
 var AdmZip = require("adm-zip");
 var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
+var assert = require("assert");
 var selectedTheme = "default";
+var configPath = "config.json";
 
 // list of currently connected clients (users)
 var clients = [];
-
 var connectionList = [];
 
 //Where we store our local config json files
@@ -164,6 +165,7 @@ wsServer.on('request', function(request) {
     switch (data.shift()) {
       case "requestwindows":
         var ipAddress = data.shift();
+          console.log("IPADDRESS RECEIVED: " + ipAddress);
         connectionList[index] = new ConnectionObject(connection,ipAddress);
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
@@ -190,7 +192,7 @@ function sendWindowInfoForIPToClient(client, ip) {
   // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
   // Get screen where screenAddress is equal to ip
-  var json = getJSONfromPath("config.json").screens.filter(function(screen) {
+  var json = getJSONfromPath(configPath).screens.filter(function(screen) {
     return screen.screenAddress === ip;
   })[0];
   // Guard to make sure IP was in list
@@ -262,6 +264,7 @@ function readDirectories(path, callback) {
       for (var i = 0; i < list.length; i++) {
         var item = list[i];
         if (fs.lstatSync(path + "/" + item).isDirectory()) {
+          console.log(item);
           listing.push(item);
         }
       }
@@ -274,7 +277,7 @@ function readDirectories(path, callback) {
 function getScreenIPs() {
   console.log("Reading addresses from JSON");
 
-  var json = getJSONfromPath("config.json");
+  var json = getJSONfromPath(configPath);
   var list = [];
   for (var i = 0; i < json.screens.length; i++) {
     list.push(json.screens[i].screenAddress);
@@ -285,7 +288,7 @@ function getScreenIPs() {
 
 // Gets the windowinfo message for a screen config entry
 function getWindowInfoForScreenConfig(jsonfile) {
-  var themes = require("./config.json").themes;
+  var themes = getJSONfromPath(configPath).themes;
   var obj = {
     "screenName": jsonfile.screenName,
     "views": getViewsForScreenConfig(jsonfile,themes)
@@ -340,7 +343,6 @@ function allWindows(jsonSC, jsonfile) {
       "coordY": screenjson.windowCoordY,
       "htmlUrl": windowjson.windowHtmlReference
     };
-    console.log(obj);
     results.push(obj);
   }
   return results;
@@ -480,21 +482,22 @@ function notifyUser(message, res) {
 // LOW PRIORITY
 
 function addScreen(json) {
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath(configPath);
+
 }
 // LOW PRIORITY
 function editScreen(screenID, json) {
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath(configPath);
 }
 // LOW PRIORITY
 function removeScreen(screenID){
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath(configPath);
 }
 
-// HIGH PRIORITY
+
 // Adds a theme to the config
-function addTheme(themename, themedesc) {
-  var config = getJSONfromPath("config.json");
+function addTheme(themename, themedescription) {
+  var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       return console.error("Theme '" + themename + "' already exists in the JSON file!");
@@ -502,16 +505,15 @@ function addTheme(themename, themedesc) {
   }
   var theme = {
     "themeName": themename,
-    "themeDescription": themedesc,
+    "themeDescription": themedescription,
     "screenViews": []
   };
   config.themes[config.themes.length] = theme;
   turnJSONIntoFile(config,"test.json");
 }
-// HIGH PRIORITY
-removeTheme("default");
+
 function removeTheme(themename) {
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       config.themes[i] = {};
@@ -521,22 +523,39 @@ function removeTheme(themename) {
   }
   return console.error("Theme '" + themename + "' does not exist in the JSON file!");
 }
-// HIGH PRIORITY
-function addViewToTheme(themename, json) {
-  var config = getJSONfromPath("config.json");
+
+// use makeViewObject() to create viewobject!
+function addViewToTheme(themename, viewobject) {
+  var config = getJSONfromPath(configPath);
+  for(var i = 0 ; i < config.themes.length ; i++) {
+    if(config.themes[i].themeName === themename) {
+      config.themes[i].screenViews[config.themes[i].screenViews.length] = viewobject;
+      console.log("Success!");
+      turnJSONIntoFile(config,"test.json");
+      return;
+    }
+  }
+  return console.error("Theme '" + themename + "' does not exist in the JSON file!");
 }
 // HIGH PRIORITY
-function editViewInTheme(themename, viewID, json) {
-  var config = getJSONfromPath("config.json");
+// TODO: Find a way to make Json Objects properly
+function editViewInTheme(themename, viewID, jsonobj) {
+  var config = getJSONfromPath(configPath);
 }
 // HIGH PRIORITY
+// TODO: Add IDs
 function removeViewInTheme(themename, viewID) {
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath(configPath);
+}
+
+// HIGH PRIORITY
+function addComponentsToView() {
+  
 }
 
 function updateCurrentTheme(themename) {
   // check if themename exists
-  var json = getJSONfromPath("config.json");
+  var json = getJSONfromPath(configPath);
   for(var i = 0 ; i < json.themes.length ; i++){
     if(json.themes[i].themeName === themename) {
       // set theme and return true if found
@@ -547,6 +566,31 @@ function updateCurrentTheme(themename) {
   // return false if theme does not exist
   return false;
 }
+
+function makeViewObject(viewName, screenParentModule, screenConfigFile) {
+  var view = {
+    "viewName" : viewName,
+    "screenParentModule" : screenParentModule,
+    "screenConfigFile" : screenConfigFile,
+    "screenComponents" : []
+  }
+  return view;
+}
+
+function sendModuleList() {
+  readDirectories("modules", function(list) {
+    //TODO: Send this array to the cpanel (maybe as JSON object?)
+  });
+}
+
+function sendThemeList() {
+  var themes = getJSONfromPath(configPath).themes;
+  var list = [];
+  for(var i = 0 ; i < themes.length ; i++) {
+    list.push(themes[i].themeName);
+  }
+  //TODO: Send this array to the cpanel (maybe as JSON object?)
+};
 
 
 function turnJSONIntoFile(jsonObj, filename) {
