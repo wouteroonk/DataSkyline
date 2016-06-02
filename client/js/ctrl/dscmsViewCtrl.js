@@ -1,6 +1,13 @@
 dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile) {
     $scope.dscmsView = $scope.dscmsDataObject[$scope.dscmsViewId];
 
+    // Contains the run code for this view.
+    var DSCMSView = {
+      run: function() {
+        console.error("View \"" + $scope.dscmsView.viewName + "\" does not have a valid Javascript file.");
+      }
+    };
+
     // The DSCMSViewTools object is a set of tools that can be used in the views own JS code
     var DSCMSViewTools = {
         // Name of the view type
@@ -17,6 +24,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // TODO: Find out why
     $timeout(dscmsStartView, 0);
 
+    // Create windows and append their HTML, start Javascript and exec run method when windows are ready.
     function dscmsStartView() {
 
         // Loop through windows and add them to the screen
@@ -73,6 +81,43 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
         // ~~~~~
         // There probably is a better way to do this though.
         eval(js);
+
+        // Wait for view to be ready and then execute the run method.
+        dscmsExecOnViewReady(function() {
+          // TODO: Pass handy variables
+          DSCMSView.run();
+        });
+    }
+
+    // Wait for view to be ready and then execute callback method.
+    function dscmsExecOnViewReady(callback) {
+      setTimeout(
+        function() {
+          // Check if view is ready
+          if (dscmsIsViewReady()) {
+            if (callback !== null) {
+              callback();
+            }
+            return;
+
+          } else {
+            console.log("Could not execute, view not ready. Retrying...");
+            waitForWS(callback);
+          }
+
+        }, 50);
+    }
+
+    // Returns true if all windows are present in the DOM.
+    function dscmsIsViewReady() {
+      for (var winId in DSCMSViewTools.myWindows) {
+        if (DSCMSViewTools.myWindows.hasOwnProperty(winId)) {
+          if ($('#' + DSCMSViewTools.myWindows[winId]).length === 0) {
+            return false;
+          }
+        }
+      }
+      return true;
     }
 
     // Download HTML and add it to the window with the specified ID

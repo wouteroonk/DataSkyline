@@ -144,7 +144,7 @@
     }, {
         "screenName": "Right",
         "screenDescription": "Right screen",
-        "screenAddress": "192.168.1.103",
+        "screenAddress": "172.20.10.3",
         "screenWidth": "3840",
         "screenHeight": "2160",
         "screenIdentifier": "3",
