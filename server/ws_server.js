@@ -14,6 +14,9 @@ var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
 
+// The selected dataskyline theme
+var selectedTheme = "default";
+
 // list of currently connected clients (users)
 var clients = [];
 
@@ -190,7 +193,7 @@ function sendWindowInfoForIPToClient(client, ip) {
   // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
   // Get screen where screenAddress is equal to ip
-  var json = getJSONfromPath("config.json").filter(function(screen) {
+  var json = getJSONfromPath("config.json").screens.filter(function(screen) {
     return screen.screenAddress === ip;
   })[0];
   // Guard to make sure IP was in list
@@ -276,8 +279,8 @@ function getScreenIPs() {
 
   var json = getJSONfromPath("config.json");
   var list = [];
-  for (var i = 0; i < json.length; i++) {
-    list.push(json[i].screenAddress);
+  for (var i = 0; i < json.screens.length; i++) {
+    list.push(json.screens[i].screenAddress);
   }
   console.dir(list);
   return list;
@@ -285,26 +288,35 @@ function getScreenIPs() {
 
 // Gets the windowinfo message for a screen config entry
 function getWindowInfoForScreenConfig(jsonfile) {
+  var themes = require("./config.json").themes;
   var obj = {
     "screenName": jsonfile.screenName,
-    "views": getViewsForScreenConfig(jsonfile)
+    "views": getViewsForScreenConfig(jsonfile,themes)
   };
   return obj;
 }
 
 // Gets the views list for a windowinfo message for a screen config entry
-function getViewsForScreenConfig(jsonfile) {
+function getViewsForScreenConfig(jsonfile,themes) {
   var results = [];
-  for (var i = 0; i < jsonfile.screenViews.length; i++) {
-    var viewjson = getJSONfromPath("modules/" + jsonfile.screenViews[i].screenParentModule + "/" + jsonfile.screenViews[i].viewName + "/info.json");
-    if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
-    var obj = {
-      "viewName": jsonfile.screenViews[i].viewName,
-      "parentModule": jsonfile.screenViews[i].screenParentModule,
-      "managerUrl": viewjson.viewJavascriptReference,
-      "windows": allWindows(jsonfile.screenViews[i], jsonfile)
-    };
-    results.push(obj);
+  for (var i = 0; i < themes.length; i++) {
+    if(themes[i].themeName === selectedTheme){
+      for(var j = 0; j < themes[i].screenViews.length ; j++){
+        var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+        if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
+        var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+        var obj = {
+          "viewName": themes[i].screenViews[j].viewName,
+          "parentModule": themes[i].screenViews[j].screenParentModule,
+          "managerUrl": viewjson.viewJavascriptReference,
+          "windows": allWindows(themes[i].screenViews[j], jsonfile)
+        };
+        if(windowinfo.length === 0) continue;
+        results.push(obj);
+      }
+    }
+
+
   }
   return results;
 }
@@ -315,12 +327,13 @@ function allWindows(jsonSC, jsonfile) {
     var windowjson = getJSONfromPath("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
     if (windowjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
     var screenjson = undefined;
-
     for (var j = 0; j < jsonfile.screenWindows.length; j++) {
       if (jsonfile.screenWindows[j].windowIdentifier === jsonSC.screenComponents[i].dsWindow) {
         screenjson = jsonfile.screenWindows[j];
       }
     }
+
+    if(screenjson === undefined) continue;
     var obj = {
       "name": windowjson.windowName,
       "type": screenjson.windowShape,
@@ -330,6 +343,7 @@ function allWindows(jsonSC, jsonfile) {
       "coordY": screenjson.windowCoordY,
       "htmlUrl": windowjson.windowHtmlReference
     };
+    console.log(obj);
     results.push(obj);
   }
   return results;
@@ -479,21 +493,36 @@ function editScreen(screenID, json) {
 function removeScreen(screenID){
   var config = getJSONfromPath("config.json");
 }
+
 // HIGH PRIORITY
-function addModule(json) {
+// Adds a theme to the config
+function addTheme(themename, themedesc) {
   var config = getJSONfromPath("config.json");
+  for(var i = 0 ; i < config.themes.length ; i++) {
+    if(config.themes[i].themeName === themename) {
+      return console.error("Theme '" + themename + "' already exists in the JSON file!");
+    }
+  }
+  var theme = {
+    "themeName": themename,
+    "themeDescription": themedesc,
+    "screenViews": []
+  };
+  config.themes[config.themes.length] = theme;
+  turnJSONIntoFile(config,"test.json");
 }
 // HIGH PRIORITY
-function removeModule(moduleID) {
-  var config = getJSONfromPath("config.json");
-}
-// HIGH PRIORITY
-function addTheme(themename) {
-  var config = getJSONfromPath("config.json");
-}
-// HIGH PRIORITY
+removeTheme("default");
 function removeTheme(themename) {
   var config = getJSONfromPath("config.json");
+  for(var i = 0 ; i < config.themes.length ; i++) {
+    if(config.themes[i].themeName === themename) {
+      config.themes[i] = {};
+      turnJSONIntoFile(config,"test.json");
+      return;
+    }
+  }
+  return console.error("Theme '" + themename + "' does not exist in the JSON file!");
 }
 // HIGH PRIORITY
 function addViewToTheme(themename, json) {
@@ -508,9 +537,23 @@ function removeViewInTheme(themename, viewID) {
   var config = getJSONfromPath("config.json");
 }
 
+function updateCurrentTheme(themename) {
+  // check if themename exists
+  var json = getJSONfromPath("config.json");
+  for(var i = 0 ; i < json.themes.length ; i++){
+    if(json.themes[i].themeName === themename) {
+      // set theme and return true if found
+      selectedTheme = themename;
+      return true;
+    }
+  }
+  // return false if theme does not exist
+  return false;
+}
 
-function turnJSONIntoFile(json, filename) {
-  fs.writeFile(filename,json, function(err) {
+
+function turnJSONIntoFile(jsonObj, filename) {
+  fs.writeFile(filename,JSON.stringify(jsonObj), function(err) {
     if(err) return console.log(err);
     console.log(filename+" created!");
   });
