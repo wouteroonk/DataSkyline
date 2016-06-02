@@ -1,20 +1,6 @@
-#touchinterface-container {
-  background: rgba(255,255,255,0.9);
-  width: 100%;
-  height: 100%;
-}
-
-#touchinterface-container .active{
+.active{
   /*box-shadow: 0 0 20px 0px rgba(0,0,0,1.15), 0 0 20px 0px rgba(0,0,0,1.17)!important;*/
   border: 10px solid #FFF;
-}
-
-#touchinterface-container h1 {
-  color: #00853a;
-  font-size: 120px;
-  text-align: center;
-  margin: 50px 0 100px;
-  text-shadow: 3px 3px #fff;
 }
 
 .button {
