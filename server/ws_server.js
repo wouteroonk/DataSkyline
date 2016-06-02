@@ -171,6 +171,10 @@ wsServer.on('request', function(request) {
         connectionList[index] = new ConnectionObject(connection,ipAddress);
         console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
         break;
+      case "getcurrentthemes":
+          var themes = JSON.stringify(getThemeList());
+          connection.send("currentthemes" + themes);
+            break;
       default:
         // Handle false message
         break;
@@ -187,6 +191,8 @@ wsServer.on('request', function(request) {
   });
 
 });
+
+console.dir(JSON.stringify(getThemeList()))
 
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip) {
@@ -498,7 +504,6 @@ function removeScreen(screenID){
 
 
 // Adds a theme to the config
-addTheme("","");
 function addTheme(themename, themedescription) {
   assert.notEqual(themename, undefined, "You must construct additional pilons!");
   assert.notEqual(themename, null, "You must construct additional pilons!");
@@ -593,13 +598,16 @@ function sendModuleList() {
   });
 }
 
-function sendThemeList() {
+function getThemeList() {
   var themes = getJSONfromPath(configPath).themes;
   var list = [];
   for(var i = 0 ; i < themes.length ; i++) {
     list.push(themes[i].themeName);
   }
-  //TODO: Send this array to the cpanel (maybe as JSON object?)
+  var obj = {
+    "themes": list
+  };
+  return obj;
 }
 
 
