@@ -41,6 +41,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   var hasConnection = false;
   var hasDisconnected = false;
 
+  // This function runs the callback method when a connection with the WS has been made.
   var waitForWS = function(callback) {
     setTimeout(
       function() {
@@ -55,7 +56,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
           waitForWS(callback);
         }
 
-      }, 5); // wait 5 milisecond for the connection...
+      }, 5);
   };
 
   ws.onopen = function() {
