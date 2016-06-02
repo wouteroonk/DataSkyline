@@ -1,4 +1,5 @@
 dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
+  $scope.themes = [];
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
@@ -14,10 +15,16 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
           return;
         }
         // Do something with JSON
+        $scope.themes = returnedJSON.themes;
+        $scope.$apply();
+
         break;
       default:
-        console.error("Unkowm message received: " message.data);
+        console.error("Unkowm message received: "+ message.data);
         console.dir(message);
     }
   });
+  dscmsWebSocket.requestThemeList();
+
+
 });

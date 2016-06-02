@@ -172,7 +172,7 @@ wsServer.on('request', function(request) {
         break;
       case "getthemes":
           var themes = JSON.stringify(getThemeList());
-          connection.send("allthemes" + themes);
+          connection.send("allthemes " + themes);
             break;
       default:
         // Handle false message
