@@ -552,7 +552,7 @@ function removeViewInTheme(themename, viewID) {
 
 // HIGH PRIORITY
 function addComponentsToView() {
-  
+
 }
 
 function updateCurrentTheme(themename) {
@@ -575,7 +575,7 @@ function makeViewObject(viewName, screenParentModule, screenConfigFile) {
     "screenParentModule" : screenParentModule,
     "screenConfigFile" : screenConfigFile,
     "screenComponents" : []
-  }
+  };
   return view;
 }
 
@@ -592,7 +592,7 @@ function sendThemeList() {
     list.push(themes[i].themeName);
   }
   //TODO: Send this array to the cpanel (maybe as JSON object?)
-};
+}
 
 
 function turnJSONIntoFile(jsonObj, filename) {
