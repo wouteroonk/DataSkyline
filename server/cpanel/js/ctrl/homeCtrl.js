@@ -4,6 +4,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
     switch (commands.shift()) {
       case "allthemes":
         // Whatever you want to do
+        //feature
         var returnedJSON;
         try {
           returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
