@@ -498,7 +498,15 @@ function removeScreen(screenID){
 
 
 // Adds a theme to the config
+addTheme("","");
 function addTheme(themename, themedescription) {
+  assert.notEqual(themename, undefined, "You must construct additional pilons!");
+  assert.notEqual(themename, null, "You must construct additional pilons!");
+  assert.notEqual(themename, "","You must construct additional pilons!");
+
+  assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
+  assert.notEqual(themedescription, null, "You must construct additional pilons!");
+  assert.notEqual(themedescription, "","You must construct additional pilons!");
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
