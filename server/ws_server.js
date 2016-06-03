@@ -166,17 +166,66 @@ wsServer.on('request', function(request) {
     // Get the message type and perform matching action
     switch (data.shift()) {
       case "requestwindows":
-        var ipAddress = data.shift();
-        connectionList[index] = new ConnectionObject(connection,ipAddress);
-        console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
-        break;
+          var ipAddress = data.shift();
+          var test = data.shift();
+          connectionList[index] = new ConnectionObject(connection,ipAddress);
+          console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          break;
       case "getthemes":
           var themes = JSON.stringify(getThemeList());
-          connection.send("allthemes" + themes);
+          connection.send("getthemes " + themes);
             break;
+      case "addview":
+          var themename = data.shift();
+          var json = message.substring(themename.length+1 , message.length); // TESTEN!
+          if(addViewToTheme(themename, json)) {
+            connection.send("addview " + "200");
+          } else {
+            connection.send("addview " + "400");
+          }
+            break;
+      case "addtheme":
+          var themename = data.shift();
+          var themedescription = data.shift();
+          if(addTheme(themename,themedescription)) {
+            connection.send("addtheme " + "200");
+          } else {
+            connection.send("addtheme " + "400");
+          }
+            break;
+      case "removetheme" :
+          var themename = data.shfit();
+          if(removeTheme(themename)) {
+            connection.send("removetheme " + "200");
+          } else {
+            connection.send("removetheme " + "400");
+          }
+            break;
+      case "removemodule" :
+          var modulemap = data.shift();
+          removeModule(modulemap , function callback(success) {
+            if(success){
+              connection.send("removemodule " + "200");
+            } else {
+              connection.send("removemodule " + "400");
+            }
+          });
+            break;
+      case "getmodules" :
+            sendModuleList(function(obj) {
+              connection.send("getmodules "+JSON.stringify(obj));
+            });
+            break;
+      case "settheme" :
+            var themename = data.shift();
+            if(updateCurrentTheme(themename)) {
+              connection.send("settheme " + "200");
+            } else {
+              connection.send("settheme " + "400");
+            }
       default:
-        // Handle false message
-        break;
+          console.error("This message doesn't exist?");
+          break;
     }
   });
 
@@ -298,6 +347,8 @@ function getWindowInfoForScreenConfig(jsonfile) {
   var themes = getJSONfromPath(configPath).themes;
   var obj = {
     "screenName": jsonfile.screenName,
+    "screenWidth": jsonfile.screenWidth,
+    "screenHeight": jsonfile.screenHeight,
     "views": getViewsForScreenConfig(jsonfile,themes)
   };
   return obj;
@@ -469,6 +520,7 @@ function removeFile(fromPath) {
 }
 
 //removes a dir with the content within this dir.
+//TODO: Make return type boolean (To check if removal succeeded)
 function removeDir(path) {
   rmdir(path, function(err, dirs, files) {
     if (err) {
@@ -485,37 +537,21 @@ function notifyUser(message, res) {
   res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
-//TODO: Make these methods
-// LOW PRIORITY
-
-function addScreen(json) {
-  var config = getJSONfromPath(configPath);
-
-}
-// LOW PRIORITY
-function editScreen(screenID, json) {
-  var config = getJSONfromPath(configPath);
-}
-// LOW PRIORITY
-function removeScreen(screenID){
-  var config = getJSONfromPath(configPath);
-}
-
-
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
-  assert.notEqual(themename, undefined, "You must construct additional pilons!");
-  assert.notEqual(themename, null, "You must construct additional pilons!");
-  assert.notEqual(themename, "","You must construct additional pilons!");
+    assert.notEqual(themename, undefined, "You must construct additional pilons!");
+    assert.notEqual(themename, null, "You must construct additional pilons!");
+    assert.notEqual(themename, "","You must construct additional pilons!");
 
-  assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
-  assert.notEqual(themedescription, null, "You must construct additional pilons!");
-  assert.notEqual(themedescription, "","You must construct additional pilons!");
+    assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
+    assert.notEqual(themedescription, null, "You must construct additional pilons!");
+    assert.notEqual(themedescription, "","You must construct additional pilons!");
 
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
-      return console.error("Theme '" + themename + "' already exists in the JSON file!");
+      console.error("Theme '" + themename + "' already exists in the JSON file!");
+      return false;
     }
   }
   var theme = {
@@ -525,9 +561,13 @@ function addTheme(themename, themedescription) {
   };
   config.themes[config.themes.length] = theme;
   turnJSONIntoFile(config,"test.json");
+  return true;
 }
 
 function removeTheme(themename) {
+  assert.notEqual(themename, "", "themename is empty");
+  assert.notEqual(themename, undefined, "themename is undefined");
+
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
@@ -539,33 +579,57 @@ function removeTheme(themename) {
   return console.error("Theme '" + themename + "' does not exist in the JSON file!");
 }
 
-// use makeViewObject() to create viewobject!
-function addViewToTheme(themename, viewobject) {
+// Removes a module directory and all connections to it
+function removeModule(mapname , callback) {
+  assert.notEqual(mapname, "" , "mapname can't be empty");
+  assert.notEqual(mapname, undefined , "mapname can't be undefined");
+
+  readDirectories("modules", function(maps) {
+    for(var i = 0 ; i  < maps.length ; i++) {
+      if(maps[i] === mapname) {
+        var themes = getJSONfromPath("config.json").themes;
+        for(var j = 0 ; j < themes.length ; j ++) {
+          for(var k = 0; k < themes[j].screenViews.length ; k++ ) {
+            if(themes[j].screenViews[k].screenParentModule === mapname) {
+              themes[j].screenViews[k] = {};
+            }
+          }
+        }
+        turnJSONIntoFile(themes , "test.json");
+        removeDir("./modules/"+mapname);
+        return callback(true);
+      }
+    }
+    console.error(mapname+" was not found!");
+    return callback(false);
+  });
+}
+
+function addViewToTheme(themename, viewjson) {
+  assert.notEqual(themename, undefined,  "Themename is undefined");
+  assert.notEqual(themename, "",  "Themename is empty");
+  assert.notEqual(viewjson, undefined,  "view json file is undefined");
+  var viewObj = viewjson;
+  assert.notEqual(viewObj.screenName, undefined,  "ScreenName is undefined");
+  assert.notEqual(viewObj.screenParentModule, undefined,  "ScreenParentModule is undefined");
+  assert.notEqual(viewObj.screenConfigFile, undefined,  "ScreenConfigFile is undefined");
+  assert.notEqual(viewObj.screenComponents, undefined,  "ScreenComponents is undefined");
+
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
-      config.themes[i].screenViews[config.themes[i].screenViews.length] = viewobject;
-      console.log("Success!");
+      config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
       turnJSONIntoFile(config,"test.json");
-      return;
+      return true;
     }
   }
-  return console.error("Theme '" + themename + "' does not exist in the JSON file!");
-}
-// HIGH PRIORITY
-// TODO: Find a way to make Json Objects properly
-function editViewInTheme(themename, viewID, jsonobj) {
-  var config = getJSONfromPath(configPath);
-}
-// HIGH PRIORITY
-// TODO: Add IDs
-function removeViewInTheme(themename, viewID) {
-  var config = getJSONfromPath(configPath);
+  console.error("Theme '" + themename + "' does not exist in the JSON file!");
+  return false ;
 }
 
 // HIGH PRIORITY
-function addComponentsToView() {
-
+function removeViewInTheme(themename, viewname) {
+  var config = getJSONfromPath(configPath);
 }
 
 function updateCurrentTheme(themename) {
@@ -578,23 +642,29 @@ function updateCurrentTheme(themename) {
       return true;
     }
   }
+  console.error(themename + " does not exist");
   // return false if theme does not exist
   return false;
 }
 
-function makeViewObject(viewName, screenParentModule, screenConfigFile) {
-  var view = {
-    "viewName" : viewName,
-    "screenParentModule" : screenParentModule,
-    "screenConfigFile" : screenConfigFile,
-    "screenComponents" : []
-  };
-  return view;
-}
-
-function sendModuleList() {
+function sendModuleList(callback) {
   readDirectories("modules", function(list) {
-    //TODO: Send this array to the cpanel (maybe as JSON object?)
+    var modulelist = [];
+    for(var i = 0 ; i < list.length ; i++) {
+      var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
+      var obj = {
+        "mapName" : list[i],
+        "moduleName" : info.moduleName,
+        "moduleDescription" : info.moduleDescription,
+        "moduleDeveloper" : info.moduleDeveloper,
+        "moduleLicense" : info.moduleLicense
+      }
+      modulelist.push(obj);
+    }
+    var finalobj = {
+      "modules" : modulelist
+    };
+    return callback(finalobj);
   });
 }
 

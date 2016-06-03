@@ -34,6 +34,51 @@ dscms.app.controller('dscmsNavigationCtrl', function($scope, $location) {
   };
 });
 
+dscms.app.controller('dscmsAddModuleCtrl', function($scope, dscmsWebSocket) {
+  $scope.addTheme = function(){
+    console.log("clicked");
+    console.log($scope.themeName + " "+ $scope.themeDescription);
+    if($scope.themeName == 'undefined'){
+      alert("The theme name field cannot be empty.");
+      return;
+    }
+    if($scope.themeDescription == 'undefined'){
+      alert("The description field cannot be empty.");
+      return;
+    }
+    dscmsWebSocket.subscribe(function(message) {
+      var commands = message.data.split(' ');
+      switch (commands.shift()) {
+        case "getthemes":
+          // Whatever you want to do
+          //feature
+          var returnedJSON;
+          try {
+            returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          } catch (e) {
+            console.log("Server did not return JSON in allthemes message: " + message.data);
+            console.dir(message);
+            alert("error something went wrong.");
+            return;
+          }
+          // Do something with JSON
+          $scope.themes = returnedJSON.themes;
+          $scope.$apply();
+          for(item in $scope.themes){
+            console.log(item);
+          }
+
+          break;
+        default:
+          console.error("Unkowm message received: "+ message.data);
+          console.dir(message);
+      }
+    });
+    dscmsWebSocket.requestThemeList();
+
+  }
+});
+
 /*
   Keeps a connection to the DataSkyline websocket server and
   provides functions and callbacks for interacting with this server.
@@ -48,11 +93,21 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
   var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
 
-  var waitForWS = function() {
-    while (ws.readyState !== 1) {
-      if (ws.readyState >= 2) return false;
-    }
-    return true;
+  var waitForWS = function(callback) {
+    setTimeout(
+      function() {
+        if (ws.readyState === 1) {
+          if (callback !== null) {
+            callback();
+          }
+          return;
+
+        } else {
+          console.log("waiting for connection...");
+          waitForWS(callback);
+        }
+
+      }, 5); // wait 5 milisecond for the connection...
   };
 
   ws.onopen = function() {
@@ -87,12 +142,25 @@ dscms.app.factory('dscmsWebSocket', function($location) {
 
   // Ask the server to send window info for IP
   functions.requestWindowsForIP = function(ip) {
-    if(waitForWS()) ws.send("requestwindows " + ip);
+    waitForWS(function() {
+      ws.send("requestwindows " + ip);
+    });
   };
 
   functions.requestThemeList = function() {
-    if(waitForWS()) ws.send("getcurrentthemes");
-  }
+    console.log("requestThemeList");
+    waitForWS(function() {
+      ws.send("getthemes");
+    });
+};
+
+functions.requestModuleList = function() {
+		console.log("requestModuleList");
+		waitForWS(function(){
+			ws.send("getmodules");
+		});
+};
+
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.

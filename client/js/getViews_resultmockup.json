@@ -1,5 +1,7 @@
 {
   "screenName": "center",
+  "screenWidth": "1080",
+  "screenHeight": "720",
   "views": [
     {
       "viewName": "",
