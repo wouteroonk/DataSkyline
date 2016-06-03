@@ -1,1 +1,15 @@
+.dscms-mini-screen {
+  background-color: #F8F8F8;
+}
 
+.dscms-mini-screen-window {
+  background-color: #ECECEC;
+}
+
+.dscmsEllipse {
+	border-radius: 50%;
+}
+
+mini-skyline-screen {
+  width: 50%;
+}

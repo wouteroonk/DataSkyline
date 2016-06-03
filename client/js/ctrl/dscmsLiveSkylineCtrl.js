@@ -44,8 +44,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
                 break;
 
             default:
-                console.error("Unknown message received: " + message.data);
-                console.dir(message);
+                break;
         }
     });
 
