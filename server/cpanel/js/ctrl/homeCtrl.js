@@ -35,8 +35,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
 				$scope.$apply();
 				break;
       default:
-        console.error("Unkowm message received: "+ message.data);
-        console.dir(message);
+        console.error("Unknown message received: "+ message.data);
     }
   });
   dscmsWebSocket.requestThemeList();
