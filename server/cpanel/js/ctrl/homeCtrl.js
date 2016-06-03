@@ -1,5 +1,6 @@
 dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
   $scope.themes = [];
+	$scope.modules = [];
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
@@ -19,10 +20,27 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
         $scope.$apply();
 
         break;
+			case "getmodules":
+				var returnedJSON;
+				try {
+					returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+				} catch (e) {
+					console.log("Server did not return JSON in allmodules message: " + message.data);
+					console.dir(message);
+					return;
+				}
+				//Do something with JSON
+				console.log("check");
+				$scope.modules = returnedJSON.modules;
+				$scope.$apply();
+				break;
       default:
         console.error("Unkowm message received: "+ message.data);
         console.dir(message);
     }
   });
   dscmsWebSocket.requestThemeList();
+	dscmsWebSocket.requestModuleList();
+
+
 });
