@@ -40,6 +40,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
   });
   dscmsWebSocket.requestThemeList();
 	dscmsWebSocket.requestModuleList();
+	console.log("request");
 
 
   //new feature
