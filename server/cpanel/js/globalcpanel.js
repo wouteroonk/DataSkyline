@@ -35,6 +35,7 @@ dscms.app.controller('dscmsNavigationCtrl', function($scope, $location) {
 });
 
 dscms.app.controller('dscmsAddModuleCtrl', function($scope, dscmsWebSocket) {
+  //new feature
   $scope.addTheme = function(){
     console.log("clicked");
     console.log($scope.themeName + " "+ $scope.themeDescription);
