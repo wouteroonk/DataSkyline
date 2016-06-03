@@ -15,7 +15,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
         // Do something with JSON
         break;
       default:
-        console.error("Unkowm message received: " message.data);
+        console.error("Unkowm message received: " + message.data);
         console.dir(message);
     }
   });
