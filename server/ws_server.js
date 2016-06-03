@@ -162,14 +162,16 @@ wsServer.on('request', function(request) {
   // When a message is received
   connection.on('message', function(message) {
     var data = message.utf8Data.split(' ');
-
     // Get the message type and perform matching action
     switch (data.shift()) {
       case "requestwindows":
           var ipAddress = data.shift();
-          var test = data.shift();
-          connectionList[index] = new ConnectionObject(connection,ipAddress);
-          console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          var specifictheme = data.shift(); // [Optional]
+          if(specifictheme === undefined) {
+            connectionList[index] = new ConnectionObject(connection,ipAddress);
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          }
+
           break;
       case "getthemes":
           var themes = JSON.stringify(getThemeList());
@@ -177,8 +179,8 @@ wsServer.on('request', function(request) {
             break;
       case "addview":
           var themename = data.shift();
-          var json = message.substring(themename.length+1 , message.length); // TESTEN!
-          if(addViewToTheme(themename, json)) {
+          var returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
           } else {
             connection.send("addview " + "400");
@@ -243,7 +245,7 @@ wsServer.on('request', function(request) {
 console.dir(JSON.stringify(getThemeList()))
 
 // Send a windowinfo message for a specific IP to a client
-function sendWindowInfoForIPToClient(client, ip) {
+function sendWindowInfoForIPToClient(client, ip, theme) {
   var validIPs = getScreenIPs();
   // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
@@ -343,38 +345,54 @@ function getScreenIPs() {
 }
 
 // Gets the windowinfo message for a screen config entry
-function getWindowInfoForScreenConfig(jsonfile) {
+function getWindowInfoForScreenConfig(jsonfile,specifictheme) {
   var themes = getJSONfromPath(configPath).themes;
   var obj = {
     "screenName": jsonfile.screenName,
     "screenWidth": jsonfile.screenWidth,
     "screenHeight": jsonfile.screenHeight,
-    "views": getViewsForScreenConfig(jsonfile,themes)
+    "views": getViewsForScreenConfig(jsonfile,themes,specifictheme)
   };
   return obj;
 }
 
 // Gets the views list for a windowinfo message for a screen config entry
-function getViewsForScreenConfig(jsonfile,themes) {
+function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   var results = [];
   for (var i = 0; i < themes.length; i++) {
-    if(themes[i].themeName === selectedTheme){
-      for(var j = 0; j < themes[i].screenViews.length ; j++){
-        var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
-        if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
-        var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
-        var obj = {
-          "viewName": themes[i].screenViews[j].viewName,
-          "parentModule": themes[i].screenViews[j].screenParentModule,
-          "managerUrl": viewjson.viewJavascriptReference,
-          "windows": allWindows(themes[i].screenViews[j], jsonfile)
-        };
-        if(windowinfo.length === 0) continue;
-        results.push(obj);
+    if(specifictheme === undefined){
+      if(themes[i].themeName === selectedTheme){
+        for(var j = 0; j < themes[i].screenViews.length ; j++){
+          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+          if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
+          var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          var obj = {
+            "viewName": themes[i].screenViews[j].viewName,
+            "parentModule": themes[i].screenViews[j].screenParentModule,
+            "managerUrl": viewjson.viewJavascriptReference,
+            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+          };
+          if(windowinfo.length === 0) continue;
+          results.push(obj);
+        }
+      }
+    } else {
+      if(themes[i].themeName === specifictheme){
+        for(var j = 0; j < themes[i].screenViews.length ; j++){
+          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+          if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
+          var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          var obj = {
+            "viewName": themes[i].screenViews[j].viewName,
+            "parentModule": themes[i].screenViews[j].screenParentModule,
+            "managerUrl": viewjson.viewJavascriptReference,
+            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+          };
+          if(windowinfo.length === 0) continue;
+          results.push(obj);
+        }
       }
     }
-
-
   }
   return results;
 }
@@ -540,11 +558,9 @@ function notifyUser(message, res) {
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
     assert.notEqual(themename, undefined, "You must construct additional pilons!");
-    assert.notEqual(themename, null, "You must construct additional pilons!");
     assert.notEqual(themename, "","You must construct additional pilons!");
 
     assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
-    assert.notEqual(themedescription, null, "You must construct additional pilons!");
     assert.notEqual(themedescription, "","You must construct additional pilons!");
 
   var config = getJSONfromPath(configPath);
