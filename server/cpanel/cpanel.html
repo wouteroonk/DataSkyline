@@ -39,35 +39,6 @@
 </head>
 
 <body>
-
-  <!-- ====== -->
-  <!-- Modals -->
-  <!-- ====== -->
-    <div ng-controller="dscmsAddModuleCtrl" id="add-theme-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Add a new theme</h4>
-        </div>
-        <div class="modal-body">
-          <div class="input-group">
-            <span class="input-group-addon">Name</span>
-            <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
-          </div>
-          <div class="input-group">
-            <span class="input-group-addon">Description</span>
-            <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button ng-click="addTheme()" type="button" class="btn btn-primary">Add theme</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-
   <!-- ========== -->
   <!-- Navigation -->
   <!-- ========== -->
