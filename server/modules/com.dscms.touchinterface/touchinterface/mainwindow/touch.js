@@ -199,98 +199,98 @@
   b2Settings.b2Assert = function(e) {
     if (!e) {
       var t;
-      t.x++
+      t.x++;
     }
   };
   var b2Vec2 = Class.create();
   b2Vec2.prototype = {
     initialize: function(e, t) {
       this.x = e;
-      this.y = t
+      this.y = t;
     },
     SetZero: function() {
       this.x = 0;
-      this.y = 0
+      this.y = 0;
     },
     Set: function(e, t) {
       this.x = e;
-      this.y = t
+      this.y = t;
     },
     SetV: function(e) {
       this.x = e.x;
-      this.y = e.y
+      this.y = e.y;
     },
     Negative: function() {
-      return new b2Vec2(-this.x, -this.y)
+      return new b2Vec2(-this.x, -this.y);
     },
     Copy: function() {
-      return new b2Vec2(this.x, this.y)
+      return new b2Vec2(this.x, this.y);
     },
     Add: function(e) {
       this.x += e.x;
-      this.y += e.y
+      this.y += e.y;
     },
     Subtract: function(e) {
       this.x -= e.x;
-      this.y -= e.y
+      this.y -= e.y;
     },
     Multiply: function(e) {
       this.x *= e;
-      this.y *= e
+      this.y *= e;
     },
     MulM: function(e) {
       var t = this.x;
       this.x = e.col1.x * t + e.col2.x * this.y;
-      this.y = e.col1.y * t + e.col2.y * this.y
+      this.y = e.col1.y * t + e.col2.y * this.y;
     },
     MulTM: function(e) {
       var t = b2Math.b2Dot(this, e.col1);
       this.y = b2Math.b2Dot(this, e.col2);
-      this.x = t
+      this.x = t;
     },
     CrossVF: function(e) {
       var t = this.x;
       this.x = e * this.y;
-      this.y = -e * t
+      this.y = -e * t;
     },
     CrossFV: function(e) {
       var t = this.x;
       this.x = -e * this.y;
-      this.y = e * t
+      this.y = e * t;
     },
     MinV: function(e) {
       this.x = this.x < e.x ? this.x : e.x;
-      this.y = this.y < e.y ? this.y : e.y
+      this.y = this.y < e.y ? this.y : e.y;
     },
     MaxV: function(e) {
       this.x = this.x > e.x ? this.x : e.x;
-      this.y = this.y > e.y ? this.y : e.y
+      this.y = this.y > e.y ? this.y : e.y;
     },
     Abs: function() {
       this.x = Math.abs(this.x);
-      this.y = Math.abs(this.y)
+      this.y = Math.abs(this.y);
     },
     Length: function() {
-      return Math.sqrt(this.x * this.x + this.y * this.y)
+      return Math.sqrt(this.x * this.x + this.y * this.y);
     },
     Normalize: function() {
       var e = this.Length();
       if (e < Number.MIN_VALUE) {
-        return 0
+        return 0;
       }
       var t = 1 / e;
       this.x *= t;
       this.y *= t;
-      return e
+      return e;
     },
     IsValid: function() {
-      return b2Math.b2IsValid(this.x) && b2Math.b2IsValid(this.y)
+      return b2Math.b2IsValid(this.x) && b2Math.b2IsValid(this.y);
     },
     x: null,
     y: null
   };
   b2Vec2.Make = function(e, t) {
-    return new b2Vec2(e, t)
+    return new b2Vec2(e, t);
   };
   var b2Mat22 = Class.create();
   b2Mat22.prototype = {
@@ -300,14 +300,14 @@
       this.col2 = new b2Vec2;
       if (t != null && n != null) {
         this.col1.SetV(t);
-        this.col2.SetV(n)
+        this.col2.SetV(n);
       } else {
         var r = Math.cos(e);
         var i = Math.sin(e);
         this.col1.x = r;
         this.col2.x = -i;
         this.col1.y = i;
-        this.col2.y = r
+        this.col2.y = r;
       }
     },
     Set: function(e) {
@@ -316,36 +316,36 @@
       this.col1.x = t;
       this.col2.x = -n;
       this.col1.y = n;
-      this.col2.y = t
+      this.col2.y = t;
     },
     SetVV: function(e, t) {
       this.col1.SetV(e);
-      this.col2.SetV(t)
+      this.col2.SetV(t);
     },
     Copy: function() {
-      return new b2Mat22(0, this.col1, this.col2)
+      return new b2Mat22(0, this.col1, this.col2);
     },
     SetM: function(e) {
       this.col1.SetV(e.col1);
-      this.col2.SetV(e.col2)
+      this.col2.SetV(e.col2);
     },
     AddM: function(e) {
       this.col1.x += e.col1.x;
       this.col1.y += e.col1.y;
       this.col2.x += e.col2.x;
-      this.col2.y += e.col2.y
+      this.col2.y += e.col2.y;
     },
     SetIdentity: function() {
       this.col1.x = 1;
       this.col2.x = 0;
       this.col1.y = 0;
-      this.col2.y = 1
+      this.col2.y = 1;
     },
     SetZero: function() {
       this.col1.x = 0;
       this.col2.x = 0;
       this.col1.y = 0;
-      this.col2.y = 0
+      this.col2.y = 0;
     },
     Invert: function(e) {
       var t = this.col1.x;
@@ -358,7 +358,7 @@
       e.col2.x = -s * n;
       e.col1.y = -s * r;
       e.col2.y = s * t;
-      return e
+      return e;
     },
     Solve: function(e, t, n) {
       var r = this.col1.x;
@@ -369,11 +369,11 @@
       u = 1 / u;
       e.x = u * (o * t - i * n);
       e.y = u * (r * n - s * t);
-      return e
+      return e;
     },
     Abs: function() {
       this.col1.Abs();
-      this.col2.Abs()
+      this.col2.Abs();
     },
     col1: new b2Vec2,
     col2: new b2Vec2
@@ -383,94 +383,94 @@
     initialize: function() {}
   };
   b2Math.b2IsValid = function(e) {
-    return isFinite(e)
+    return isFinite(e);
   };
   b2Math.b2Dot = function(e, t) {
-    return e.x * t.x + e.y * t.y
+    return e.x * t.x + e.y * t.y;
   };
   b2Math.b2CrossVV = function(e, t) {
-    return e.x * t.y - e.y * t.x
+    return e.x * t.y - e.y * t.x;
   };
   b2Math.b2CrossVF = function(e, t) {
     var n = new b2Vec2(t * e.y, -t * e.x);
-    return n
+    return n;
   };
   b2Math.b2CrossFV = function(e, t) {
     var n = new b2Vec2(-e * t.y, e * t.x);
-    return n
+    return n;
   };
   b2Math.b2MulMV = function(e, t) {
     var n = new b2Vec2(e.col1.x * t.x + e.col2.x * t.y, e.col1.y * t.x + e.col2.y * t.y);
-    return n
+    return n;
   };
   b2Math.b2MulTMV = function(e, t) {
     var n = new b2Vec2(b2Math.b2Dot(t, e.col1), b2Math.b2Dot(t, e.col2));
-    return n
+    return n;
   };
   b2Math.AddVV = function(e, t) {
     var n = new b2Vec2(e.x + t.x, e.y + t.y);
-    return n
+    return n;
   };
   b2Math.SubtractVV = function(e, t) {
     var n = new b2Vec2(e.x - t.x, e.y - t.y);
-    return n
+    return n;
   };
   b2Math.MulFV = function(e, t) {
     var n = new b2Vec2(e * t.x, e * t.y);
-    return n
+    return n;
   };
   b2Math.AddMM = function(e, t) {
     var n = new b2Mat22(0, b2Math.AddVV(e.col1, t.col1), b2Math.AddVV(e.col2, t.col2));
-    return n
+    return n;
   };
   b2Math.b2MulMM = function(e, t) {
     var n = new b2Mat22(0, b2Math.b2MulMV(e, t.col1), b2Math.b2MulMV(e, t.col2));
-    return n
+    return n;
   };
   b2Math.b2MulTMM = function(e, t) {
     var n = new b2Vec2(b2Math.b2Dot(e.col1, t.col1), b2Math.b2Dot(e.col2, t.col1));
     var r = new b2Vec2(b2Math.b2Dot(e.col1, t.col2), b2Math.b2Dot(e.col2, t.col2));
     var i = new b2Mat22(0, n, r);
-    return i
+    return i;
   };
   b2Math.b2Abs = function(e) {
-    return e > 0 ? e : -e
+    return e > 0 ? e : -e;
   };
   b2Math.b2AbsV = function(e) {
     var t = new b2Vec2(b2Math.b2Abs(e.x), b2Math.b2Abs(e.y));
-    return t
+    return t;
   };
   b2Math.b2AbsM = function(e) {
     var t = new b2Mat22(0, b2Math.b2AbsV(e.col1), b2Math.b2AbsV(e.col2));
-    return t
+    return t;
   };
   b2Math.b2Min = function(e, t) {
-    return e < t ? e : t
+    return e < t ? e : t;
   };
   b2Math.b2MinV = function(e, t) {
     var n = new b2Vec2(b2Math.b2Min(e.x, t.x), b2Math.b2Min(e.y, t.y));
-    return n
+    return n;
   };
   b2Math.b2Max = function(e, t) {
-    return e > t ? e : t
+    return e > t ? e : t;
   };
   b2Math.b2MaxV = function(e, t) {
     var n = new b2Vec2(b2Math.b2Max(e.x, t.x), b2Math.b2Max(e.y, t.y));
-    return n
+    return n;
   };
   b2Math.b2Clamp = function(e, t, n) {
-    return b2Math.b2Max(t, b2Math.b2Min(e, n))
+    return b2Math.b2Max(t, b2Math.b2Min(e, n));
   };
   b2Math.b2ClampV = function(e, t, n) {
-    return b2Math.b2MaxV(t, b2Math.b2MinV(e, n))
+    return b2Math.b2MaxV(t, b2Math.b2MinV(e, n));
   };
   b2Math.b2Swap = function(e, t) {
     var n = e[0];
     e[0] = t[0];
-    t[0] = n
+    t[0] = n;
   };
   b2Math.b2Random = function() {
-    return Math.random() * 2 - 1
+    return Math.random() * 2 - 1;
   };
   b2Math.b2NextPowerOfTwo = function(e) {
     e |= e >> 1 & 2147483647;
@@ -478,7 +478,7 @@
     e |= e >> 4 & 268435455;
     e |= e >> 8 & 16777215;
     e |= e >> 16 & 65535;
-    return e + 1
+    return e + 1;
   };
   b2Math.b2IsPowerOfTwo = function(e) {
     var t = e > 0 && (e & e - 1) == 0;
@@ -506,16 +506,16 @@
     maxVertex: new b2Vec2,
     initialize: function() {
       this.minVertex = new b2Vec2;
-      this.maxVertex = new b2Vec2
+      this.maxVertex = new b2Vec2;
     }
   };
   var b2Bound = Class.create();
   b2Bound.prototype = {
     IsLower: function() {
-      return (this.value & 1) == 0
+      return (this.value & 1) == 0;
     },
     IsUpper: function() {
-      return (this.value & 1) == 1
+      return (this.value & 1) == 1;
     },
     Swap: function(e) {
       var t = this.value;
@@ -526,7 +526,7 @@
       this.stabbingCount = e.stabbingCount;
       e.value = t;
       e.proxyId = n;
-      e.stabbingCount = r
+      e.stabbingCount = r;
     },
     value: 0,
     proxyId: 0,
@@ -539,34 +539,34 @@
     upperValues: [0, 0],
     initialize: function() {
       this.lowerValues = [0, 0];
-      this.upperValues = [0, 0]
+      this.upperValues = [0, 0];
     }
   };
   var b2Pair = Class.create();
   b2Pair.prototype = {
     SetBuffered: function() {
-      this.status |= b2Pair.e_pairBuffered
+      this.status |= b2Pair.e_pairBuffered;
     },
     ClearBuffered: function() {
-      this.status &= ~b2Pair.e_pairBuffered
+      this.status &= ~b2Pair.e_pairBuffered;
     },
     IsBuffered: function() {
-      return (this.status & b2Pair.e_pairBuffered) == b2Pair.e_pairBuffered
+      return (this.status & b2Pair.e_pairBuffered) == b2Pair.e_pairBuffered;
     },
     SetRemoved: function() {
-      this.status |= b2Pair.e_pairRemoved
+      this.status |= b2Pair.e_pairRemoved;
     },
     ClearRemoved: function() {
-      this.status &= ~b2Pair.e_pairRemoved
+      this.status &= ~b2Pair.e_pairRemoved;
     },
     IsRemoved: function() {
-      return (this.status & b2Pair.e_pairRemoved) == b2Pair.e_pairRemoved
+      return (this.status & b2Pair.e_pairRemoved) == b2Pair.e_pairRemoved;
     },
     SetFinal: function() {
-      this.status |= b2Pair.e_pairFinal
+      this.status |= b2Pair.e_pairFinal;
     },
     IsFinal: function() {
-      return (this.status & b2Pair.e_pairFinal) == b2Pair.e_pairFinal
+      return (this.status & b2Pair.e_pairFinal) == b2Pair.e_pairFinal;
     },
     userData: null,
     proxyId1: 0,
@@ -585,7 +585,7 @@
   var b2PairCallback = Class.create();
   b2PairCallback.prototype = {
     PairAdded: function(e, t) {
-      return null
+      return null;
     },
     PairRemoved: function(e, t, n) {},
     initialize: function() {}
@@ -602,29 +602,29 @@
       var e = 0;
       this.m_hashTable = new Array(b2Pair.b2_tableCapacity);
       for (e = 0; e < b2Pair.b2_tableCapacity; ++e) {
-        this.m_hashTable[e] = b2Pair.b2_nullPair
+        this.m_hashTable[e] = b2Pair.b2_nullPair;
       }
       this.m_pairs = new Array(b2Settings.b2_maxPairs);
       for (e = 0; e < b2Settings.b2_maxPairs; ++e) {
-        this.m_pairs[e] = new b2Pair
+        this.m_pairs[e] = new b2Pair;
       }
       this.m_pairBuffer = new Array(b2Settings.b2_maxPairs);
       for (e = 0; e < b2Settings.b2_maxPairs; ++e) {
-        this.m_pairBuffer[e] = new b2BufferedPair
+        this.m_pairBuffer[e] = new b2BufferedPair;
       }
       for (e = 0; e < b2Settings.b2_maxPairs; ++e) {
         this.m_pairs[e].proxyId1 = b2Pair.b2_nullProxy;
         this.m_pairs[e].proxyId2 = b2Pair.b2_nullProxy;
         this.m_pairs[e].userData = null;
         this.m_pairs[e].status = 0;
-        this.m_pairs[e].next = e + 1
+        this.m_pairs[e].next = e + 1;
       }
       this.m_pairs[b2Settings.b2_maxPairs - 1].next = b2Pair.b2_nullPair;
-      this.m_pairCount = 0
+      this.m_pairCount = 0;
     },
     Initialize: function(e, t) {
       this.m_broadPhase = e;
-      this.m_callback = t
+      this.m_callback = t;
     },
     AddBufferedPair: function(e, t) {
       var n = this.AddPair(e, t);
@@ -632,27 +632,27 @@
         n.SetBuffered();
         this.m_pairBuffer[this.m_pairBufferCount].proxyId1 = n.proxyId1;
         this.m_pairBuffer[this.m_pairBufferCount].proxyId2 = n.proxyId2;
-        ++this.m_pairBufferCount
+        ++this.m_pairBufferCount;
       }
       n.ClearRemoved();
       if (b2BroadPhase.s_validate) {
-        this.ValidateBuffer()
+        this.ValidateBuffer();
       }
     },
     RemoveBufferedPair: function(e, t) {
       var n = this.Find(e, t);
       if (n == null) {
-        return
+        return;
       }
       if (n.IsBuffered() == false) {
         n.SetBuffered();
         this.m_pairBuffer[this.m_pairBufferCount].proxyId1 = n.proxyId1;
         this.m_pairBuffer[this.m_pairBufferCount].proxyId2 = n.proxyId2;
-        ++this.m_pairBufferCount
+        ++this.m_pairBufferCount;
       }
       n.SetRemoved();
       if (b2BroadPhase.s_validate) {
-        this.ValidateBuffer()
+        this.ValidateBuffer();
       }
     },
     Commit: function() {
@@ -666,36 +666,36 @@
         var s = n[r.proxyId2];
         if (r.IsRemoved()) {
           if (r.IsFinal() == true) {
-            this.m_callback.PairRemoved(i.userData, s.userData, r.userData)
+            this.m_callback.PairRemoved(i.userData, s.userData, r.userData);
           }
           this.m_pairBuffer[t].proxyId1 = r.proxyId1;
           this.m_pairBuffer[t].proxyId2 = r.proxyId2;
-          ++t
+          ++t;
         } else {
           if (r.IsFinal() == false) {
             r.userData = this.m_callback.PairAdded(i.userData, s.userData);
-            r.SetFinal()
+            r.SetFinal();
           }
         }
       }
       for (e = 0; e < t; ++e) {
-        this.RemovePair(this.m_pairBuffer[e].proxyId1, this.m_pairBuffer[e].proxyId2)
+        this.RemovePair(this.m_pairBuffer[e].proxyId1, this.m_pairBuffer[e].proxyId2);
       }
       this.m_pairBufferCount = 0;
       if (b2BroadPhase.s_validate) {
-        this.ValidateTable()
+        this.ValidateTable();
       }
     },
     AddPair: function(e, t) {
       if (e > t) {
         var n = e;
         e = t;
-        t = n
+        t = n;
       }
       var r = b2PairManager.Hash(e, t) & b2Pair.b2_tableMask;
       var i = i = this.FindHash(e, t, r);
       if (i != null) {
-        return i
+        return i;
       }
       var s = this.m_freePair;
       i = this.m_pairs[s];
@@ -707,13 +707,13 @@
       i.next = this.m_hashTable[r];
       this.m_hashTable[r] = s;
       ++this.m_pairCount;
-      return i
+      return i;
     },
     RemovePair: function(e, t) {
       if (e > t) {
         var n = e;
         e = t;
-        t = n
+        t = n;
       }
       var r = b2PairManager.Hash(e, t) & b2Pair.b2_tableMask;
       var i = this.m_hashTable[r];
@@ -722,9 +722,9 @@
         if (b2PairManager.Equals(this.m_pairs[i], e, t)) {
           var o = i;
           if (s) {
-            s.next = this.m_pairs[i].next
+            s.next = this.m_pairs[i].next;
           } else {
-            this.m_hashTable[r] = this.m_pairs[i].next
+            this.m_hashTable[r] = this.m_pairs[i].next;
           }
           var u = this.m_pairs[o];
           var a = u.userData;
@@ -735,32 +735,32 @@
           u.status = 0;
           this.m_freePair = o;
           --this.m_pairCount;
-          return a
+          return a;
         } else {
           s = this.m_pairs[i];
-          i = s.next
+          i = s.next;
         }
       }
-      return null
+      return null;
     },
     Find: function(e, t) {
       if (e > t) {
         var n = e;
         e = t;
-        t = n
+        t = n;
       }
       var r = b2PairManager.Hash(e, t) & b2Pair.b2_tableMask;
-      return this.FindHash(e, t, r)
+      return this.FindHash(e, t, r);
     },
     FindHash: function(e, t, n) {
       var r = this.m_hashTable[n];
       while (r != b2Pair.b2_nullPair && b2PairManager.Equals(this.m_pairs[r], e, t) == false) {
-        r = this.m_pairs[r].next
+        r = this.m_pairs[r].next;
       }
       if (r == b2Pair.b2_nullPair) {
-        return null
+        return null;
       }
-      return this.m_pairs[r]
+      return this.m_pairs[r];
     },
     ValidateBuffer: function() {},
     ValidateTable: function() {},
@@ -781,13 +781,13 @@
     n = n ^ n >> 4 & 268435455;
     n = n * 2057;
     n = n ^ n >> 16 & 65535;
-    return n
+    return n;
   };
   b2PairManager.Equals = function(e, t, n) {
-    return e.proxyId1 == t && e.proxyId2 == n
+    return e.proxyId1 == t && e.proxyId2 == n;
   };
   b2PairManager.EqualsPair = function(e, t) {
-    return e.proxyId1 == t.proxyId1 && e.proxyId2 == t.proxyId2
+    return e.proxyId1 == t.proxyId1 && e.proxyId2 == t.proxyId2;
   };
   var b2BroadPhase = Class.create();
   b2BroadPhase.prototype = {
@@ -802,13 +802,13 @@
       this.m_worldAABB = e;
       this.m_proxyCount = 0;
       for (n = 0; n < b2Settings.b2_maxProxies; n++) {
-        this.m_queryResults[n] = 0
+        this.m_queryResults[n] = 0;
       }
       this.m_bounds = new Array(2);
       for (n = 0; n < 2; n++) {
         this.m_bounds[n] = new Array(2 * b2Settings.b2_maxProxies);
         for (var r = 0; r < 2 * b2Settings.b2_maxProxies; r++) {
-          this.m_bounds[n][r] = new b2Bound
+          this.m_bounds[n][r] = new b2Bound;
         }
       }
       var i = e.maxVertex.x;
@@ -824,7 +824,7 @@
         o.SetNext(n + 1);
         o.timeStamp = 0;
         o.overlapCount = b2BroadPhase.b2_invalid;
-        o.userData = null
+        o.userData = null;
       }
       o = new b2Proxy;
       this.m_proxyPool[b2Settings.b2_maxProxies - 1] = o;
@@ -834,7 +834,7 @@
       o.userData = null;
       this.m_freeProxy = 0;
       this.m_timeStamp = 1;
-      this.m_queryResultCount = 0
+      this.m_queryResultCount = 0;
     },
     InRange: function(e) {
       var t;
@@ -851,13 +851,13 @@
       i -= e.maxVertex.y;
       t = b2Math.b2Max(t, r);
       n = b2Math.b2Max(n, i);
-      return b2Math.b2Max(t, n) < 0
+      return b2Math.b2Max(t, n) < 0;
     },
     GetProxy: function(e) {
       if (e == b2Pair.b2_nullProxy || this.m_proxyPool[e].IsValid() == false) {
-        return null
+        return null;
       }
-      return this.m_proxyPool[e]
+      return this.m_proxyPool[e];
     },
     CreateProxy: function(e, t) {
       var n = 0;

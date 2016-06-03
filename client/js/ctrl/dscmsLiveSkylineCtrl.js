@@ -1,4 +1,6 @@
 /*
+  Created by Steyn Potze on 2016-05-21
+  Last updated by Steyn Potze 2016-06-02 (Added comments)
   This controller
     * Makes a connection to the central DataSkyline server
     * Asks the DataSkyline server for info about this screen
