@@ -43,7 +43,7 @@
   <!-- ====== -->
   <!-- Modals -->
   <!-- ====== -->
-    <div id="add-theme-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div ng-controller="dscmsAddModuleCtrl" id="add-theme-modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -53,16 +53,16 @@
         <div class="modal-body">
           <div class="input-group">
             <span class="input-group-addon">Name</span>
-            <input id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
+            <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
           </div>
           <div class="input-group">
             <span class="input-group-addon">Description</span>
-            <input id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
+            <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary">Add theme</button>
+          <button ng-click="addTheme()" type="button" class="btn btn-primary">Add theme</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -94,7 +94,7 @@
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
                 <a href="#/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-plus
-" aria-hidden="true"></span></a>
+                  " aria-hidden="true"></span></a>
                 <ul class="dropdown-menu">
                   <li><a href="">Add module</a></li>
                   <li><a href="" data-toggle="modal" data-target="#add-theme-modal">Add theme</a></li>

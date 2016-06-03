@@ -3,7 +3,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
-      case "allthemes":
+      case "getthemes":
         // Whatever you want to do
         //feature
         var returnedJSON;
@@ -25,6 +25,4 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
     }
   });
   dscmsWebSocket.requestThemeList();
-
-
 });
