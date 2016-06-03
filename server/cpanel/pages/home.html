@@ -10,13 +10,13 @@
                         <thead>
                             <tr>
                                 <th>Module</th>
-                                <th>Theme</th>
+																<th>Author</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Module 1</td>
-                                <td>Theme 1</td>
+                            <tr ng-repeat="module in modules">
+                                <td>{{module.mapName}}</td>
+																<td>{{module.moduleDeveloper}}</td>
                             </tr>
                         </tbody>
                     </table>

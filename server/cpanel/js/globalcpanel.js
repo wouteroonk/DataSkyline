@@ -106,8 +106,15 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     console.log("requestThemeList");
     waitForWS(function() {
       ws.send("getthemes");
-    })
-  }
+    });
+  };
+	
+	functions.requestModuleList = function() {
+		console.log("requestModuleList");
+		waitForWS(function(){
+			ws.send("getmodules");
+		});
+	};
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.
