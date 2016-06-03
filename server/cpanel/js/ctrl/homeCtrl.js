@@ -42,4 +42,25 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
 	dscmsWebSocket.requestModuleList();
 
 
+  //new feature
+  $scope.addTheme = function(){
+    console.log("clicked");
+    console.log($scope.themeName + " "+ $scope.themeDescription);
+    if($scope.themeName === undefined){
+      alert("The theme name field cannot be empty.");
+      return;
+    }
+    if($scope.themeDescription === undefined){
+      alert("The description field cannot be empty.");
+      return;
+    }
+    var exists = false;
+    $scope.themes.forEach(function(currentValue, index,arr){
+      
+    });
+
+
+  }
+
+
 });
