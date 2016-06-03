@@ -1,7 +1,7 @@
 // Created by Steyn Potze
 // The dscmsViewCtrl controller is used to instantiate and run a view.
 // Views will run inside of the controller scope.
-dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile) {
+dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile, dscmsWebSocket) {
   $scope.dscmsView = $scope.dscmsDataObject[$scope.dscmsViewId];
 
   // Contains the run code for this view.
