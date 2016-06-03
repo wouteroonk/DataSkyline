@@ -48,11 +48,21 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
   var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
 
-  var waitForWS = function() {
-    while (ws.readyState !== 1) {
-      if (ws.readyState >= 2) return false;
-    }
-    return true;
+  var waitForWS = function(callback) {
+    setTimeout(
+      function() {
+        if (ws.readyState === 1) {
+          if (callback !== null) {
+            callback();
+          }
+          return;
+
+        } else {
+          console.log("waiting for connection...");
+          waitForWS(callback);
+        }
+
+      }, 5); // wait 5 milisecond for the connection...
   };
 
   ws.onopen = function() {
@@ -87,11 +97,16 @@ dscms.app.factory('dscmsWebSocket', function($location) {
 
   // Ask the server to send window info for IP
   functions.requestWindowsForIP = function(ip) {
-    if(waitForWS()) ws.send("requestwindows " + ip);
+    waitForWS(function() {
+      ws.send("requestwindows " + ip);
+    });
   };
 
   functions.requestThemeList = function() {
-    if(waitForWS()) ws.send("getcurrentthemes");
+    console.log("requestThemeList");
+    waitForWS(function() {
+      ws.send("getthemes");
+    })
   }
 
   // Damn, this is way too hacky

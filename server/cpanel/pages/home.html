@@ -32,11 +32,12 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Theme</th>
+                                <th>Theme:</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr ng-repeat="theme in themes">
+                              <td>{{theme.name}}</td>
                             </tr>
                         </tbody>
                     </table>
