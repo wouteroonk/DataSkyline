@@ -103,20 +103,11 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     });
   };
 
-  functions.requestThemeList = function() {
-    console.log("requestThemeList");
+  functions.sendServerMessage = function(stringMessage) {
     waitForWS(function() {
-      ws.send("getthemes");
+      ws.send(stringMessage);
     });
 };
-
-functions.requestModuleList = function() {
-		console.log("requestModuleList");
-		waitForWS(function(){
-			ws.send("getmodules");
-		});
-};
-
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.
