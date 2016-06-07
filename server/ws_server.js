@@ -585,16 +585,20 @@ function removeTheme(themename) {
   assert.notEqual(themename, undefined, "themename is undefined");
 
   var config = getJSONfromPath(configPath);
+  var newlist = [];
   for(var i = 0 ; i < config.themes.length ; i++) {
-    if(config.themes[i].themeName === themename) {
-      config.themes[i] = {};
-      turnJSONIntoFile(config,"test.json");
-      return;
+    if(config.themes[i].themeName !== themename) {
+      newlist.push(config.themes[i]);
     }
   }
-  return console.error("Theme '" + themename + "' does not exist in the JSON file!");
+  config.themes = newlist;
+  turnJSONIntoFile(config,"test.json");
+  return true;
 }
 
+removeModule("remove",function(success) {
+  if(success) console.log("GJ");
+});
 // Removes a module directory and all connections to it
 function removeModule(mapname , callback) {
   assert.notEqual(mapname, "" , "mapname can't be empty");
@@ -603,15 +607,18 @@ function removeModule(mapname , callback) {
   readDirectories("modules", function(maps) {
     for(var i = 0 ; i  < maps.length ; i++) {
       if(maps[i] === mapname) {
-        var themes = getJSONfromPath("config.json").themes;
+        var config = getJSONfromPath("config.json");
+        var themes = config.themes;
         for(var j = 0 ; j < themes.length ; j ++) {
+          var newlist = [];
           for(var k = 0; k < themes[j].screenViews.length ; k++ ) {
-            if(themes[j].screenViews[k].screenParentModule === mapname) {
-              themes[j].screenViews[k] = {};
+            if(themes[j].screenViews[k].screenParentModule !== mapname) {
+              newlist.push(themes[j].screenViews[k]);
             }
           }
+          themes[j].screenViews = newlist;
         }
-        turnJSONIntoFile(themes , "test.json");
+        turnJSONIntoFile(config , "test.json");
         removeDir("./modules/"+mapname);
         return callback(true);
       }
