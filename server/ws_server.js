@@ -596,9 +596,6 @@ function removeTheme(themename) {
   return true;
 }
 
-removeModule("remove",function(success) {
-  if(success) console.log("GJ");
-});
 // Removes a module directory and all connections to it
 function removeModule(mapname , callback) {
   assert.notEqual(mapname, "" , "mapname can't be empty");
