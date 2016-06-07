@@ -1,10 +1,10 @@
-<img src="https://github.com/wouteroonk/DataSkyline/blob/develop/img/dataskylinelogo.png?raw=true" alt="Dataskyline logo" width="20%" align="left"/>
-<img src="https://github.com/wouteroonk/DataSkyline/blob/develop/img/rebelliousllamaslogo.png?raw=true" alt="Rebellious Llamas logo" width="10%" align="right"/>
+<img src="http://wouteroonk.nl/git_img/dataskylinelogo.png?raw=true" alt="Dataskyline logo" width="20%" align="left"/>
+<img src="http://wouteroonk.nl/git_img/rebelliousllamaslogo.png?raw=true" alt="Rebellious Llamas logo" width="10%" align="right"/>
 # Dataskyline CMS
 Dataskyline CMS biedt een content management systeem voor de Dataskyline, waarmee eenvoudig weergaves aan de Dataskyline toegevoegd kunnen worden. Dataskyline CMS verzorgt ook een omgeving voor eindgebruikers, waarmee zij kunnen kiezen welke thema's er op de schermen verschijnen.
 
 ## Server - client structuur
-<img src="https://github.com/wouteroonk/DataSkyline/blob/develop/img/systemdiagram.png?raw=true" alt="Systeem diagram" width="50%" align="right"/>
+<img src="http://wouteroonk.nl/git_img/systemdiagram.png?raw=true" alt="Systeem diagram" width="50%" align="right"/>
 
 1. Clients connecten met centrale NodeJS server via websockets
 2. Een client haalt zijn pagina van de NodeJS server. Op basis van het ip adres bepaalt de server welke pagina er terug wordt gestuurd.
