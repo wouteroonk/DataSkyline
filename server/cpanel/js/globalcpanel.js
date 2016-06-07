@@ -18,9 +18,9 @@ dscms.app.config(function($routeProvider) {
     templateUrl: 'cpanel/pages/home.html',
     controller: 'dscmsHomeCtrl'
   }).
-  when('/screens', {
-    templateUrl: 'cpanel/pages/screens.html',
-    controller: 'dscmsScreensCtrl'
+  when('/theme', {
+    templateUrl: 'cpanel/pages/theme.html',
+    controller: 'dscmsThemeCtrl'
   }).
   otherwise({
     redirectTo: '/'

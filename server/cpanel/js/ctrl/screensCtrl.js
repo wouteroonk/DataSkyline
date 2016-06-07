@@ -1,2 +1,2 @@
-dscms.app.controller('dscmsScreensCtrl', function($scope) {
+dscms.app.controller('dscmsThemeCtrl', function($scope) {
 });
