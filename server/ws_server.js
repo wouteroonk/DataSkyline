@@ -230,6 +230,9 @@ wsServer.on('request', function(request) {
               connection.send("settheme " + "400");
             }
             break;
+      case "getscreens" :
+          connection.send("getscreens " + getScreenList());
+            break;
       // Should not get here (client error)
       default:
           console.error("This message doesn't exist?");
@@ -423,12 +426,14 @@ function allWindows(jsonSC, jsonfile) {
       "type": screenjson.windowShape,
       "pixelWidth": screenjson.windowPixelWidth,
       "pixelHeight": screenjson.windowPixelHeight,
+      "dsWindow":jsonSC.screenComponents[i].dsWindow,
       "coordX": screenjson.windowCoordX,
       "coordY": screenjson.windowCoordY,
       "htmlUrl": windowjson.windowHtmlReference
     };
     results.push(obj);
   }
+  console.log(results);
   return results;
 }
 
@@ -730,7 +735,7 @@ function turnJSONIntoFile(jsonObj, filename) {
 // returns list with all screens
 function getScreenList() {
   var config = getJSONfromPath(configPath);
-  return config.screens;
+  return config.screens
 }
 
 // "Object" for connections
@@ -740,7 +745,5 @@ function ConnectionObject(connection, address) {
 }
 
 // TODO: windowinfo moet dsWindow meegeven
-
-// TODO:  message die alle windows terug geeft ??
 
 // TODO: message die alle screens terug geeft
