@@ -15,6 +15,7 @@
           "pixelHeight": 200,
           "coordX":10,
           "coordY":10,
+          "dsWindow":1.1,
           "htmlUrl": "logoshower.html"
         },
         {

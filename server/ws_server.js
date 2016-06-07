@@ -15,8 +15,8 @@ var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
 
 // The selected dataskyline theme
-var selectedTheme = "default";
 var configPath = "config.json";
+var selectedTheme = (getJSONfromPath(configPath).themes[0].themeName || "none");
 
 // list of currently connected clients (users)
 var clients = [];
@@ -188,7 +188,7 @@ wsServer.on('request', function(request) {
             break;
       case "addtheme":
           var themename = data.shift();
-          var themedescription = data.shift();
+          var themedescription = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
           } else {
@@ -649,6 +649,8 @@ function removeViewInTheme(themename, viewname) {
 }
 
 function updateCurrentTheme(themename) {
+  assert.notEqual(themename, "" , "Themename can't be empty");
+  assert.notEqual(themename, undefined, "Themename can't be undefined");
   // check if themename exists
   var json = getJSONfromPath(configPath);
   for(var i = 0 ; i < json.themes.length ; i++){
@@ -705,8 +707,16 @@ function turnJSONIntoFile(jsonObj, filename) {
   });
 }
 
+function getScreenList() {
+  var config = getJSONfromPath(configPath);
+  return config.screens;
+}
+
 // "Object" for connections
 function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+
+// windowinfo moet dsWindow mee
+// message die alle windows terug geeft
