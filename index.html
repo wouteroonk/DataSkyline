@@ -25,7 +25,7 @@
 <h1>
 <a id="dataskyline-cms" class="anchor" href="#dataskyline-cms" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dataskyline CMS</h1>
 
-<p>Dataskyline CMS biedt een content management systeem voor de Dataskyline, waarmee eenvoudig weergaves aan de Dataskyline toegevoegd kunnen worden. Dataskyline CMS verzorgt ook een omgeving voor eindgebruikers, waarmee zij kunnen kiezen welke thema's er op het scherm verschijnen.</p>
+<p>Dataskyline CMS biedt een content management systeem voor de Dataskyline, waarmee eenvoudig weergaves aan de Dataskyline toegevoegd kunnen worden. Dataskyline CMS verzorgt ook een omgeving voor eindgebruikers, waarmee zij kunnen kiezen welke thema's er op de schermen verschijnen.</p>
 
 <h2>
 <a id="server---client-structuur" class="anchor" href="#server---client-structuur" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server - client structuur</h2>
@@ -34,64 +34,31 @@
 
 <ol>
 <li>Clients connecten met centrale NodeJS server via websockets</li>
-<li>Elke client heeft een iFrame waarin de content wordt geladen, om de websocket connectie niet constant te hoeven verversen.</li>
-<li>Touchscreen stuurt commando’s naar de server, bijv: “/change config3.json”</li>
-<li>Server haalt (lokaal opgeslagen) config3.json op</li>
+<li>Een client haalt zijn pagina van de NodeJS server. Op basis van het ip adres bepaalt de server welke pagina er terug wordt gestuurd.</li>
 <li>
-<p>Server stuurt de inhoud van json file naar alle clients, bijv:</p>
+<p>Het Touchscreen stuurt messages naar de server om het thema te kunnen wijzigen, bijv:</p>
 
-<div class="highlight highlight-source-json"><pre>{
-    <span class="pl-s"><span class="pl-pds">"</span>leftscreen<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>template_links.html<span class="pl-pds">"</span></span>,
-    <span class="pl-s"><span class="pl-pds">"</span>midscreen<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>template_mid.html<span class="pl-pds">"</span></span>,
-    <span class="pl-s"><span class="pl-pds">"</span>rightscreen<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>template_rechts.html<span class="pl-pds">"</span></span>,
-    <span class="pl-s"><span class="pl-pds">"</span>ledscreen<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>template_led.html<span class="pl-pds">"</span></span>,
-}</pre></div>
+<pre><code>functions.setTheme = function(theme) {
+  waitForWS(function() {
+    ws.send("settheme " + theme);
+  });
+};
+</code></pre>
 </li>
-<li><p>Clients weten zelf of ze links/midden/rechterscherm zijn door middel van ip adres
-Clients laden nieuwe URL in iFrame.</p></li>
+<li><p>De client toont vervolgens de terug gekregen pagina.</p></li>
 </ol>
 
 <h2>
 <a id="data-skyline-config-panel" class="anchor" href="#data-skyline-config-panel" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Data Skyline config panel</h2>
 
-<p>De Data Skyline heeft een erg simpele ingebouwde config panel om config files mee aan te passen.</p>
+<p>De Data Skyline heeft een simpele configuratie pagina waar alle schermen in aangepast kunnnen worden.</p>
 
 <ol>
 <li> Verbind met het Data Skyline wifi netwerk</li>
 <li> Ga naar het ip adres van de server in je browser: 192.168.1.100:8080 (Werking cpanel is alleen getest in Chrome)</li>
-<li> De config panel laat alle beschikbare config files zien die op de server staan</li>
 <li> Middels dit config panel kun je de verschillende config files aanpassen, updaten, verwijderen, of een compleet nieuwe config file maken. Deze config files worden lokaal op de server opgeslagen.</li>
-<li> De URLs in de config files kunnen extern gehost zijn (beginnen met <a href="http://www.">www.</a>) óf lokaal op de server zijn opgeslagen (voer het lokale pad in) </li>
-<li> Beschikbare config files kunnen in de touchapplicatie worden aangeroepen, zie hierbij ook de voorbeeldapplicatie “touch.html”</li>
+<li> Op het touchscreen worden alle thema's getoond en deze kunnen worden aangeroepen om de schermen te wijzigen.</li>
 </ol>
-
-<h2>
-<a id="templates" class="anchor" href="#templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Templates</h2>
-
-<p>Voor elk van de vier schermen is een template beschikbaar. Deze zijn te vinden onder: /client/templates/. Het wordt aangeraden deze templates te gebruiken, omdat een aantal basisdingen hierin al zijn opgenomen:</p>
-
-<ul>
-<li>Verbergen van de cursor op de pagina</li>
-<li>Juiste resoluties
-
-<ul>
-<li>LED scherm is 1080p</li>
-<li>3 grote schermen zijn ieder 4K</li>
-</ul>
-</li>
-<li>Uitlijning vakjes linker- en rechterscherm
-
-<ul>
-<li>Deze kunnen nog iets strakker worden uitgelijnd indien gewenst (aanpassen .css bestanden)</li>
-<li>Aangeraden wordt om de vakjes aan elke kant ~10px te vergroten, zodat je de rand niet meer ziet</li>
-</ul>
-</li>
-</ul>
-
-<h2>
-<a id="huidige-content" class="anchor" href="#huidige-content" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Huidige content</h2>
-
-<p>De huidige Data Skyline content is gemaakt door Heinze Havinga. De repo is te vinden op <a href="https://github.com/heinzehavinga/dataskyline">https://github.com/heinzehavinga/dataskyline</a>. Omdat sommige widgets een server nodig hebben, draait op elke client een lokale XAMPP server.</p>
 
 <h2>
 <a id="server-installatie" class="anchor" href="#server-installatie" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server installatie</h2>
@@ -99,23 +66,17 @@ Clients laden nieuwe URL in iFrame.</p></li>
 <ol>
 <li>Installeer NodeJS: <a href="https://nodejs.org/en/">https://nodejs.org/en/</a>
 </li>
-<li>Installeer Websocket-node package: "npm install websocket"</li>
-<li>Installeer Request package: "npm install request"</li>
+<li>Ga in de terminal naar de map waar de server in zit "/server"</li>
+<li>Voer het commando "npm install" uit</li>
 <li>Installeer Forever package globaal: "npm install forever -g"
 (Forever restart de server automatisch als 'ie crasht :) )</li>
-<li>Configureer:
-
-<ul>
-<li>localPathToConfigs (ws_server.js) (indien nodig)</li>
-<li>Server IP (client.js in /client/ Èn /server/cpanel/)</li>
-<li>Client IPs (getIP.js in /client/ Èn /server/cpanel/)</li>
-</ul>
-</li>
 <li>Start Node server: "forever -o out.log -e err.log start ws_server.js"</li>
-<li>Start alle clients</li>
-<li>???</li>
-<li>PROFIT!</li>
+<li>Start alle clients door een webserver op de client te draaien met de client bestanden "/client"</li>
+<li>Ga op de client in Google Chrome naar de lokaal gehoste website.</li>
 </ol>
+
+<p>Dataskyline
+Laatst geupdated: 7 Juni 2016 15:08</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/wouteroonk/DataSkyline">Dataskyline</a> is maintained by <a href="https://github.com/wouteroonk">wouteroonk</a>.</span>
