@@ -279,7 +279,7 @@
     }, {
         "screenName": "Touch",
         "screenDescription": "Touch screen",
-        "screenAddress": "192.168.1.100",
+        "screenAddress": "145.136.75.10",
         "screenWidth": "1920",
         "screenHeight": "1080",
         "screenIdentifier": "5",
@@ -295,7 +295,7 @@
 
     "themes": [{
         "themeName": "default",
-        "themeDescription": "DataSkyline default theme",
+        "themeDescription": "Dataskyline default theme",
         "screenViews": [{
             "viewName": "tweetbox",
             "screenParentModule": "com.example.twitter",
@@ -340,7 +340,7 @@
         }]
     }, {
         "themeName": "default2",
-        "themeDescription": "DataSkyline default theme",
+        "themeDescription": "Dataskyline default theme",
         "screenViews": [{
             "viewName": "tweetbox",
             "screenParentModule": "com.example.twitter",

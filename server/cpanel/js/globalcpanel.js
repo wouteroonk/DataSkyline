@@ -2,11 +2,11 @@ var dscms = {};
 dscms.app = angular.module('dscmsDataskylineControlApp', ['ngRoute', 'ui.bootstrap']);
 
 /*
-  Set the page title to "DataSkyline control panel" to make sure a title is present
+  Set the page title to "Dataskyline control panel" to make sure a title is present
   The page title should be changed to something more specific once a page is loaded.
 */
 dscms.app.run(function($rootScope) {
-    $rootScope.title = "DataSkyline control panel";
+    $rootScope.title = "Dataskyline control panel";
 });
 
 /*
@@ -36,7 +36,7 @@ dscms.app.controller('dscmsNavigationCtrl', function($scope, $location) {
 
 
 /*
-  Keeps a connection to the DataSkyline websocket server and
+  Keeps a connection to the Dataskyline websocket server and
   provides functions and callbacks for interacting with this server.
 */
 dscms.app.factory('dscmsWebSocket', function($location) {

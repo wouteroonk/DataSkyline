@@ -15,3 +15,32 @@ body {
 .dscmsEllipse {
 	border-radius: 50%;
 }
+
+/*	----------------- */
+/*	Background colors	*/
+/*	----------------- */
+
+.bgBlue{
+  background-color: #06bdea;
+	color: #FFF;
+}
+
+.bgGreen{
+  background-color: #9bb717;
+	color: #FFF;
+}
+
+.bgPink{
+  background-color: #ed1e68;
+	color: #FFF;
+}
+
+.bgOrange{
+  background-color: #ff912b;
+	color: #FFF;
+}
+
+.bgPurple{
+  background-color: #5c4fd9;
+	color: #FFF;
+}

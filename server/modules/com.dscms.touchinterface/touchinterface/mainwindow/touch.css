@@ -1,5 +1,4 @@
 .active{
-  /*box-shadow: 0 0 20px 0px rgba(0,0,0,1.15), 0 0 20px 0px rgba(0,0,0,1.17)!important;*/
   border: 10px solid #FFF;
 }
 
@@ -14,25 +13,4 @@
   line-height: 200px;
 
   font-size: 30px;
-  color: #fff;
-}
-
-.bgBlue{
-  background-color: #06bdea;
-}
-
-.bgGreen{
-  background-color: #9bb717;
-}
-
-.bgPink{
-  background-color: #ed1e68;
-}
-
-.bgOrange{
-  background-color: #ff912b;
-}
-
-.bgPurple{
-  background-color: #5c4fd9;
 }

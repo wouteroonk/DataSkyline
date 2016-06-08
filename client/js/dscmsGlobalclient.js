@@ -2,11 +2,11 @@ var dscms = {};
 dscms.app = angular.module('dscmsDataskylineClientApp', ['ngRoute']);
 
 /*
-  Set the page title to "DataSkyline" to make sure a title is present
+  Set the page title to "Dataskyline" to make sure a title is present
   The page title should be changed to something more specific once screen info is received from server.
 */
 dscms.app.run(function($rootScope) {
-  $rootScope.title = "DataSkyline";
+  $rootScope.title = "Dataskyline";
 });
 
 /*
@@ -26,7 +26,7 @@ dscms.app.config(function($routeProvider) {
 });
 
 /*
-  Keeps a connection to the DataSkyline websocket server and
+  Keeps a connection to the Dataskyline websocket server and
   provides functions and callbacks for interacting with this server.
 */
 dscms.app.factory('dscmsWebSocket', function($location) {
