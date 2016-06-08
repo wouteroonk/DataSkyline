@@ -166,8 +166,10 @@ wsServer.on('request', function(request) {
           if(specifictheme === undefined) {
             connectionList[index] = new ConnectionObject(connection,ipAddress);
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          } else {
+            connectionList[index] = new ConnectionObject(connection,ipAddress);
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           }
-
           break;
       // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
       case "getthemes":
@@ -177,7 +179,8 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          //TODO: Test this
+          var returnedJSON = arrayToString(data);
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
           } else {
@@ -187,7 +190,7 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          var themedescription = arrayToString(data);
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
           } else {
@@ -196,7 +199,7 @@ wsServer.on('request', function(request) {
             break;
       // "removetheme" is requested by the control panel, it will remove a theme from the configuration JSON file given a themename
       case "removetheme" :
-          var themename = data.shfit();
+          var themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
           } else {
@@ -247,7 +250,6 @@ wsServer.on('request', function(request) {
     connectionList[index] = null;
     logClientList();
   });
-
 });
 
 console.dir(JSON.stringify(getThemeList()))
@@ -570,11 +572,11 @@ function notifyUser(message, res) {
 
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
-    assert.notEqual(themename, undefined, "You must construct additional pilons!");
-    assert.notEqual(themename, "","You must construct additional pilons!");
+    assert.notEqual(themename, undefined, "themename can't be undefined");
+    assert.notEqual(themename, "","themename can't be empty");
 
-    assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
-    assert.notEqual(themedescription, "","You must construct additional pilons!");
+    assert.notEqual(themedescription, undefined, "themedescription can't be undefined");
+    assert.notEqual(themedescription, "","themedescription can't be empty");
 
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
@@ -589,7 +591,7 @@ function addTheme(themename, themedescription) {
     "screenViews": []
   };
   config.themes[config.themes.length] = theme;
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
@@ -606,7 +608,7 @@ function removeTheme(themename) {
     }
   }
   config.themes = newlist;
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
@@ -629,7 +631,7 @@ function removeModule(mapname , callback) {
           }
           themes[j].screenViews = newlist;
         }
-        turnJSONIntoFile(config , "test.json");
+        turnJSONIntoFile(config , "config.json");
         removeDir("./modules/"+mapname);
         return callback(true);
       }
@@ -640,6 +642,7 @@ function removeModule(mapname , callback) {
 }
 
 // adds a "view" to the theme given a themename and a JSON object that needs to be inserted (JSON file should contain a "view")
+// TODO: Test these assertions
 function addViewToTheme(themename, viewjson) {
   assert.notEqual(themename, undefined,  "Themename is undefined");
   assert.notEqual(themename, "",  "Themename is empty");
@@ -654,7 +657,7 @@ function addViewToTheme(themename, viewjson) {
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
-      turnJSONIntoFile(config,"test.json");
+      turnJSONIntoFile(config,"config.json");
       return true;
     }
   }
@@ -722,6 +725,14 @@ function getThemeList() {
     "themes": list
   };
   return obj;
+}
+
+function arrayToString(array) {
+  var string = "";
+  for(var i = 0 ; i < array.length ; i++) {
+    string += array[i]+ " ";
+  }
+  return string.substring(0,string.length-1);
 }
 
 // given a JSON object and a filename, create a JSON file
