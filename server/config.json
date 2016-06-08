@@ -144,7 +144,7 @@
     }, {
         "screenName": "Right",
         "screenDescription": "Right screen",
-        "screenAddress": "192.168.1.103",
+        "screenAddress": "2001:67c:2564:a155:f9fe:ecd7:68fd:1441",
         "screenWidth": "3840",
         "screenHeight": "2160",
         "screenIdentifier": "3",
@@ -338,52 +338,5 @@
                 "dsWindow": "5.1"
             }]
         }]
-    },
-        {
-            "themeName": "removepls",
-            "themeDescription": "DataSkyline default theme",
-            "screenViews": [{
-                "viewName": "tweetbox",
-                "screenParentModule": "remove",
-                "screenConfigFile": "",
-                "screenComponents": [{
-                    "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
-                    "dsWindow": "1.1"
-                }, {
-                    "viewWindow": "com.example.twitter/tweetbox/textwindow",
-                    "dsWindow": "1.6"
-                }]
-            }, {
-                "viewName": "tweetbox",
-                "screenParentModule": "com.example.twitter",
-                "screenConfigFile": "",
-                "screenComponents": [{
-                    "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
-                    "dsWindow": "3.1"
-                }, {
-                    "viewWindow": "com.example.twitter/tweetbox/textwindow",
-                    "dsWindow": "3.5"
-                }]
-            }, {
-                "viewName": "tweetbox",
-                "screenParentModule": "com.example.twitter",
-                "screenConfigFile": "",
-                "screenComponents": [{
-                    "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
-                    "dsWindow": "3.2"
-                }, {
-                    "viewWindow": "com.example.twitter/tweetbox/textwindow",
-                    "dsWindow": "3.6"
-                }]
-            }, {
-                "viewName": "touchinterface",
-                "screenParentModule": "com.dscms.touchinterface",
-                "screenConfigFile": "",
-                "screenComponents": [{
-                    "viewWindow": "com.dscms.touchinterface/touchinterface/mainwindow",
-                    "dsWindow": "5.1"
-                }]
-            }]
-        }
-    ]
+    }]
 }
