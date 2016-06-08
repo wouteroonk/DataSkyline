@@ -46,6 +46,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, dscmsWebSo
           return;
         }
         $scope.screens = returnedJSON;
+        $scope.$apply();
         break;
     }
   });
