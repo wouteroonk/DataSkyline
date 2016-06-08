@@ -1,46 +1,39 @@
 body {
-	cursor: none;
-	background: #EEE;
+    cursor: none;
+    background: #EEE;
+    font-family: 'Open Sans', sans-serif !important;
 }
-
 *, *:after, *:before {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  padding:0;
-  margin: 0;
-  overflow: hidden;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
-
 .dscmsEllipse {
-	border-radius: 50%;
+    border-radius: 50%;
 }
 
-/*	----------------- */
 /*	Background colors	*/
-/*	----------------- */
 
-.bgBlue{
-  background-color: #06bdea;
-	color: #FFF;
+.dscms-bgBlue {
+    background-color: #06bdea;
+    color: #FFF;
 }
-
-.bgGreen{
-  background-color: #9bb717;
-	color: #FFF;
+.dscms-bgGreen {
+    background-color: #9bb717;
+    color: #FFF;
 }
-
-.bgPink{
-  background-color: #ed1e68;
-	color: #FFF;
+.dscms-bgPink {
+    background-color: #ed1e68;
+    color: #FFF;
 }
-
-.bgOrange{
-  background-color: #ff912b;
-	color: #FFF;
+.dscms-bgOrange {
+    background-color: #ff912b;
+    color: #FFF;
 }
-
-.bgPurple{
-  background-color: #5c4fd9;
-	color: #FFF;
+.dscms-bgPurple {
+    background-color: #5c4fd9;
+    color: #FFF;
 }

@@ -6980,7 +6980,7 @@ DSCMSView.run = function(DSCMSViewTools) {
 
     function initThemes(themes) {
         //Default colours of the dataskyline
-        var colors = ["bgBlue", "bgGreen", "bgPink", "bgOrange", "bgPurple"];
+        var colors = ["dscms-bgBlue", "dscms-bgGreen", "dscms-bgPink", "dscms-bgOrange", "dscms-bgPurple"];
 
         //Create buttons
         var j = 0;
