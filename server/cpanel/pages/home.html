@@ -8,14 +8,19 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a new theme</h4>
       </div>
-      <div class="modal-body">
-        <div class="input-group">
-          <span class="input-group-addon">Name</span>
-          <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
+      <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
+      <div class="modal-body row">
+        <div class="col-md-3">
+          <label>Name: </label>
         </div>
-        <div class="input-group">
-          <span class="input-group-addon">Description</span>
-          <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
+        <div class="col-md-9">
+          <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="Enter theme name" aria-describedby="theme-name">
+        </div>
+        <div class="col-md-3">
+          <label>Description: </label>
+        </div>
+        <div class="col-md-9">
+            <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="Enter description" aria-describedby="theme-description">
         </div>
       </div>
       <div ng-show="showThemeError == true" id="add-thema-message" type="hidden" class="alert alert-danger alert-dismissible" role="alert">
