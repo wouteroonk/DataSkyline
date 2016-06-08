@@ -6,6 +6,7 @@
 
 .dscms-mini-screen-window {
   border: 1px solid #DDD;
+  cursor: pointer;
 }
 
 /** This class is applied to the child element of a dscms-mini-screen-window element that creates the hue */
