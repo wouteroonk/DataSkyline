@@ -376,13 +376,13 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
-            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+            "windows": windowinfo
           };
-          if(windowinfo.length === 0) continue;
           results.push(obj);
         }
       }
@@ -392,13 +392,13 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
-            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+            "windows": windowinfo
           };
-          if(windowinfo.length === 0) continue;
           results.push(obj);
         }
       }
@@ -735,7 +735,7 @@ function turnJSONIntoFile(jsonObj, filename) {
 // returns list with all screens
 function getScreenList() {
   var config = getJSONfromPath(configPath);
-  return config.screens
+  return config.screens;
 }
 
 // "Object" for connections
@@ -743,7 +743,3 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
-
-// TODO: windowinfo moet dsWindow meegeven
-
-// TODO: message die alle screens terug geeft
