@@ -4,9 +4,7 @@
     <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <select ng-model="selectedScreen" class="form-control">
-            <option ng-repeat="screen in screens" value="{{screen.screenName}}">{{screen.screenName}}</option>
-          </select>
+          <select data-ng-options="s.screenName for s in screens" data-ng-model="selectedScreen" class="form-control"></select>
         </div>
         <div class="panel-body">
           <div class="container-fluid">
@@ -15,6 +13,7 @@
                 <mini-skyline-screen class="edit-theme-screen-preview" windows="windowsForCurrentScreen"></mini-skyline-screen>
               </div>
               <div class="col-md-8">
+                {{test}}
               </div>
             </div>
           </div>

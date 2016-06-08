@@ -8,15 +8,15 @@
     The structure of this object is specified below.
 **/
 
-dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element) {
+dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $timeout) {
   // Set the mini-skyline-screen object to block (default is inline)
   $element.css('display', 'block');
 
   // Watch the windows variable for changes and update the element accordingly
   // Third argument is true to check for value equality instead of reference equality.
-  $scope.$watch('windows', function(oldVal, newVal) {
+  $scope.$watch('windows', function() {
     $element.empty();
-    addWindowsToElement(newVal, $element);
+    addWindowsToElement($scope.windows, $element);
   }, true);
 
   // Fill the preview based on JSON
@@ -113,7 +113,7 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element) {
         thisWindow.css("background-size", "100% 100%");
         thisWindow.append("<div class='dscms-mini-screen-window-hue' style='background-color: rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25);'></div>");
       } else {
-        thisWindow.css("background", "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",1)");
+        thisWindow.css("background", "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25)");
       }
 
       // Click callback
