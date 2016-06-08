@@ -234,7 +234,7 @@ wsServer.on('request', function(request) {
             }
             break;
       case "getscreens" :
-          connection.send("getscreens " + getScreenList());
+          connection.send("getscreens " + JSON.stringify(getScreenList()));
             break;
       // Should not get here (client error)
       default:
