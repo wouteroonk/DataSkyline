@@ -338,5 +338,50 @@
                 "dsWindow": "5.1"
             }]
         }]
+    }, {
+        "themeName": "default2",
+        "themeDescription": "DataSkyline default theme",
+        "screenViews": [{
+            "viewName": "tweetbox",
+            "screenParentModule": "com.example.twitter",
+            "screenConfigFile": "",
+            "screenComponents": [{
+                "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+                "dsWindow": "1.1"
+            }, {
+                "viewWindow": "com.example.twitter/tweetbox/textwindow",
+                "dsWindow": "1.6"
+            }]
+        }, {
+            "viewName": "tweetbox",
+            "screenParentModule": "com.example.twitter",
+            "screenConfigFile": "",
+            "screenComponents": [{
+                "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+                "dsWindow": "3.1"
+            }, {
+                "viewWindow": "com.example.twitter/tweetbox/textwindow",
+                "dsWindow": "3.5"
+            }]
+        }, {
+            "viewName": "tweetbox",
+            "screenParentModule": "com.example.twitter",
+            "screenConfigFile": "",
+            "screenComponents": [{
+                "viewWindow": "com.example.twitter/tweetbox/avatarwindow",
+                "dsWindow": "3.2"
+            }, {
+                "viewWindow": "com.example.twitter/tweetbox/textwindow",
+                "dsWindow": "3.6"
+            }]
+        }, {
+            "viewName": "touchinterface",
+            "screenParentModule": "com.dscms.touchinterface",
+            "screenConfigFile": "",
+            "screenComponents": [{
+                "viewWindow": "com.dscms.touchinterface/touchinterface/mainwindow",
+                "dsWindow": "5.1"
+            }]
+        }]
     }]
 }

@@ -7023,8 +7023,7 @@ DSCMSView.run = function(DSCMSViewTools) {
 
         switch (commands.shift()) {
             case "getthemes":
-                // Whatever you want to do
-                //feature
+
                 var returnedJSON;
                 try {
                     returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -7035,10 +7034,6 @@ DSCMSView.run = function(DSCMSViewTools) {
 
                 initThemes(returnedJSON.themes);
 
-                // // Do something with JSON
-                // $scope.themes = returnedJSON.themes;
-                // $scope.$apply();
-                // console.dir($scope.themes);
                 break;
             case "settheme":
                 switch (commands.shift()) {
@@ -7057,6 +7052,4 @@ DSCMSView.run = function(DSCMSViewTools) {
     });
 
     dscmsWebSocket.getThemes();
-
-
 }
