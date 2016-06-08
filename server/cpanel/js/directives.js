@@ -9,6 +9,7 @@ dscms.app.directive('miniSkylineScreen', function() {
   return {
     restrict: 'E',
     scope: {
+      windows: '='
     },
     templateUrl: 'cpanel/partials/miniSkylineScreen.html',
     controller: 'dscmsMiniSkylineScreenCtrl'
