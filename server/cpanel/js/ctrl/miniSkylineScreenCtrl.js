@@ -30,7 +30,7 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element) {
   //       pixelHeight: '0',
   //       coordX: '0',
   //       coordY: '0',
-  //       shape: 'rectangle',
+  //       type: 'rectangle',
   //
   //       // Styling
   //       hue: '#FFFFFF',
