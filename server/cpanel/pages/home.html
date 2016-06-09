@@ -50,10 +50,10 @@
 </div>
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">Installed modules</h3>
+                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">Modules</h3>
 									<button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus"></span>
 											</button>
                 </div>
@@ -66,16 +66,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-click="openModuleModal(module.mapName)" ng-repeat="module in modules" data-toggle="modal" data-target="#module-info">
+                            <tr ng-repeat="module in modules">
                                 <td>{{module.mapName}}</td>
 																<td>{{module.moduleDeveloper}}</td>
+																<td><button type="button" class="btn btn-default pull-right">
+																	<span class="glyphicon glyphicon-info-sign"></span>
+																</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-left" style="padding-top: 7.5px">All themes</h3>
@@ -86,7 +89,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Theme:</th>
+                                <th>Theme</th>
                             </tr>
                         </thead>
                         <tbody>
