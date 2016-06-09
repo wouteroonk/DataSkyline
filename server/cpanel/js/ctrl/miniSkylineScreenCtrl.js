@@ -14,10 +14,14 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
 
   // Watch the windows variable for changes and update the element accordingly
   // Third argument is true to check for value equality instead of reference equality.
-  $scope.$watch('windows', function() {
+  $scope.$watch('windows', regenerate, true);
+
+  $(window).resize(regenerate);
+
+  function regenerate() {
     $element.empty();
     addWindowsToElement($scope.windows, $element);
-  }, true);
+  }
 
   // Fill the preview based on JSON
   // {
