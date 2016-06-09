@@ -1,6 +1,6 @@
-dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
+dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location) {
   $scope.themes = [];
-	$scope.modules = [];
+  $scope.modules = [];
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
@@ -20,47 +20,67 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
         $scope.$apply();
 
         break;
-			case "getmodules":
-				var returnedJSON;
-				try {
-					returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
-				} catch (e) {
-					console.log("Server did not return JSON in allmodules message: " + message.data);
-					console.dir(message);
-					return;
-				}
-				//Do something with JSON
-				console.log("check");
-				$scope.modules = returnedJSON.modules;
-				$scope.$apply();
-				break;
+      case "getmodules":
+        var returnedJSON;
+        try {
+          returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+        } catch (e) {
+          console.log("Server did not return JSON in allmodules message: " + message.data);
+          console.dir(message);
+          return;
+        }
+        //Do something with JSON
+        $scope.modules = returnedJSON.modules;
+        $scope.$apply();
+        break;
+      case "addtheme":
+        if (message.data.substring(message.data.indexOf(' ') + 1) == 200) {
+          console.log("added the theme");
+          $('#add-theme-modal').modal('hide');
+          return;
+        } else {
+          alert("Something went wrong Error: " + message.data);
+        }
+        return;
+
       default:
         break;
     }
   });
-  dscmsWebSocket.requestThemeList();
-	dscmsWebSocket.requestModuleList();
+  dscmsWebSocket.sendServerMessage("getthemes");
+  dscmsWebSocket.sendServerMessage("getmodules");
+  console.log("request");
 
 
   //new feature
-  $scope.addTheme = function(){
+  $scope.addTheme = function() {
+    $scope.showThemeError = false;
     console.log("clicked");
-    console.log($scope.themeName + " "+ $scope.themeDescription);
-    if($scope.themeName === undefined){
-      alert("The theme name field cannot be empty.");
+    console.log($scope.newThemeName + " " + $scope.newThemeDescription);
+    if ($scope.newThemeName === undefined) {
+      $scope.addThemeError = "The theme name field cannot be empty.";
+      $scope.showThemeError = true;
       return;
     }
-    if($scope.themeDescription === undefined){
-      alert("The description field cannot be empty.");
+    if ($scope.newThemeDescription === undefined) {
+      $scope.addThemeError = "The description field cannot be empty.";
+      $scope.showThemeError = true;
       return;
     }
     var exists = false;
-    $scope.themes.forEach(function(currentValue, index,arr){
-
+    $scope.themes.forEach(function(currentValue, index, arr) {
+      if (currentValue.name == $scope.newThemeName) {
+        $scope.addThemeError = "This theme name already exists, please choose another one.";
+        $scope.showThemeError = true;
+        exists = true;
+      }
     });
+    if (exists) return;
+    dscmsWebSocket.sendServerMessage("addtheme " + $scope.newThemeName + " " + $scope.newThemeDescription);
+  };
 
-
-  }
-
+  $scope.editTheme = function (theme) {
+    $location.path('/themes/' + theme.name);
+  };
 
 });

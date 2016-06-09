@@ -8,15 +8,19 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a new theme</h4>
       </div>
+      <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
       <div class="modal-body">
-        <div class="input-group">
-          <span class="input-group-addon">Name</span>
-          <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">Description</span>
-          <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
-        </div>
+        <fieldset class="form-group">
+          <label for="newThemeNameInput">Theme name</label>
+          <input ng-model="newThemeName" type="text" class="form-control" id="newThemeNameInput">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="newThemeDescriptionInput">Theme description</label>
+          <input ng-model="newThemeDescription" type="text" class="form-control" id="newThemeDescriptionInput">
+        </fieldset>
+      </div>
+      <div ng-show="showThemeError == true" id="add-thema-message" type="hidden" class="alert alert-danger alert-dismissible" role="alert">
+        <strong>Warning!</strong> {{addThemeError}}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -67,8 +71,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="theme in themes">
-                              <td>{{theme.name}}</td>
+                            <tr ng-repeat="theme in themes" ng-click="editTheme(theme)">
+                             <td>{{theme.name}}</td>
                             </tr>
                         </tbody>
                     </table>
