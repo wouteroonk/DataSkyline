@@ -8,15 +8,15 @@
     The structure of this object is specified below.
 **/
 
-dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element) {
+dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $timeout) {
   // Set the mini-skyline-screen object to block (default is inline)
   $element.css('display', 'block');
 
   // Watch the windows variable for changes and update the element accordingly
   // Third argument is true to check for value equality instead of reference equality.
-  $scope.$watch('windows', function(oldVal, newVal) {
+  $scope.$watch('windows', function() {
     $element.empty();
-    addWindowsToElement(newVal, $element);
+    addWindowsToElement($scope.windows, $element);
   }, true);
 
   // Fill the preview based on JSON
@@ -83,45 +83,45 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element) {
     miniScreen.css("height", sH * mul + "px");
 
     var allWindows = screenData.windows;
-    for (var j in allWindows) {
+    if (allWindows === undefined) return;
+    allWindows.forEach(function(windowObj, j) {
       var id = 'dscms-mini-preview-screen-part-' + j;
       miniScreen.append("<div class='dscms-mini-screen-window'></div>");
-      var thisWindow = miniScreen.children('.dscms-mini-screen-window').last();
+      var windowElem = miniScreen.children('.dscms-mini-screen-window').last();
 
-      if (allWindows[j].type === "ellipse") {
-        thisWindow.addClass("dscmsEllipse");
+      if (windowObj.type === "ellipse") {
+        windowElem.addClass("dscmsEllipse");
       }
 
       // Size
-      thisWindow.css("width", (allWindows[j].pixelWidth * mul) + "px");
-      thisWindow.css("height", (allWindows[j].pixelHeight * mul) + "px");
+      windowElem.css("width", (windowObj.pixelWidth * mul) + "px");
+      windowElem.css("height", (windowObj.pixelHeight * mul) + "px");
 
       // Position
-      thisWindow.css("position", "absolute");
-      thisWindow.css("top", (allWindows[j].coordY * mul) + "px");
-      thisWindow.css("left", (allWindows[j].coordX * mul) + "px");
+      windowElem.css("position", "absolute");
+      windowElem.css("top", (windowObj.coordY * mul) + "px");
+      windowElem.css("left", (windowObj.coordX * mul) + "px");
 
       // Color, background, etc
-      var rgb = hexToRgb(allWindows[j].hue);
+      var rgb = hexToRgb(windowObj.hue);
       if (rgb === null) {
-        allWindows[j].hue = "#FFFFFF";
-        rgb = hexToRgb(allWindows[j].hue);
+        windowObj.hue = "#FFFFFF";
+        rgb = hexToRgb(windowObj.hue);
       }
 
-      if (allWindows[j].background !== undefined) {
-        thisWindow.css("background", "url(" + allWindows[j].background + ")");
-        thisWindow.css("background-size", "100% 100%");
-        thisWindow.append("<div class='dscms-mini-screen-window-hue' style='background-color: rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25);'></div>");
+      if (windowObj.background !== undefined) {
+        windowElem.css("background", "url(" + windowObj.background + ")");
+        windowElem.css("background-size", "100% 100%");
+        windowElem.append("<div class='dscms-mini-screen-window-hue' style='background-color: rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25);'></div>");
       } else {
-        thisWindow.css("background", "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",1)");
+        windowElem.css("background", "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25)");
       }
 
       // Click callback
-      thisWindow.click(function() {
-        allWindows[j].onClick(thisWindow);
+      windowElem.click(function() {
+        windowObj.onClick(windowElem, windowObj.id);
       });
-
-    }
+    });
   }
 
   function hexToRgb(hex) {
