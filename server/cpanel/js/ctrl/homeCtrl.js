@@ -36,6 +36,11 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       case "addtheme":
         if (message.data.substring(message.data.indexOf(' ') + 1) == 200) {
           console.log("added the theme");
+          //TODO: change this
+          var t = new Object();
+          t.name = $scope.newThemeName;
+          $scope.themes.push(t);
+          $scope.$apply();
           $('#add-theme-modal').modal('hide');
           return;
         } else {
@@ -56,13 +61,13 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   //new theme
   $scope.addTheme = function() {
     $scope.showThemeError = false;
-    console.log($scope.newThemeName + " " + $scope.newThemeDescription);
-    if ($scope.newThemeName === undefined) {
+    //console.log($scope.newThemeName + " " + $scope.newThemeDescription);
+    if ($scope.newThemeName === undefined || $scope.newThemeName.trim().length == 0) {
       $scope.addThemeError = "The theme name field cannot be empty.";
       $scope.showThemeError = true;
       return;
     }
-    if ($scope.newThemeDescription === undefined) {
+    if ($scope.newThemeDescription === undefined || $scope.newThemeDescription.trim().length == 0) {
       $scope.addThemeError = "The description field cannot be empty.";
       $scope.showThemeError = true;
       return;
@@ -73,6 +78,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         $scope.addThemeError = "This theme name already exists, please choose another one.";
         $scope.showThemeError = true;
         exists = true;
+        return;
       }
     });
     if (exists) return;
@@ -97,5 +103,30 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   $scope.editTheme = function (theme) {
     $location.path('/themes/' + theme.name);
   };
+
+  $("#newThemeNameInput").on('keydown', function(){
+    var key = event.keyCode || event.charCode;
+    if(key === 32){
+      $scope.addThemeError = "The theme name cannot contain blanks.";
+      $scope.showThemeError = true;
+      $scope.$apply();
+      return false;
+    }
+    if(key === 13){
+      console.log("pressed");
+      $scope.addTheme();
+      $scope.$apply();
+      return;
+    }
+  });
+
+  $("#newThemeDescriptionInput").on('keydown', function(){
+    var key = event.keyCode || event.charCode;
+    if(key === 13){
+      $scope.addTheme();
+      $scope.$apply();
+      return;
+    }
+  });
 
 });
