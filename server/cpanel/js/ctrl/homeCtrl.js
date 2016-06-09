@@ -31,6 +31,9 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         }
         //Do something with JSON
         $scope.modules = returnedJSON.modules;
+
+        console.dir($scope.modules);
+
         $scope.$apply();
         break;
       case "addtheme":
@@ -82,8 +85,8 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     console.log(folderName);
     $scope.modules.forEach(function(currentValue, index,arr){
       console.log(currentValue);
-      if(currentValue.folderName === folderName){
-        $scope.moduleFolderName = currentValue.folderName;
+      if(currentValue.moduleFolderName === folderName){
+        $scope.moduleFolderName = currentValue.moduleFolderName;
         $scope.moduleName = currentValue.moduleName;
         $scope.moduleDescription = currentValue.moduleDescription;
         $scope.moduleDeveloper = currentValue.moduleDeveloper;

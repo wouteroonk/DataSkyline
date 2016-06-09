@@ -728,7 +728,7 @@ function sendModuleList(callback) {
     for(var i = 0 ; i < list.length ; i++) {
       var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
       var obj = {
-        "folderName" : list[i],
+        "moduleFolderName" : list[i],
         "moduleName" : info.moduleName,
         "moduleDescription" : info.moduleDescription,
         "moduleDeveloper" : info.moduleDeveloper,
