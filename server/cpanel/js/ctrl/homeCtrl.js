@@ -80,7 +80,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   $scope.openModuleModal = function(folderName){
     console.log(folderName);
-    $scope.modules.forEach(funcstion(currentValue, index,arr){
+    $scope.modules.forEach(function(currentValue, index,arr){
       console.log(currentValue);
       if(currentValue.folderName === folderName){
         $scope.moduleFolderName = currentValue.folderName;
@@ -91,7 +91,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       }
     });
 
-  }
+  };
 
   $scope.editTheme = function (theme) {
     $location.path('/themes/' + theme.name);
@@ -102,6 +102,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 		if(folderName !== undefined) {
 			dscmsWebSocket.sendServerMessage("removemodule " + folderName);
 		}
-	}
+	};
 
 });
