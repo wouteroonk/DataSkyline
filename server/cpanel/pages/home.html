@@ -8,7 +8,6 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a new theme</h4>
       </div>
-      <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
       <div class="modal-body">
         <fieldset class="form-group">
           <label for="newThemeNameInput">Theme name</label>
@@ -29,7 +28,7 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="module-info" class="modal fade" role="dialog">
+<div id="module-info" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -69,7 +68,7 @@
                             <tr ng-repeat="module in modules">
                                 <td>{{module.mapName}}</td>
 																<td>{{module.moduleDeveloper}}</td>
-																<td><button type="button" class="btn btn-default pull-right">
+																<td><button ng-click="openModuleModal(module.mapName)" data-keyboard="true" data-toggle="modal" data-target="#module-info" type="button" class="btn btn-default pull-right">
 																	<span class="glyphicon glyphicon-info-sign"></span>
 																</button></td>
                             </tr>
