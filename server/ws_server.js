@@ -206,6 +206,12 @@ wsServer.on('request', function(request) {
             connection.send("removetheme " + "400");
           }
             break;
+      case "removeview" :
+          var themename = data.shift();
+          var viewname = data.shift();
+          removeViewInTheme(themename,viewname);
+          connection.send("removeview " + "200");
+            break;
       // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
       case "removemodule" :
           var modulemap = data.shift();
@@ -553,7 +559,6 @@ function removeFile(fromPath) {
 }
 
 //removes a dir with the content within this dir.
-//TODO: Make return type boolean (to check if removal succeeded)
 function removeDir(path) {
   rmdir(path, function(err, dirs, files) {
     if (err) {
@@ -570,6 +575,7 @@ function notifyUser(message, res) {
   res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
     assert.notEqual(themename, undefined, "themename can't be undefined");
@@ -595,6 +601,7 @@ function addTheme(themename, themedescription) {
   return true;
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
 // removes a theme from the configuration JSON file given a themename
 function removeTheme(themename) {
   assert.notEqual(themename, "", "themename is empty");
@@ -612,6 +619,7 @@ function removeTheme(themename) {
   return true;
 }
 
+// TODO: Send update to everyone
 // Removes a module directory and all connections to it
 function removeModule(mapname , callback) {
   assert.notEqual(mapname, "" , "mapname can't be empty");
@@ -641,6 +649,7 @@ function removeModule(mapname , callback) {
   });
 }
 
+// TODO: Send update to everyone
 // adds a "view" to the theme given a themename and a JSON object that needs to be inserted (JSON file should contain a "view")
 // TODO: Test these assertions
 function addViewToTheme(themename, viewjson) {
@@ -665,10 +674,32 @@ function addViewToTheme(themename, viewjson) {
   return false ;
 }
 
-// TODO: Not implemented yet
+// TODO: Send update to everyone
+//TODO: Make the return type Boolean!
 // removes a view from the selected theme given a themename and a viewname
 function removeViewInTheme(themename, viewname) {
+
+  assert.notEqual(themename, "", "Themename can't be empty");
+  assert.notEqual(themename, undefined, "Themename can't be undefined");
+  assert.notEqual(viewname, "", "Viewname can't be empty");
+  assert.notEqual(viewname, undefined, "Viewname can't be undefined");
+
   var config = getJSONfromPath(configPath);
+  var themes = config.themes;
+  for(var i = 0 ; i < themes.length ; i++) {
+    if(themes[i].themeName === themename) {
+      var newscreenviews = [];
+      for(var j = 0 ; j < themes[i].screenViews.length ; j++ ){
+        if(themes[i].screenViews[j].viewName !== viewname) {
+          newscreenviews.push(themes[i].screenViews[j]);
+        }
+      }
+      themes[i].screenViews = newscreenviews;
+    }
+  }
+  turnJSONIntoFile(config, "config.json");
+  console.log("Finish!");
+  return;
 }
 
 // TODO: Send message to all dislay screens with an update
@@ -754,3 +785,5 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+
+//TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
