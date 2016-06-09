@@ -111,7 +111,7 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">All themes</h3>
+                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">Themes</h3>
 										<button type="button" class="btn btn-primary pull-right" href="" data-toggle="modal" data-target="#add-theme-modal"><span class="glyphicon glyphicon-plus"></span>
 											</button>
                 </div>
@@ -121,12 +121,16 @@
                             <tr>
                                 <th>Theme</th>
                                 <th>Description</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="theme in themes" ng-click="editTheme(theme)">
+                            <tr ng-repeat="theme in themes">
                              <td>{{theme.name}}</td>
                              <td>{{theme.description}}</td>
+                             <td><button ng-click="editTheme(theme)" type="button" class="btn btn-default pull-right">
+                               <span class="glyphicon glyphicon-pencil"></span>
+                             </button></td>
                             </tr>
                         </tbody>
                     </table>
