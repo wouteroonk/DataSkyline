@@ -258,7 +258,6 @@ wsServer.on('request', function(request) {
   });
 });
 
-console.dir(JSON.stringify(getThemeList()))
 
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip, theme) {
@@ -729,12 +728,12 @@ function sendModuleList(callback) {
     for(var i = 0 ; i < list.length ; i++) {
       var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
       var obj = {
-        "mapName" : list[i],
+        "moduleFolderName" : list[i],
         "moduleName" : info.moduleName,
         "moduleDescription" : info.moduleDescription,
         "moduleDeveloper" : info.moduleDeveloper,
         "moduleLicense" : info.moduleLicense
-      }
+      };
       modulelist.push(obj);
     }
     var finalobj = {
@@ -749,7 +748,7 @@ function getThemeList() {
   var themes = getJSONfromPath(configPath).themes;
   var list = [];
   for(var i = 0 ; i < themes.length ; i++) {
-    var listitem = {"name" : themes[i].themeName};
+    var listitem = {"name" : themes[i].themeName, "description" : themes[i].themeDescription};
     list.push(listitem);
   }
   var obj = {

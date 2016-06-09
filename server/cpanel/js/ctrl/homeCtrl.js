@@ -31,6 +31,9 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         }
         //Do something with JSON
         $scope.modules = returnedJSON.modules;
+
+        console.dir($scope.modules);
+
         $scope.$apply();
         break;
       case "addtheme":
@@ -42,7 +45,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
           alert("Something went wrong Error: " + message.data);
         }
         return;
-
       default:
         break;
     }
@@ -79,23 +81,30 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     dscmsWebSocket.sendServerMessage("addtheme " + $scope.newThemeName + " " + $scope.newThemeDescription);
   };
 
-  $scope.openModuleModal = function(mapName){
-    console.log(mapName);
+  $scope.openModuleModal = function(folderName){
+    console.log(folderName);
     $scope.modules.forEach(function(currentValue, index,arr){
       console.log(currentValue);
-      if(currentValue.mapName === mapName){
-        $scope.moduleInfoMapName = currentValue.mapName;
-        $scope.moduleInfoName = currentValue.moduleName;
-        $scope.moduleInfoDescription = currentValue.moduleDescription;
-        $scope.moduleInfoDeveloper = currentValue.moduleDeveloper;
-        $scope.moduleInfoLicense = currentValue.moduleLicense;
+      if(currentValue.moduleFolderName === folderName){
+        $scope.moduleFolderName = currentValue.moduleFolderName;
+        $scope.moduleName = currentValue.moduleName;
+        $scope.moduleDescription = currentValue.moduleDescription;
+        $scope.moduleDeveloper = currentValue.moduleDeveloper;
+        $scope.moduleLicense = currentValue.moduleLicense;
       }
     });
 
-  }
+  };
 
   $scope.editTheme = function (theme) {
     $location.path('/themes/' + theme.name);
   };
+
+	$scope.removeModule = function(folderName) {
+		console.log(folderName);
+		if(folderName !== undefined) {
+			dscmsWebSocket.sendServerMessage("removemodule " + folderName);
+		}
+	};
 
 });

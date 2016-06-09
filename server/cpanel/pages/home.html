@@ -1,6 +1,7 @@
 <!-- ====== -->
 <!-- Modals -->
 <!-- ====== -->
+<!-- Add theme modal -->
 <div id="add-theme-modal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -8,7 +9,6 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a new theme</h4>
       </div>
-      <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
       <div class="modal-body">
         <fieldset class="form-group">
           <label for="newThemeNameInput">Theme name</label>
@@ -29,18 +29,20 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-<div id="module-info" class="modal fade" role="dialog">
+
+<!-- Module info modal -->
+<div id="module-info" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Info of {{moduleInfoMapName}}</h4>
+        <h4 class="modal-title">Info of {{moduleFolderName}}</h4>
       </div>
       <div class="modal-body">
-        <p>Name: {{moduleInfoName}}</p>
-        <p>Description: {{moduleInfoDescription}}</p>
-        <p>Developer: {{moduleInfoDeveloper}}</p>
-        <p>License: {{moduleInfoLicense}}</p>
+        <p>Name: {{moduleName}}</p>
+        <p>Description: {{moduleDescription}}</p>
+        <p>Developer: {{moduleDeveloper}}</p>
+        <p>License: {{moduleLicense}}</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -48,12 +50,35 @@
     </div>
   </div>
 </div>
+
+<!-- Confirm delete modal -->
+<div id="module-delete" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Warning!</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete {{moduleName}}?</p>
+      </div>
+      <div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="removeModule(moduleFolderName)">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== -->
+<!-- Web Page -->
+<!-- ======== -->
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
-                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">Installed modules</h3>
+                    <h3 class="panel-title pull-left" style="padding-top: 7.5px">Modules</h3>
 									<button type="button" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-plus"></span>
 											</button>
                 </div>
@@ -63,19 +88,27 @@
                             <tr>
                                 <th>Module</th>
 																<th>Author</th>
+                                <th></th>
+																<th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-click="openModuleModal(module.mapName)" ng-repeat="module in modules" data-toggle="modal" data-target="#module-info">
-                                <td>{{module.mapName}}</td>
+                            <tr ng-repeat="module in modules">
+                                <td>{{module.moduleFolderName}}</td>
 																<td>{{module.moduleDeveloper}}</td>
+																<td><button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-info" type="button" class="btn btn-default pull-right">
+																	<span class="glyphicon glyphicon-info-sign"></span>
+																</button></td>
+																<td><button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-delete" type="button" class="btn btn-default pull-right">
+																	<span class="glyphicon glyphicon-trash"></span>
+																</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title pull-left" style="padding-top: 7.5px">All themes</h3>
@@ -86,12 +119,14 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Theme:</th>
+                                <th>Theme</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="theme in themes" ng-click="editTheme(theme)">
                              <td>{{theme.name}}</td>
+                             <td>{{theme.description}}</td>
                             </tr>
                         </tbody>
                     </table>
