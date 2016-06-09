@@ -89,19 +89,18 @@
                                 <th>Module</th>
 																<th>Author</th>
                                 <th></th>
-																<th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="module in modules">
                                 <td>{{module.moduleFolderName}}</td>
 																<td>{{module.moduleDeveloper}}</td>
-																<td><button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-info" type="button" class="btn btn-default pull-right">
+																<td><div class="btn-group" data-toggle="buttons"><button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-info" type="button" class="btn btn-default">
 																	<span class="glyphicon glyphicon-info-sign"></span>
-																</button></td>
-																<td><button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-delete" type="button" class="btn btn-default pull-right">
+																</button>
+																<button ng-click="openModuleModal(module.moduleFolderName)" data-toggle="modal" data-target="#module-delete" type="button" class="btn btn-default">
 																	<span class="glyphicon glyphicon-trash"></span>
-																</button></td>
+																</button></div></td>
                             </tr>
                         </tbody>
                     </table>
