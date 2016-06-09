@@ -4,6 +4,18 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, dscmsWebSo
   $scope.screens = [];
   $scope.windowsForCurrentScreen = {};
   $scope.viewsForCurrentScreen = {};
+  $scope.configForCurrentView = {
+    configItems: [
+      {
+        name: "user",
+        value: "taylorswift13"
+      },
+      {
+        name: "delaySec",
+        value: "5"
+      }
+    ]
+  };
 
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');

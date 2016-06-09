@@ -9,19 +9,15 @@
         <h4 class="modal-title">Add a new theme</h4>
       </div>
       <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
-      <div class="modal-body row">
-        <div class="col-md-3">
-          <label>Name: </label>
-        </div>
-        <div class="col-md-9">
-          <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="Enter theme name" aria-describedby="theme-name">
-        </div>
-        <div class="col-md-3">
-          <label>Description: </label>
-        </div>
-        <div class="col-md-9">
-            <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="Enter description" aria-describedby="theme-description">
-        </div>
+      <div class="modal-body">
+        <fieldset class="form-group">
+          <label for="newThemeNameInput">Theme name</label>
+          <input ng-model="newThemeName" type="text" class="form-control" id="newThemeNameInput">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="newThemeDescriptionInput">Theme description</label>
+          <input ng-model="newThemeDescription" type="text" class="form-control" id="newThemeDescriptionInput">
+        </fieldset>
       </div>
       <div ng-show="showThemeError == true" id="add-thema-message" type="hidden" class="alert alert-danger alert-dismissible" role="alert">
         <strong>Warning!</strong> {{addThemeError}}

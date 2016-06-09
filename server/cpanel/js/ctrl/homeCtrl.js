@@ -56,27 +56,27 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   $scope.addTheme = function() {
     $scope.showThemeError = false;
     console.log("clicked");
-    console.log($scope.themeName + " " + $scope.themeDescription);
-    if ($scope.themeName === undefined) {
+    console.log($scope.newThemeName + " " + $scope.newThemeDescription);
+    if ($scope.newThemeName === undefined) {
       $scope.addThemeError = "The theme name field cannot be empty.";
       $scope.showThemeError = true;
       return;
     }
-    if ($scope.themeDescription === undefined) {
+    if ($scope.newThemeDescription === undefined) {
       $scope.addThemeError = "The description field cannot be empty.";
       $scope.showThemeError = true;
       return;
     }
     var exists = false;
     $scope.themes.forEach(function(currentValue, index, arr) {
-      if (currentValue.name == $scope.themeName) {
+      if (currentValue.name == $scope.newThemeName) {
         $scope.addThemeError = "This theme name already exists, please choose another one.";
         $scope.showThemeError = true;
         exists = true;
       }
     });
     if (exists) return;
-    dscmsWebSocket.sendServerMessage("addtheme " + $scope.themeName + " " + $scope.themeDescription);
+    dscmsWebSocket.sendServerMessage("addtheme " + $scope.newThemeName + " " + $scope.newThemeDescription);
   };
 
   $scope.editTheme = function (theme) {
