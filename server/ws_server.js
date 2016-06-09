@@ -15,17 +15,12 @@ var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
 
 // The selected dataskyline theme
-var selectedTheme = "default";
 var configPath = "config.json";
+var selectedTheme = (getJSONfromPath(configPath).themes[0].themeName || "none");
 
 // list of currently connected clients (users)
 var clients = [];
 var connectionList = [];
-
-//Where we store our local config json files
-// C:/Users/Gebruiker/Desktop/DataSkyline/server/ on production DataSkyline
-// TODO: Is this still needed?
-var localPathToConfigs = "C:/Users/Gebruiker/Desktop/DataSkyline/server/";
 
 //Count of currently connected clients
 var connectionCount = 0;
@@ -164,45 +159,60 @@ wsServer.on('request', function(request) {
     var data = message.utf8Data.split(' ');
     // Get the message type and perform matching action
     switch (data.shift()) {
+      // "requestwindows" is send by a display screen, when the switch matches this command, it'll send back the correct information for that display screen
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
           if(specifictheme === undefined) {
             connectionList[index] = new ConnectionObject(connection,ipAddress);
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          } else {
+            connectionList[index] = new ConnectionObject(connection,ipAddress);
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           }
-
           break;
+      // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
       case "getthemes":
           var themes = JSON.stringify(getThemeList());
           connection.send("getthemes " + themes);
             break;
+      // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          //TODO: Test this
+          var returnedJSON = arrayToString(data);
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
           } else {
             connection.send("addview " + "400");
           }
             break;
+      // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = data.shift();
+          var themedescription = arrayToString(data);
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
           } else {
             connection.send("addtheme " + "400");
           }
             break;
+      // "removetheme" is requested by the control panel, it will remove a theme from the configuration JSON file given a themename
       case "removetheme" :
-          var themename = data.shfit();
+          var themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
           } else {
             connection.send("removetheme " + "400");
           }
             break;
+      case "removeview" :
+          var themename = data.shift();
+          var viewname = data.shift();
+          removeViewInTheme(themename,viewname);
+          connection.send("removeview " + "200");
+            break;
+      // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
       case "removemodule" :
           var modulemap = data.shift();
           removeModule(modulemap , function callback(success) {
@@ -213,11 +223,14 @@ wsServer.on('request', function(request) {
             }
           });
             break;
+      // "getmodules" is requested by the control panel, this message will return a json object containing all modules with their information
       case "getmodules" :
             sendModuleList(function(obj) {
               connection.send("getmodules "+JSON.stringify(obj));
             });
             break;
+      // "settheme: is requested by the touchpanel, when a "ball" is clicked, this message is called which will update all screens
+            // TODO: send update to all display screens (here or in updateCurrentTheme method)
       case "settheme" :
             var themename = data.shift();
             if(updateCurrentTheme(themename)) {
@@ -225,21 +238,24 @@ wsServer.on('request', function(request) {
             } else {
               connection.send("settheme " + "400");
             }
+            break;
+      case "getscreens" :
+          connection.send("getscreens " + JSON.stringify(getScreenList()));
+            break;
+      // Should not get here (client error)
       default:
           console.error("This message doesn't exist?");
           break;
     }
   });
 
-  // Client disconnects
+  // When a client disconnects
   connection.on('close', function(reasonCode, description) {
     console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
     clients[index] = null;
     connectionList[index] = null;
-    // TODO: Shouldn't we lower connectionCount?
     logClientList();
   });
-
 });
 
 console.dir(JSON.stringify(getThemeList()))
@@ -300,6 +316,7 @@ function logClientList() {
   console.log("------");
 }
 
+// Given a file name, return a json object
 function getJSONfromPath(filename) {
   try {
     var file = pathing.resolve('./' + filename);
@@ -313,6 +330,7 @@ function getJSONfromPath(filename) {
 
 }
 
+// Returns a list with directories given a path (callback is needed to get the path)
 function readDirectories(path, callback) {
   var listing = [];
   fs.readdir(path, function(err, list) {
@@ -366,13 +384,13 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
-            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+            "windows": windowinfo
           };
-          if(windowinfo.length === 0) continue;
           results.push(obj);
         }
       }
@@ -382,13 +400,13 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+          if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
-            "windows": allWindows(themes[i].screenViews[j], jsonfile)
+            "windows": windowinfo
           };
-          if(windowinfo.length === 0) continue;
           results.push(obj);
         }
       }
@@ -397,6 +415,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   return results;
 }
 
+// used by getViewsForScreenConfig to retrieve all windows
 function allWindows(jsonSC, jsonfile) {
   var results = [];
   for (var i = 0; i < jsonSC.screenComponents.length; i++) {
@@ -415,12 +434,14 @@ function allWindows(jsonSC, jsonfile) {
       "type": screenjson.windowShape,
       "pixelWidth": screenjson.windowPixelWidth,
       "pixelHeight": screenjson.windowPixelHeight,
+      "dsWindow":jsonSC.screenComponents[i].dsWindow,
       "coordX": screenjson.windowCoordX,
       "coordY": screenjson.windowCoordY,
       "htmlUrl": windowjson.windowHtmlReference
     };
     results.push(obj);
   }
+  console.log(results);
   return results;
 }
 
@@ -538,7 +559,6 @@ function removeFile(fromPath) {
 }
 
 //removes a dir with the content within this dir.
-//TODO: Make return type boolean (To check if removal succeeded)
 function removeDir(path) {
   rmdir(path, function(err, dirs, files) {
     if (err) {
@@ -555,13 +575,14 @@ function notifyUser(message, res) {
   res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
-    assert.notEqual(themename, undefined, "You must construct additional pilons!");
-    assert.notEqual(themename, "","You must construct additional pilons!");
+    assert.notEqual(themename, undefined, "themename can't be undefined");
+    assert.notEqual(themename, "","themename can't be empty");
 
-    assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
-    assert.notEqual(themedescription, "","You must construct additional pilons!");
+    assert.notEqual(themedescription, undefined, "themedescription can't be undefined");
+    assert.notEqual(themedescription, "","themedescription can't be empty");
 
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
@@ -576,25 +597,29 @@ function addTheme(themename, themedescription) {
     "screenViews": []
   };
   config.themes[config.themes.length] = theme;
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
+// removes a theme from the configuration JSON file given a themename
 function removeTheme(themename) {
   assert.notEqual(themename, "", "themename is empty");
   assert.notEqual(themename, undefined, "themename is undefined");
 
   var config = getJSONfromPath(configPath);
+  var newlist = [];
   for(var i = 0 ; i < config.themes.length ; i++) {
-    if(config.themes[i].themeName === themename) {
-      config.themes[i] = {};
-      turnJSONIntoFile(config,"test.json");
-      return;
+    if(config.themes[i].themeName !== themename) {
+      newlist.push(config.themes[i]);
     }
   }
-  return console.error("Theme '" + themename + "' does not exist in the JSON file!");
+  config.themes = newlist;
+  turnJSONIntoFile(config,"config.json");
+  return true;
 }
 
+// TODO: Send update to everyone
 // Removes a module directory and all connections to it
 function removeModule(mapname , callback) {
   assert.notEqual(mapname, "" , "mapname can't be empty");
@@ -603,15 +628,18 @@ function removeModule(mapname , callback) {
   readDirectories("modules", function(maps) {
     for(var i = 0 ; i  < maps.length ; i++) {
       if(maps[i] === mapname) {
-        var themes = getJSONfromPath("config.json").themes;
+        var config = getJSONfromPath("config.json");
+        var themes = config.themes;
         for(var j = 0 ; j < themes.length ; j ++) {
+          var newlist = [];
           for(var k = 0; k < themes[j].screenViews.length ; k++ ) {
-            if(themes[j].screenViews[k].screenParentModule === mapname) {
-              themes[j].screenViews[k] = {};
+            if(themes[j].screenViews[k].screenParentModule !== mapname) {
+              newlist.push(themes[j].screenViews[k]);
             }
           }
+          themes[j].screenViews = newlist;
         }
-        turnJSONIntoFile(themes , "test.json");
+        turnJSONIntoFile(config , "config.json");
         removeDir("./modules/"+mapname);
         return callback(true);
       }
@@ -621,6 +649,9 @@ function removeModule(mapname , callback) {
   });
 }
 
+// TODO: Send update to everyone
+// adds a "view" to the theme given a themename and a JSON object that needs to be inserted (JSON file should contain a "view")
+// TODO: Test these assertions
 function addViewToTheme(themename, viewjson) {
   assert.notEqual(themename, undefined,  "Themename is undefined");
   assert.notEqual(themename, "",  "Themename is empty");
@@ -635,7 +666,7 @@ function addViewToTheme(themename, viewjson) {
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
-      turnJSONIntoFile(config,"test.json");
+      turnJSONIntoFile(config,"config.json");
       return true;
     }
   }
@@ -643,12 +674,39 @@ function addViewToTheme(themename, viewjson) {
   return false ;
 }
 
-// HIGH PRIORITY
+// TODO: Send update to everyone
+//TODO: Make the return type Boolean!
+// removes a view from the selected theme given a themename and a viewname
 function removeViewInTheme(themename, viewname) {
+
+  assert.notEqual(themename, "", "Themename can't be empty");
+  assert.notEqual(themename, undefined, "Themename can't be undefined");
+  assert.notEqual(viewname, "", "Viewname can't be empty");
+  assert.notEqual(viewname, undefined, "Viewname can't be undefined");
+
   var config = getJSONfromPath(configPath);
+  var themes = config.themes;
+  for(var i = 0 ; i < themes.length ; i++) {
+    if(themes[i].themeName === themename) {
+      var newscreenviews = [];
+      for(var j = 0 ; j < themes[i].screenViews.length ; j++ ){
+        if(themes[i].screenViews[j].viewName !== viewname) {
+          newscreenviews.push(themes[i].screenViews[j]);
+        }
+      }
+      themes[i].screenViews = newscreenviews;
+    }
+  }
+  turnJSONIntoFile(config, "config.json");
+  console.log("Finish!");
+  return;
 }
 
+// TODO: Send message to all dislay screens with an update
+// Updates the current selected theme
 function updateCurrentTheme(themename) {
+  assert.notEqual(themename, "" , "Themename can't be empty");
+  assert.notEqual(themename, undefined, "Themename can't be undefined");
   // check if themename exists
   var json = getJSONfromPath(configPath);
   for(var i = 0 ; i < json.themes.length ; i++){
@@ -663,6 +721,8 @@ function updateCurrentTheme(themename) {
   return false;
 }
 
+//TODO: rename this method (returnModuleList)
+// Returns list with all modules in the modules directory (callback needed for list)
 function sendModuleList(callback) {
   readDirectories("modules", function(list) {
     var modulelist = [];
@@ -684,6 +744,7 @@ function sendModuleList(callback) {
   });
 }
 
+// Returns all themes in JSON format
 function getThemeList() {
   var themes = getJSONfromPath(configPath).themes;
   var list = [];
@@ -697,7 +758,15 @@ function getThemeList() {
   return obj;
 }
 
+function arrayToString(array) {
+  var string = "";
+  for(var i = 0 ; i < array.length ; i++) {
+    string += array[i]+ " ";
+  }
+  return string.substring(0,string.length-1);
+}
 
+// given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {
   fs.writeFile(filename,JSON.stringify(jsonObj), function(err) {
     if(err) return console.log(err);
@@ -705,8 +774,16 @@ function turnJSONIntoFile(jsonObj, filename) {
   });
 }
 
+// returns list with all screens
+function getScreenList() {
+  var config = getJSONfromPath(configPath);
+  return config.screens;
+}
+
 // "Object" for connections
 function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+
+//TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!

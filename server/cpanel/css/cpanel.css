@@ -5,7 +5,13 @@ body {
 /** Change the style for a dscms-mini-screen element */
 
 .dscms-mini-screen {
-    background-color: #F8F8F8;
+  background-color: #FFF;
+  border: 1px solid #DDD;
+}
+
+.dscms-mini-screen-window {
+  border: 1px solid #DDD;
+  cursor: pointer;
 }
 
 /** This class is applied to the child element of a dscms-mini-screen-window element that creates the hue */
@@ -20,4 +26,15 @@ body {
 
 .dscmsEllipse {
     border-radius: 50%;
+}
+
+/** Change cursor to pointer on ng-click */
+[ng-click],
+[data-ng-click],
+[x-ng-click] {
+    cursor: pointer;
+}
+
+.edit-theme-screen-preview {
+  width: 100%;
 }
