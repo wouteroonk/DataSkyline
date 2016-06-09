@@ -56,8 +56,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   //new theme
   $scope.addTheme = function() {
     $scope.showThemeError = false;
->>>>>>> b5facf6dbc0862e4bc83b85929cfe4b2beb96e88
-    console.log("clicked");
     console.log($scope.newThemeName + " " + $scope.newThemeDescription);
     if ($scope.newThemeName === undefined) {
       $scope.addThemeError = "The theme name field cannot be empty.";
