@@ -729,12 +729,12 @@ function sendModuleList(callback) {
     for(var i = 0 ; i < list.length ; i++) {
       var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
       var obj = {
-        "mapName" : list[i],
+        "folderName" : list[i],
         "moduleName" : info.moduleName,
         "moduleDescription" : info.moduleDescription,
         "moduleDeveloper" : info.moduleDeveloper,
         "moduleLicense" : info.moduleLicense
-      }
+      };
       modulelist.push(obj);
     }
     var finalobj = {

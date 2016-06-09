@@ -41,7 +41,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         } else {
           alert("Something went wrong Error: " + message.data);
         }
-        return;			
+        return;
       default:
         break;
     }
@@ -80,7 +80,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   $scope.openModuleModal = function(folderName){
     console.log(folderName);
-    $scope.modules.forEach(funcstion(currentValue, index,arr){
+    $scope.modules.forEach(function(currentValue, index,arr){
       console.log(currentValue);
       if(currentValue.folderName === folderName){
         $scope.moduleFolderName = currentValue.folderName;
@@ -91,17 +91,17 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       }
     });
 
-  }
+  };
 
   $scope.editTheme = function (theme) {
     $location.path('/themes/' + theme.name);
   };
-	
+
 	$scope.removeModule = function(folderName) {
 		console.log(folderName);
 		if(folderName !== undefined) {
 			dscmsWebSocket.sendServerMessage("removemodule " + folderName);
 		}
-	}
+	};
 
 });
