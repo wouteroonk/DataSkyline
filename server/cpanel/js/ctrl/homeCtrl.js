@@ -43,7 +43,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
 	console.log("request");
 
 
-  //new feature
+  //new theme
   $scope.addTheme = function(){
     console.log("clicked");
     console.log($scope.themeName + " "+ $scope.themeDescription);

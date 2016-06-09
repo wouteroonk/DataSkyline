@@ -9,18 +9,20 @@
         <h4 class="modal-title">Add a new theme</h4>
       </div>
       <div class="modal-body">
-        <div class="input-group">
-          <span class="input-group-addon">Name</span>
-          <input ng-model="themeName" id="theme-name" type="text" class="form-control" placeholder="..." aria-describedby="theme-name">
-        </div>
-        <div class="input-group">
-          <span class="input-group-addon">Description</span>
-          <input ng-model="themeDescription" id="theme-description" type="text" class="form-control" placeholder="..." aria-describedby="theme-description">
-        </div>
+         <form>
+          <div class="form-group">
+            <label for="recipient-name" class="control-label">Name:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="control-label">Description:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button ng-click="addTheme()" type="button" class="btn btn-primary">Add theme</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
