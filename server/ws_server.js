@@ -159,15 +159,19 @@ wsServer.on('request', function(request) {
     var data = message.utf8Data.split(' ');
     // Get the message type and perform matching action
     switch (data.shift()) {
+      // Identify yourself
+      case "identification" :
+          var address = data.shift();
+          connectionList[index] = new ConnectionObject(connection,address);
+          break;
       // "requestwindows" is send by a display screen, when the switch matches this command, it'll send back the correct information for that display screen
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
+          addWorkAddress(connection,ipAddress);
           if(specifictheme === undefined) {
-            connectionList[index] = new ConnectionObject(connection,ipAddress);
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           } else {
-            connectionList[index] = new ConnectionObject(connection,ipAddress);
             console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           }
           break;
@@ -183,6 +187,7 @@ wsServer.on('request', function(request) {
           var returnedJSON = arrayToString(data);
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
+            sendSkylineUpdate();
           } else {
             connection.send("addview " + "400");
           }
@@ -193,6 +198,7 @@ wsServer.on('request', function(request) {
           var themedescription = arrayToString(data);
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
+            sendSkylineUpdate();
           } else {
             connection.send("addtheme " + "400");
           }
@@ -202,6 +208,7 @@ wsServer.on('request', function(request) {
           var themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
+            sendSkylineUpdate();
           } else {
             connection.send("removetheme " + "400");
           }
@@ -211,13 +218,15 @@ wsServer.on('request', function(request) {
           var viewname = data.shift();
           removeViewInTheme(themename,viewname);
           connection.send("removeview " + "200");
+          sendSkylineUpdate();
             break;
       // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
       case "removemodule" :
-          var modulemap = data.shift();
-          removeModule(modulemap , function callback(success) {
+          var modulefolder = data.shift();
+          removeModule(modulefolder , function callback(success) {
             if(success){
               connection.send("removemodule " + "200");
+              sendSkylineUpdate();
             } else {
               connection.send("removemodule " + "400");
             }
@@ -235,6 +244,7 @@ wsServer.on('request', function(request) {
             var themename = data.shift();
             if(updateCurrentTheme(themename)) {
               connection.send("settheme " + "200");
+              sendSkylineUpdate();
             } else {
               connection.send("settheme " + "400");
             }
@@ -275,12 +285,9 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   return true;
 }
 
-//Broadcast message to all connected clients
-function broadcastMessage(command, message) {
-  for (var i = 0; i < clients.length; i++) {
-    if (clients[i]) {
-      clients[i].sendUTF(command + " " + message);
-    }
+function sendSkylineUpdate() {
+  for(var i = 0 ; i < connectionList.length ; i++ ){
+    connectionList[i].connection.send("skylineupdate");
   }
 }
 
@@ -402,6 +409,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
+            "instanceName": themes[i].screenViews[j].instanceName,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
             "windows": windowinfo
@@ -620,30 +628,30 @@ function removeTheme(themename) {
 
 // TODO: Send update to everyone
 // Removes a module directory and all connections to it
-function removeModule(mapname , callback) {
-  assert.notEqual(mapname, "" , "mapname can't be empty");
-  assert.notEqual(mapname, undefined , "mapname can't be undefined");
+function removeModule(foldername , callback) {
+  assert.notEqual(foldername, "" , "foldername can't be empty");
+  assert.notEqual(foldername, undefined , "foldername can't be undefined");
 
-  readDirectories("modules", function(maps) {
-    for(var i = 0 ; i  < maps.length ; i++) {
-      if(maps[i] === mapname) {
+  readDirectories("modules", function(directory) {
+    for(var i = 0 ; i  < directory.length ; i++) {
+      if(directory[i] === foldername) {
         var config = getJSONfromPath("config.json");
         var themes = config.themes;
         for(var j = 0 ; j < themes.length ; j ++) {
           var newlist = [];
           for(var k = 0; k < themes[j].screenViews.length ; k++ ) {
-            if(themes[j].screenViews[k].screenParentModule !== mapname) {
+            if(themes[j].screenViews[k].screenParentModule !== foldername) {
               newlist.push(themes[j].screenViews[k]);
             }
           }
           themes[j].screenViews = newlist;
         }
         turnJSONIntoFile(config , "config.json");
-        removeDir("./modules/"+mapname);
+        removeDir("./modules/"+foldername);
         return callback(true);
       }
     }
-    console.error(mapname+" was not found!");
+    console.error(foldername+" was not found!");
     return callback(false);
   });
 }
@@ -786,3 +794,5 @@ function ConnectionObject(connection, address) {
 }
 
 //TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
+
+//TODO: Client moet "identification" bericht sturen wanneer je verbinding legt met de server
