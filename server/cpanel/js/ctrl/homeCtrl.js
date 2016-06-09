@@ -32,8 +32,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         //Do something with JSON
         $scope.modules = returnedJSON.modules;
 
-        console.dir($scope.modules);
-
         $scope.$apply();
         break;
       case "addtheme":
