@@ -8,17 +8,19 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Add a new theme</h4>
       </div>
+      <!--De manier hoe dit rendert is lelijk , Fix dit via bootstrap-->
       <div class="modal-body">
-         <form>
-          <div class="form-group">
-            <label for="recipient-name" class="control-label">Name:</label>
-            <input type="text" class="form-control" id="recipient-name">
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="control-label">Description:</label>
-            <textarea class="form-control" id="message-text"></textarea>
-          </div>
-        </form>
+        <fieldset class="form-group">
+          <label for="newThemeNameInput">Theme name</label>
+          <input ng-model="newThemeName" type="text" class="form-control" id="newThemeNameInput">
+        </fieldset>
+        <fieldset class="form-group">
+          <label for="newThemeDescriptionInput">Theme description</label>
+          <input ng-model="newThemeDescription" type="text" class="form-control" id="newThemeDescriptionInput">
+        </fieldset>
+      </div>
+      <div ng-show="showThemeError == true" id="add-thema-message" type="hidden" class="alert alert-danger alert-dismissible" role="alert">
+        <strong>Warning!</strong> {{addThemeError}}
       </div>
       <div class="modal-footer">
         <button ng-click="addTheme()" type="button" class="btn btn-primary">Add theme</button>
@@ -69,8 +71,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="theme in themes">
-                              <td>{{theme.name}}</td>
+                            <tr ng-repeat="theme in themes" ng-click="editTheme(theme)">
+                             <td>{{theme.name}}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -78,7 +80,7 @@
             </div>
         </div>
     </div>
-    <!-- <button type="button" class="btn btn-default btn-lg file-upload" enctype="multipart/form-data"><input type="file" class="file-input"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload module</input></button> 
+    <!-- <button type="button" class="btn btn-default btn-lg file-upload" enctype="multipart/form-data"><input type="file" class="file-input"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload module</input></button>
     <form id   =  "uploadForm"
      enctype   =  "multipart/form-data"
      action    = "/"
@@ -88,4 +90,3 @@
         <input type="submit" value="Upload an module" name="submit">
       </form>
 </div> -->
-

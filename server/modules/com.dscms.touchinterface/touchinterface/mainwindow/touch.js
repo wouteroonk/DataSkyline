@@ -6975,53 +6975,81 @@
 // ************************
 
 DSCMSView.run = function(DSCMSViewTools) {
-    dscmsWebSocket.subscribe(function(message) {
 
-    });
+    var clickedButton;
 
-    var themes = dscmsWebSocket.getthemes();
-    dir.log(themes);
+    function initThemes(themes) {
+        //Default colours of the dataskyline
+        var colors = ["bgBlue", "bgGreen", "bgPink", "bgOrange", "bgPurple"];
 
-    //Default colours of the dataskyline
-    var colors = ["bgBlue", "bgGreen", "bgPink", "bgOrange", "bgPurple"];
+        //Create buttons
+        var j = 0;
+        while (j < themes.length) {
+            $("#" + DSCMSViewTools.myWindows["Touch Window"]).append("<div id='button_" + j + "' class='button " + colors[j % colors.length] + "'>" + themes[j].name + "</div>");
+            j++;
+        }
 
-    //Temp buttons for demo
-    var buttons = ["Verkeer", "Weer", "Bezoekers", "Nieuws"];
+        //Activate the first button
+        //TODO: Misschien verander met een response van de server
+        $("#" + DSCMSViewTools.myWindows["Touch Window"] + " .button").first().addClass("active");
 
-    //Create buttons
-    var j = 0;
-    while (j < buttons.length) {
-        $("#" + DSCMSViewTools.myWindows["Touch Window"]).append("<div id='button_" + j + "' class='button " + colors[j % colors.length] + "'>" + buttons[j] + "</div>");
-        j++;
+        //Make the buttons throwable (moveable)
+        $("#" + DSCMSViewTools.myWindows["Touch Window"] + " .button").throwable({
+            containment: "parent",
+            gravity: {
+                x: 0,
+                y: 0
+            },
+            bounce: 1,
+            impulse: {
+                f: 100,
+                p: {
+                    x: 3,
+                    y: 3
+                }
+            },
+            shape: "circle",
+        });
+
+        //Button click
+        $(".button").click(function() {
+            clickedButton = $(this);
+            dscmsWebSocket.setTheme(clickedButton.context.innerText);
+        });
     }
 
-    //Activate the first button
-    $("#" + DSCMSViewTools.myWindows["Touch Window"] + " .button").first().addClass("active");
+    dscmsWebSocket.subscribe(function(message) {
+        var commands = message.data.split(' ');
 
-    //Make the buttons throwable (moveable)
-    $("#" + DSCMSViewTools.myWindows["Touch Window"] + " .button").throwable({
-        containment: "parent",
-        gravity: {
-            x: 0,
-            y: 0
-        },
-        bounce: 1,
-        impulse: {
-            f: 100,
-            p: {
-                x: 3,
-                y: 3
-            }
-        },
-        shape: "circle",
+        switch (commands.shift()) {
+            case "getthemes":
+
+                var returnedJSON;
+                try {
+                    returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+                } catch (e) {
+                    console.log("Server did not return JSON in allthemes message: " + message.data);
+                    return;
+                }
+
+                initThemes(returnedJSON.themes);
+
+                break;
+            case "settheme":
+                switch (commands.shift()) {
+                    case "200":
+                        $(".active").removeClass("active")
+                        clickedButton.addClass("active");
+                        break;
+                    default:
+                        console.log("Server can't set the theme: " + clickedButton.context.innerText);
+                }
+                break;
+            default:
+                console.error("Unkowm message received: " + message.data);
+                console.dir(message);
+        }
     });
 
-    //Button click
-    $(".button").click(function() {
-
-        $(".active").removeClass("active")
-        $(this).addClass("active");
-
-        dscmsWebSocket.setTheme("default");
-    });
+    dscmsWebSocket.getThemes();
 }
