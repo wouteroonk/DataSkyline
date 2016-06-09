@@ -749,7 +749,7 @@ function getThemeList() {
   var themes = getJSONfromPath(configPath).themes;
   var list = [];
   for(var i = 0 ; i < themes.length ; i++) {
-    var listitem = {"name" : themes[i].themeName};
+    var listitem = {"name" : themes[i].themeName, "description" : themes[i].themeDescription};
     list.push(listitem);
   }
   var obj = {
