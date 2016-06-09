@@ -258,7 +258,6 @@ wsServer.on('request', function(request) {
   });
 });
 
-console.dir(JSON.stringify(getThemeList()))
 
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip, theme) {
