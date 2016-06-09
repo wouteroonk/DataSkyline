@@ -80,5 +80,20 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket) {
     dscmsWebSocket.sendServerMessage("addtheme " + $scope.themeName +" "+ $scope.themeDescription);
   }
 
+  $scope.openModuleModal = function(mapName){
+    console.log(mapName);
+    $scope.modules.forEach(function(currentValue, index,arr){
+      console.log(currentValue);
+      if(currentValue.mapName === mapName){
+        $scope.moduleInfoMapName = currentValue.mapName;
+        $scope.moduleInfoName = currentValue.moduleName;
+        $scope.moduleInfoDescription = currentValue.moduleDescription;
+        $scope.moduleInfoDeveloper = currentValue.moduleDeveloper;
+        $scope.moduleInfoLicense = currentValue.moduleLicense;
+      }
+    });
+
+  }
+
 
 });
