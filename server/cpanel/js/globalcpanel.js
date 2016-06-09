@@ -18,7 +18,7 @@ dscms.app.config(function($routeProvider) {
     templateUrl: 'cpanel/pages/home.html',
     controller: 'dscmsHomeCtrl'
   }).
-  when('/theme', {
+  when('/themes/:theme', {
     templateUrl: 'cpanel/pages/theme.html',
     controller: 'dscmsThemeCtrl'
   }).

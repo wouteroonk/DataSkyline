@@ -166,8 +166,10 @@ wsServer.on('request', function(request) {
           if(specifictheme === undefined) {
             connectionList[index] = new ConnectionObject(connection,ipAddress);
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+          } else {
+            connectionList[index] = new ConnectionObject(connection,ipAddress);
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           }
-
           break;
       // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
       case "getthemes":
@@ -177,7 +179,8 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          //TODO: Test this
+          var returnedJSON = arrayToString(data);
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
           } else {
@@ -187,7 +190,7 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+          var themedescription = arrayToString(data);
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
           } else {
@@ -196,12 +199,18 @@ wsServer.on('request', function(request) {
             break;
       // "removetheme" is requested by the control panel, it will remove a theme from the configuration JSON file given a themename
       case "removetheme" :
-          var themename = data.shfit();
+          var themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
           } else {
             connection.send("removetheme " + "400");
           }
+            break;
+      case "removeview" :
+          var themename = data.shift();
+          var viewname = data.shift();
+          removeViewInTheme(themename,viewname);
+          connection.send("removeview " + "200");
             break;
       // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
       case "removemodule" :
@@ -231,7 +240,7 @@ wsServer.on('request', function(request) {
             }
             break;
       case "getscreens" :
-          connection.send("getscreens " + getScreenList());
+          connection.send("getscreens " + JSON.stringify(getScreenList()));
             break;
       // Should not get here (client error)
       default:
@@ -247,7 +256,6 @@ wsServer.on('request', function(request) {
     connectionList[index] = null;
     logClientList();
   });
-
 });
 
 console.dir(JSON.stringify(getThemeList()))
@@ -551,7 +559,6 @@ function removeFile(fromPath) {
 }
 
 //removes a dir with the content within this dir.
-//TODO: Make return type boolean (to check if removal succeeded)
 function removeDir(path) {
   rmdir(path, function(err, dirs, files) {
     if (err) {
@@ -568,13 +575,14 @@ function notifyUser(message, res) {
   res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
 // Adds a theme to the config
 function addTheme(themename, themedescription) {
-    assert.notEqual(themename, undefined, "You must construct additional pilons!");
-    assert.notEqual(themename, "","You must construct additional pilons!");
+    assert.notEqual(themename, undefined, "themename can't be undefined");
+    assert.notEqual(themename, "","themename can't be empty");
 
-    assert.notEqual(themedescription, undefined, "You must construct additional pilons!");
-    assert.notEqual(themedescription, "","You must construct additional pilons!");
+    assert.notEqual(themedescription, undefined, "themedescription can't be undefined");
+    assert.notEqual(themedescription, "","themedescription can't be empty");
 
   var config = getJSONfromPath(configPath);
   for(var i = 0 ; i < config.themes.length ; i++) {
@@ -589,10 +597,11 @@ function addTheme(themename, themedescription) {
     "screenViews": []
   };
   config.themes[config.themes.length] = theme;
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
+// TODO: Send update to Cpanel and Touch interface (Or everyone)
 // removes a theme from the configuration JSON file given a themename
 function removeTheme(themename) {
   assert.notEqual(themename, "", "themename is empty");
@@ -606,10 +615,11 @@ function removeTheme(themename) {
     }
   }
   config.themes = newlist;
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
+// TODO: Send update to everyone
 // Removes a module directory and all connections to it
 function removeModule(mapname , callback) {
   assert.notEqual(mapname, "" , "mapname can't be empty");
@@ -629,7 +639,7 @@ function removeModule(mapname , callback) {
           }
           themes[j].screenViews = newlist;
         }
-        turnJSONIntoFile(config , "test.json");
+        turnJSONIntoFile(config , "config.json");
         removeDir("./modules/"+mapname);
         return callback(true);
       }
@@ -639,7 +649,9 @@ function removeModule(mapname , callback) {
   });
 }
 
+// TODO: Send update to everyone
 // adds a "view" to the theme given a themename and a JSON object that needs to be inserted (JSON file should contain a "view")
+// TODO: Test these assertions
 function addViewToTheme(themename, viewjson) {
   assert.notEqual(themename, undefined,  "Themename is undefined");
   assert.notEqual(themename, "",  "Themename is empty");
@@ -654,7 +666,7 @@ function addViewToTheme(themename, viewjson) {
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
-      turnJSONIntoFile(config,"test.json");
+      turnJSONIntoFile(config,"config.json");
       return true;
     }
   }
@@ -662,10 +674,32 @@ function addViewToTheme(themename, viewjson) {
   return false ;
 }
 
-// TODO: Not implemented yet
+// TODO: Send update to everyone
+//TODO: Make the return type Boolean!
 // removes a view from the selected theme given a themename and a viewname
 function removeViewInTheme(themename, viewname) {
+
+  assert.notEqual(themename, "", "Themename can't be empty");
+  assert.notEqual(themename, undefined, "Themename can't be undefined");
+  assert.notEqual(viewname, "", "Viewname can't be empty");
+  assert.notEqual(viewname, undefined, "Viewname can't be undefined");
+
   var config = getJSONfromPath(configPath);
+  var themes = config.themes;
+  for(var i = 0 ; i < themes.length ; i++) {
+    if(themes[i].themeName === themename) {
+      var newscreenviews = [];
+      for(var j = 0 ; j < themes[i].screenViews.length ; j++ ){
+        if(themes[i].screenViews[j].viewName !== viewname) {
+          newscreenviews.push(themes[i].screenViews[j]);
+        }
+      }
+      themes[i].screenViews = newscreenviews;
+    }
+  }
+  turnJSONIntoFile(config, "config.json");
+  console.log("Finish!");
+  return;
 }
 
 // TODO: Send message to all dislay screens with an update
@@ -724,6 +758,14 @@ function getThemeList() {
   return obj;
 }
 
+function arrayToString(array) {
+  var string = "";
+  for(var i = 0 ; i < array.length ; i++) {
+    string += array[i]+ " ";
+  }
+  return string.substring(0,string.length-1);
+}
+
 // given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {
   fs.writeFile(filename,JSON.stringify(jsonObj), function(err) {
@@ -743,3 +785,5 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+
+//TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
