@@ -168,7 +168,6 @@ wsServer.on('request', function(request) {
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
-          addWorkAddress(connection,ipAddress);
           if(specifictheme === undefined) {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           } else {
