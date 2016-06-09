@@ -130,3 +130,53 @@ dscms.app.factory('dscmsWebSocket', function($location) {
 
   return functions;
 });
+
+dscms.app.factory('dscmsNotificationCenter', function($timeout) {
+  var functions = {};
+  var callbackMethods = {};
+  var callbackIterator = 0;
+  var shouldShowNotification = false;
+
+  var currentPromise = null;
+
+  functions.currentNotification = {};
+
+  functions.subscribe = function(callback) {
+    // Add callback to list and add one to iterator.
+    // This way we can safely use callbackIterator as a UID.
+    callbackMethods[callbackIterator] = callback;
+    callbackIterator++;
+    return callbackIterator - 1;
+  };
+
+  functions.unsubscribe = function(uid) {
+    // Delete callback with uid from list if it exists
+    if (callbackMethods.hasOwnProperty(uid)) {
+      delete callbackMethods[uid];
+      return true;
+    }
+    return false;
+  };
+
+  functions.publishNotification = function(title, text, duration) {
+    if (currentPromise !== null) $timeout.cancel(currentPromise);
+    currentPromise = null;
+
+    functions.currentNotification = {
+      'title': title,
+      'text': text
+    };
+    shouldShowNotification = true;
+    currentPromise = $timeout(function() {
+      shouldShowNotification = false;
+      for (var i in callbackMethods) {
+        callbackMethods[i](shouldShowNotification);
+      }
+    }, duration);
+
+    for (var i in callbackMethods) {
+      callbackMethods[i](shouldShowNotification);
+    }
+  };
+  return functions;
+});

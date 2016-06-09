@@ -15,3 +15,14 @@ dscms.app.directive('miniSkylineScreen', function() {
     controller: 'dscmsMiniSkylineScreenCtrl'
   };
 });
+
+dscms.app.directive('notificationCenter', function() {
+  return {
+    restrict: 'E',
+    scope: {
+
+    },
+    templateUrl: 'cpanel/partials/notificationCenter.html',
+    controller: 'dscmsNotificationCenterCtrl'
+  };
+});

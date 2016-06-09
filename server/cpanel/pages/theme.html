@@ -13,16 +13,59 @@
                 <mini-skyline-screen class="edit-theme-screen-preview" windows="windowsForCurrentScreen"></mini-skyline-screen>
               </div>
               <div class="col-md-8">
-                <select data-ng-options="s.screenDescription for s in screens" data-ng-model="selectedScreen" class="form-control"></select>
+
+                <!-- Select view -->
+
+                <div class="btn-group" role="group" aria-label="...">
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{selectedView.viewName}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li ng-repeat="v in viewsForCurrentScreen"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>
+                    </ul>
+                  </div>
+                  <button type="button" class="btn btn-default">+</button>
+                </div>
+                <hr>
+
+                <!-- Windows for selected view -->
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Position</th>
+                      <th>Window</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="window in selectedView.windows">
+                      <td><span class="glyphicon glyphicon-pencil"></span></td>
+                      <td>{{window.dsWindow}}</td>
+                      <td>{{window.name}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr>
+
+                <!-- Config for selected view -->
+
                 <form>
-                  <fieldset ng-repeat="var in configForCurrentView.configItems" class="form-group">
+                  <fieldset ng-repeat="var in selectedView.config.configItems" class="form-group">
                     <label for="{{var.name}}Input">{{var.name}}</label>
                     <input type="text" class="form-control" id="{{var.name}}Input" value="{{var.value}}">
                   </fieldset>
                 </form>
+
               </div>
             </div>
           </div>
+        </div>
+        <div id="edit-theme-footer" class="panel-footer">
+          <button type="button" class="btn btn-default" ng-click="cancelEdit()">Cancel</button>
+          <button type="button" class="btn btn-primary" ng-click="saveEdit()">Save</button>
         </div>
       </div>
     </div>

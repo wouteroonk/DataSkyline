@@ -1,21 +1,13 @@
-dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, dscmsWebSocket) {
+dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location, dscmsWebSocket, dscmsNotificationCenter) {
   $scope.themeName = $routeParams.theme;
+
   $scope.selectedScreen = null;
   $scope.screens = [];
+
   $scope.windowsForCurrentScreen = {};
+
+  $scope.selectedView = null;
   $scope.viewsForCurrentScreen = {};
-  $scope.configForCurrentView = {
-    configItems: [
-      {
-        name: "user",
-        value: "taylorswift13"
-      },
-      {
-        name: "delaySec",
-        value: "5"
-      }
-    ]
-  };
 
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
@@ -92,9 +84,8 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, dscmsWebSo
     dscmsWebSocket.sendServerMessage("requestwindows " + $scope.selectedScreen.screenAddress + " " + $scope.themeName);
   }, true);
 
-  // Fill windows with views
-  function fillWindows(windowinfo) {
-    $scope.viewsForCurrentScreen = windowinfo.views;
+  // Reset colors
+  function resetColors() {
     var allViewWindows = [];
     for (var i = 0; i < $scope.viewsForCurrentScreen.length; i++)
       allViewWindows = allViewWindows.concat($scope.viewsForCurrentScreen[i].windows);
@@ -106,7 +97,39 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, dscmsWebSo
           e.hue = "#E27703";
       });
     }
+  }
+
+  // Fill windows with views
+  function fillWindows(windowinfo) {
+    $scope.viewsForCurrentScreen = windowinfo.views;
+    if ($scope.viewsForCurrentScreen.length > 0) $scope.selectedView = $scope.viewsForCurrentScreen[0];
+    resetColors();
     $scope.$apply();
   }
+
+  $scope.changeSelectedView = function(v) {
+    $scope.selectedView = v;
+  };
+
+  $scope.$watch('selectedView', function() {
+    if ($scope.selectedView === null) return;
+    resetColors();
+    for (var j = 0; j < $scope.selectedView.windows.length; j++) {
+      var thisWindow = $scope.selectedView.windows[j];
+      $.grep($scope.windowsForCurrentScreen.windows, function(e){
+        if (e.id == thisWindow.dsWindow)
+          e.hue = "#3149E2";
+      });
+    }
+  });
+
+  $scope.cancelEdit = function() {
+    $location.path('/');
+  };
+
+  $scope.saveEdit = function() {
+    // TODO: Send edits to Server
+    dscmsNotificationCenter.publishNotification("Sorry!", "This feature is not yet implemented.", 2000);
+  };
 
 });
