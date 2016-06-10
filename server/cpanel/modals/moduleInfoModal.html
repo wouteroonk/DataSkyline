@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Info of {{moduleFolderName}}</h4>
+</div>
+<div class="modal-body">
+  <p>Name: {{module.moduleName}}</p>
+  <p>Description: {{module.moduleDescription}}</p>
+  <p>Developer: {{module.moduleDeveloper}}</p>
+  <p>License: {{module.moduleLicense}}</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="close()">Close</button>
+</div>

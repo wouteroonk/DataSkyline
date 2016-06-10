@@ -1,4 +1,4 @@
-dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location) {
+dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location, $modal) {
   $scope.themes = [];
   $scope.modules = [];
   dscmsWebSocket.subscribe(function(message) {
@@ -53,93 +53,59 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   });
   dscmsWebSocket.sendServerMessage("getthemes");
   dscmsWebSocket.sendServerMessage("getmodules");
-  console.log("request");
-
-
+  dscmsWebSocket.requestOwnLocalIP(function(ip) {
+    dscmsWebSocket.sendServerMessage("identification " + ip);
+  });
 
   //new theme
-  $scope.addTheme = function() {
-    $scope.showThemeError = false;
-    //console.log($scope.newThemeName + " " + $scope.newThemeDescription);
-    if ($scope.newThemeName === undefined || $scope.newThemeName.trim().length == 0) {
-      $scope.addThemeError = "The theme name field cannot be empty.";
-      $scope.showThemeError = true;
-      return;
-    }
-    if ($scope.newThemeDescription === undefined || $scope.newThemeDescription.trim().length == 0) {
-      $scope.addThemeError = "The description field cannot be empty.";
-      $scope.showThemeError = true;
-      return;
-    }
-    var exists = false;
-    $scope.themes.forEach(function(currentValue, index, arr) {
-      if (currentValue.name == $scope.newThemeName) {
-        $scope.addThemeError = "This theme name already exists, please choose another one.";
-        $scope.showThemeError = true;
-        exists = true;
-        return;
-      }
-    });
-    if (exists) return;
-    dscmsWebSocket.sendServerMessage("addtheme " + $scope.newThemeName + " " + $scope.newThemeDescription);
-  };
-
-  $scope.openModuleModal = function(folderName){
-    console.log(folderName);
-    $scope.modules.forEach(function(currentValue, index,arr){
-      console.log(currentValue);
-      if(currentValue.moduleFolderName === folderName){
-        $scope.moduleFolderName = currentValue.moduleFolderName;
-        $scope.moduleName = currentValue.moduleName;
-        $scope.moduleDescription = currentValue.moduleDescription;
-        $scope.moduleDeveloper = currentValue.moduleDeveloper;
-        $scope.moduleLicense = currentValue.moduleLicense;
+  $scope.openAddThemeModal = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/addTheme.html',
+      controller: 'dscmsAddThemeCtrl',
+      resolve: {
+        themes: function() {
+          return $scope.themes;
+        }
       }
     });
 
+    modalInstance.result.then(function() {
+      // TODO: Refresh theme list
+    });
   };
 
-  $scope.editTheme = function (theme) {
+  $scope.openModuleInfoModal = function(module) {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/moduleInfoModal.html',
+      controller: 'dscmsModuleInfoCtrl',
+      resolve: {
+        thisModule: function() {
+          return module;
+        }
+      }
+    });
+  };
+
+  $scope.deleteModule = function(module) {
+    console.dir(module);
+    swal(
+      {
+        title: "Are you sure?",
+        text: "This will delete \"" + module.moduleName + "\" forever.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Delete",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        if (isConfirm) {
+          dscmsWebSocket.sendServerMessage("removemodule " + module.moduleFolderName);
+        }
+      });
+  };
+
+  $scope.editTheme = function(theme) {
     $location.path('/themes/' + theme.name);
   };
-
-	$scope.removeModule = function(folderName) {
-		console.log(folderName);
-		if(folderName !== undefined) {
-			dscmsWebSocket.sendServerMessage("removemodule " + folderName);
-		}
-	};
-
-  $("#newThemeNameInput").on('keydown', function(){
-    var key = event.keyCode || event.charCode;
-    if(key === 32){
-      $scope.addThemeError = "The theme name cannot contain blanks.";
-      $scope.showThemeError = true;
-      $scope.$apply();
-      return false;
-    }
-    if(key === 13){
-      console.log("pressed");
-      $scope.addTheme();
-      $scope.$apply();
-      return;
-    }
-  });
-
-  $("#newThemeDescriptionInput").on('keydown', function(){
-    var key = event.keyCode || event.charCode;
-    if(key === 13){
-      $scope.addTheme();
-      $scope.$apply();
-      return;
-    }
-  });
-
-    dscmsWebSocket.requestOwnLocalIP(function(ip){
-      dscmsWebSocket.sendServerMessage("identification " + ip);
-    });
-
-
-
 
 });
