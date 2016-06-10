@@ -15,6 +15,7 @@
   <!-- AngularJS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>
 
@@ -97,7 +98,7 @@
   <!-- ============ -->
 
   <div id="wrap">
-    <div class="dscmsPage" ng-view></div>
+    <div class="dscmsPage {{pageClass}}" ng-view></div>
   </div>
 
 </body>

@@ -1,4 +1,6 @@
 dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter) {
+  $scope.pageClass = "dscms-page-theme";
+
   $scope.themeName = $routeParams.theme;
 
   // A screen is a physical screen, or client
@@ -291,7 +293,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       templateUrl: 'cpanel/modals/addViewToTheme.html',
       controller: 'dscmsAddViewToThemeCtrl',
       resolve: {
-        
+
       }
     });
 

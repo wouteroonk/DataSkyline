@@ -1,5 +1,39 @@
 body {
-    font-family: 'Open Sans', sans-serif !important;
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+.nav {
+  z-index: 9998;
+}
+
+/** Animate pagination **/
+
+.dscmsPage {
+  bottom: 0;
+  padding-top: 81px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.dscms-page-home.ng-enter {
+  animation: fadeIn 0.5s both ease;
+  z-index: 9000;
+}
+
+.dscms-page-theme.ng-enter {
+  animation: slideInUp 0.5s both ease;
+  z-index: 9000;
+}
+
+.dscms-page-home.ng-leave {
+  animation: fadeOut 0.5s both ease;
+  z-index: 8999;
+}
+
+.dscms-page-theme.ng-leave {
+  animation: slideOutDown 0.5s both ease;
+  z-index: 8999;
 }
 
 /** Change the style for a dscms-mini-screen element */
@@ -9,7 +43,6 @@ body {
   border: 1px solid #ECF0F1;
   border-radius: 3px;
 }
-
 .dscms-mini-screen-window {
   cursor: pointer;
 }
@@ -17,38 +50,33 @@ body {
 /** This class is applied to the child element of a dscms-mini-screen-window element that creates the hue */
 
 .dscms-mini-screen-window-hue {
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 /** Transform an element to an ellipse */
 
 .dscmsEllipse {
-    border-radius: 50%;
+  border-radius: 50%;
 }
 
 /** Change cursor to pointer on ng-click */
-[ng-click],
-[data-ng-click],
-[x-ng-click] {
-    cursor: pointer;
-}
 
+[ng-click], [data-ng-click], [x-ng-click] {
+  cursor: pointer;
+}
 .edit-theme-screen-preview {
   width: 100%;
 }
-
 .panel-title-with-button {
   line-height: 45px;
   font-size: 17px;
 }
-
 #edit-theme-config-table tr td:first-child {
-    white-space: nowrap;
-    width: 1px;
+  white-space: nowrap;
+  width: 1px;
 }
-
 notification-center {
   height: 20%;
   width: 100%;
@@ -61,33 +89,32 @@ notification-center {
   -webkit-transition: width 1s, height 1s, top 1s, -webkit-transform 1s;
   transition: width 1s, height 1s, top 1s, transform 1s;
 }
-
 notification-center strong {
   font-size: 1.5em;
   line-height: 3em;
 }
 
 /** Module upload **/
+
 #module-upload-file-input {
   display: none;
 }
-
 .btn-file {
-    position: relative;
-    overflow: hidden;
+  position: relative;
+  overflow: hidden;
 }
 .btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  background: white;
+  cursor: inherit;
+  display: block;
 }

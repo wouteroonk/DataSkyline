@@ -1,4 +1,6 @@
 dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location, $modal) {
+  $scope.pageClass = "dscms-page-home";
+
   $scope.themes = [];
   $scope.modules = [];
   dscmsWebSocket.subscribe(function(message) {

@@ -1,5 +1,5 @@
 var dscms = {};
-dscms.app = angular.module('dscmsDataskylineControlApp', ['ngRoute', 'ui.bootstrap']);
+dscms.app = angular.module('dscmsDataskylineControlApp', ['ngRoute', 'ui.bootstrap', 'ngAnimate']);
 
 /*
   Set the page title to "Dataskyline control panel" to make sure a title is present
