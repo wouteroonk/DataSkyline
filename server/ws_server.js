@@ -152,7 +152,7 @@ wsServer.on('request', function(request) {
   clients[index] = connection; //Add to client list
 
   console.log((new Date()) + ' - Connection accepted from ' + connection.remoteAddress + " with index " + index);
-  logClientList();
+
 
   // When a message is received
   connection.on('message', function(message) {
@@ -163,6 +163,7 @@ wsServer.on('request', function(request) {
       case "identification" :
           var address = data.shift();
           connectionList[index] = new ConnectionObject(connection,address);
+          logConnections();
           break;
       // "requestwindows" is send by a display screen, when the switch matches this command, it'll send back the correct information for that display screen
       case "requestwindows":
@@ -182,11 +183,10 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          //TODO: Test this
-          var returnedJSON = arrayToString(data);
+          var returnedJSON = arrayToString(data); //TODO: Change this so it'll properly read JSON
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
-            sendSkylineUpdate();
+            sendSkylineUpdate("addview");
           } else {
             connection.send("addview " + "400");
           }
@@ -194,10 +194,10 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = arrayToString(data);
+          var themedescription = arrayToString(data); //TODO: Change this so it'll function like the others (it actually works this way)
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
-            sendSkylineUpdate();
+            sendSkylineUpdate("addtheme");
           } else {
             connection.send("addtheme " + "400");
           }
@@ -207,7 +207,7 @@ wsServer.on('request', function(request) {
           var themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
-            sendSkylineUpdate();
+            sendSkylineUpdate("removetheme");
           } else {
             connection.send("removetheme " + "400");
           }
@@ -217,7 +217,7 @@ wsServer.on('request', function(request) {
           var viewname = data.shift();
           removeViewInTheme(themename,viewname);
           connection.send("removeview " + "200");
-          sendSkylineUpdate();
+          sendSkylineUpdate("removeview");
             break;
       // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
       case "removemodule" :
@@ -225,7 +225,7 @@ wsServer.on('request', function(request) {
           removeModule(modulefolder , function callback(success) {
             if(success){
               connection.send("removemodule " + "200");
-              sendSkylineUpdate();
+              sendSkylineUpdate("removemodule");
             } else {
               connection.send("removemodule " + "400");
             }
@@ -243,7 +243,7 @@ wsServer.on('request', function(request) {
             var themename = data.shift();
             if(updateCurrentTheme(themename)) {
               connection.send("settheme " + "200");
-              sendSkylineUpdate();
+              sendSkylineUpdate("settheme");
             } else {
               connection.send("settheme " + "400");
             }
@@ -263,7 +263,7 @@ wsServer.on('request', function(request) {
     console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
     clients[index] = null;
     connectionList[index] = null;
-    logClientList();
+    logConnections();
   });
 });
 
@@ -284,41 +284,18 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   return true;
 }
 
-function sendSkylineUpdate() {
+function sendSkylineUpdate(change) {
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    connectionList[i].connection.send("skylineupdate");
+    connectionList[i].connection.send("skylineupdate " + change);
   }
 }
 
-// This function updates all screens!
-// TODO: This function currently does not work.
-// This function does not work, because we don't know the IP address for a connection. TODO:(we DO actually have the connection with an IP)
-// Proposed fix:
-//  * add setmyip message for clients in which they set their IP
-//  * expand requestwindows message with zero parameters variant, where the connections set IP is used.
-function sendUpdateNotification() {
-  var iplist = getScreenIPs();
-  console.log("CONNECTIONLIST: " + connectionList);
-  for (var i = 0; i < connectionList.length; i++) {
-    if (connectionList[i]) {
-      console.dir("Connection " + i);
-      sendWindowInfoForIPToClient(connectionList[i].connection, connectionList[i].address);
-    }
+function logConnections() {
+  console.log("$$ Connected clients: ");
+  console.log("index - address");
+  for(var i = 0 ; i < connectionList.length ; i++){
+    console.log(i + " - " + connectionList[i].address);
   }
-}
-
-// Iterate over & log all connected clients
-function logClientList() {
-  console.log("Current connected clients: ");
-  console.log("index : address");
-  for (var i = 0; i < clients.length; i++) {
-    if (clients[i]) {
-      console.log(i + "     : " + clients[i].remoteAddress);
-      //Note: remoteAddresses might start with "::ffff:"
-      //This is an ipv4 address expressed through ipv6
-    }
-  }
-  console.log("------");
 }
 
 // Given a file name, return a json object
@@ -354,7 +331,7 @@ function readDirectories(path, callback) {
   });
 }
 
-// Gets a list of the IP addresses of all DS screens
+// Returns a list of the IP addresses of all DS screens
 function getScreenIPs() {
   console.log("Reading addresses from JSON");
 
@@ -763,12 +740,17 @@ function getThemeList() {
   };
   return obj;
 }
+var obj = {
+  "thingOne":1,
+  "thingTwo":2
+};
 
 function arrayToString(array) {
   var string = "";
   for(var i = 0 ; i < array.length ; i++) {
     string += array[i]+ " ";
   }
+  console.log(string.substring(0,string.length-1));
   return string.substring(0,string.length-1);
 }
 
