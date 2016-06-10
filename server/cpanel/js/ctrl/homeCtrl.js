@@ -4,6 +4,10 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
+      case "skylineupdate":
+        dscmsWebSocket.sendServerMessage("getthemes");
+        dscmsWebSocket.sendServerMessage("getmodules");
+        break;
       case "getthemes":
         // Whatever you want to do
         //feature
@@ -37,11 +41,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       case "addtheme":
         if (message.data.substring(message.data.indexOf(' ') + 1) == 200) {
           console.log("added the theme");
-          //TODO: change this
-          var t = new Object();
-          t.name = $scope.newThemeName;
-          $scope.themes.push(t);
-          $scope.$apply();
           $('#add-theme-modal').modal('hide');
           return;
         } else {
@@ -135,6 +134,14 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       return;
     }
   });
+
+  if(!sessionStorage.hasIdentified){
+    dscmsWebSocket.requestOwnLocalIP(function(ip){
+      dscmsWebSocket.sendServerMessage("identification " + ip);
+      sessionStorage.hasIdentified = true;
+    });
+  }
+
 
 
 });
