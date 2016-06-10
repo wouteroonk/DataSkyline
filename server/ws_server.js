@@ -162,7 +162,11 @@ wsServer.on('request', function(request) {
       // Identify yourself
       case "identification" :
           var address = data.shift();
-          connectionList[index] = new ConnectionObject(connection,address);
+          if(!alreadyIdentified(address)) {
+            connectionList[index] = new ConnectionObject(connection,address);
+          } else {
+            console.log(address + " tried to overwrite his own connection!");
+          }
           logConnections();
           break;
       // "requestwindows" is send by a display screen, when the switch matches this command, it'll send back the correct information for that display screen
@@ -338,6 +342,7 @@ function logConnections() {
     }
   }
 }
+
 
 // Given a file name, return a json object
 function getJSONfromPath(filename) {
@@ -850,6 +855,17 @@ function ConnectionObject(connection, address) {
 
   this.connection = connection;
   this.address = address;
+}
+
+function alreadyIdentified(ip) {
+  for(var i = 0 ; i < connectionList.length ; i++){
+    if(connectionList[i] !== null && connectionList[i].address !== undefined){
+      if(connectionList[i].address === ip) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 //TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
