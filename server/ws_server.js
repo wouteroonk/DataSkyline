@@ -270,6 +270,10 @@ wsServer.on('request', function(request) {
 
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip, theme) {
+  assert.notEqual(client, undefined, "client can't be undefined");
+  assert.notEqual(ip, undefined, "ip can't be undefined");
+  assert.notEqual(ip, "", "ip can't be empty");
+
   var validIPs = getScreenIPs();
   // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
@@ -284,22 +288,62 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   return true;
 }
 
+// Send update message to all "identified" connections
 function sendSkylineUpdate(change) {
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    connectionList[i].connection.send("skylineupdate " + change);
+    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+        connectionList[i].connection.send("skylineupdate " + change);
+    }
   }
+}
+
+// Send update message to all "identified" Displays
+function sendSkylineUpdateDisplays(change) {
+  if(change === undefined) change = "undefined";
+  for(var i = 0 ; i < connectionList.length ; i++ ){
+    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+      if(isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
+    }
+  }
+}
+
+// Send update message to all "identified" Control panels
+function sendSkylineUpdateCpanel(change) {
+  if(change === undefined) change = "undefined";
+  for(var i = 0 ; i < connectionList.length ; i++ ){
+    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+      if(!isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
+    }
+  }
+}
+
+function isDisplayScreen(ip) {
+  assert.notEqual(ip, undefined, "ip can't be undefined");
+  assert.notEqual(ip, "", "ip can't be empty");
+
+  var iplist = getScreenIPs();
+
+  for(var i = 0 ; i < iplist.length ; i++){
+    if(iplist[i] === ip) return true;
+  }
+  return false;
 }
 
 function logConnections() {
   console.log("$$ Connected clients: ");
   console.log("index - address");
   for(var i = 0 ; i < connectionList.length ; i++){
-    console.log(i + " - " + connectionList[i].address);
+    if(connectionList[i] !== null && connectionList[i].address !== null) {
+      console.log(i + " - " + connectionList[i].address);
+    }
   }
 }
 
 // Given a file name, return a json object
 function getJSONfromPath(filename) {
+  assert.notEqual(filename, "", "filename can't be empty");
+  assert.notEqual(filename, undefined, "filename can't be undefined");
+
   try {
     var file = pathing.resolve('./' + filename);
     delete require.cache[file]; // Clear cache (otherwise files won't update)
@@ -314,6 +358,9 @@ function getJSONfromPath(filename) {
 
 // Returns a list with directories given a path (callback is needed to get the path)
 function readDirectories(path, callback) {
+  assert.notEqual(path, undefined, "path can't be undefined");
+  assert.notEqual(path, "", "path can't be empty");
+
   var listing = [];
   fs.readdir(path, function(err, list) {
     if (err) {
@@ -346,6 +393,7 @@ function getScreenIPs() {
 
 // Gets the windowinfo message for a screen config entry
 function getWindowInfoForScreenConfig(jsonfile,specifictheme) {
+  assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
   var themes = getJSONfromPath(configPath).themes;
   var obj = {
     "screenName": jsonfile.screenName,
@@ -358,6 +406,8 @@ function getWindowInfoForScreenConfig(jsonfile,specifictheme) {
 
 // Gets the views list for a windowinfo message for a screen config entry
 function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
+  assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
+  assert.notEqual(themes, undefined, "jsonSC can't be undefined!");
   var results = [];
   for (var i = 0; i < themes.length; i++) {
     if(specifictheme === undefined){
@@ -400,6 +450,9 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
 
 // used by getViewsForScreenConfig to retrieve all windows
 function allWindows(jsonSC, jsonfile) {
+  assert.notEqual(jsonSC, undefined, "jsonSC can't be undefined!");
+  assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
+
   var results = [];
   for (var i = 0; i < jsonSC.screenComponents.length; i++) {
     var windowjson = getJSONfromPath("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
@@ -431,6 +484,9 @@ function allWindows(jsonSC, jsonfile) {
 // handles an upload of a new module
 // This method should always be called when the config.json file is needed
 function handleModuleUpload(req, res) {
+  assert.notEqual(res, undefined, "res can't be undefined");
+  assert.notEqual(req, undefined, "req can't be undefined");
+
   upload(req, res, function(err) {
     if (err) {
       //emptyTmp(fileName);
@@ -463,6 +519,10 @@ var upload = multer({
 
 //unzips a zip file to tmp folder.
 function unzipFile(fileName, res) {
+  assert.notEqual(fileName, "", "filename can't be empty");
+  assert.notEqual(fileName, undefined, "filename can't be undefined");
+  assert.notEqual(res, undefined, "res can't be undefined");
+
   var fromPath = 'tmp/' + fileName;
 
   //check to see if the file uploaded is a zip file.
@@ -488,6 +548,9 @@ function unzipFile(fileName, res) {
 }
 //validates a module for a given path
 function validateModule(pathToModule, res) {
+  assert.notEqual(pathToModule, "", "pathToModule can't be empty");
+  assert.notEqual(pathToModule, undefined, "pathToModule can't be undefined");
+  assert.notEqual(res, undefined, "res can't be undefined");
   console.log("validating module " + pathToModule);
   //reads the content of the folder
   fs.readdir(pathToModule, function(err, files) {
@@ -531,11 +594,19 @@ function validateModule(pathToModule, res) {
 }
 //unzips a zip file to a given path.
 function simpleUnzip(fromPath, toPath) {
+  assert.notEqual(fromPath, "", "fromPath can't be empty");
+  assert.notEqual(fromPath, undefined, "fromPath can't be undefined");
+  assert.notEqual(toPath, "", "toPath can't be empty");
+  assert.notEqual(toPath, undefined, "toPath can't be undefined");
+
   var zip = new AdmZip(fromPath);
   zip.extractAllTo(toPath, true);
 }
 //removes a single file.
 function removeFile(fromPath) {
+  assert.notEqual(fromPath, "", "fromPath can't be empty");
+  assert.notEqual(fromPath, undefined, "fromPath can't be undefined");
+
   fs.unlink(fromPath, function(err) {
     if (err) console.log(err);
   });
@@ -543,6 +614,9 @@ function removeFile(fromPath) {
 
 //removes a dir with the content within this dir.
 function removeDir(path) {
+  assert.notEqual(path, "", "path can't be empty");
+  assert.notEqual(path, undefined, "path can't be undefined");
+
   rmdir(path, function(err, dirs, files) {
     if (err) {
       console.log(err);
@@ -770,6 +844,10 @@ function getScreenList() {
 
 // "Object" for connections
 function ConnectionObject(connection, address) {
+  assert.notEqual(connection, undefined, "connection can't be undefined");
+  assert.notEqual(address, undefined, "address can't be undefined");
+  assert.notEqual(address, "", "address can't be empty!");
+
   this.connection = connection;
   this.address = address;
 }
