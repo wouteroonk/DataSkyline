@@ -4,8 +4,9 @@
 </div>
 <div class="modal-body">
   <label class="btn btn-default btn-block btn-lg btn-file">
-    Browse
-    <input type="file" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" id="module-upload-file-input" />
+    {{selectedFileName === null ? "Click to select zip file..." : "\"" + selectedFileName + "\" selected (" + selectedFileSizeHR + ")"}}
+    <input type="file" onchange="angular.element(this).scope().fileSelected()" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" id="module-upload-file-input" />
+
   </label>
 </div>
 <div class="modal-footer">
