@@ -4,22 +4,9 @@
 <head>
   <title ng-bind="title">Dataskyline control panel</title>
 
-  <!-- =========== -->
-  <!-- Stylesheets -->
-  <!-- =========== -->
-
-  <!-- Open Sans Font -->
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-  <!-- Custom -->
-  <link rel="stylesheet" href="cpanel/css/cpanel.css">
-
-  <!-- ========== -->
-  <!-- Javascript -->
-  <!-- ========== -->
+  <!-- ========= -->
+  <!-- Libraries -->
+  <!-- ========= -->
 
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -32,15 +19,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>
 
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/flatly/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-  <!-- Custom -->
+  <!-- Notify -->
+  <script src="cpanel/libs/notify/bootstrap-notify.min.js"></script>
+
+  <!-- Animate -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+
+  <!-- Sweetalert -->
+  <script src="cpanel/libs/swal/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="cpanel/libs/swal/sweetalert.css">
+
+  <!-- =========== -->
+  <!-- Stylesheets -->
+  <!-- =========== -->
+
+  <!-- Open Sans Font -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+  <!-- ============ -->
+  <!-- Custom stuff -->
+  <!-- ============ -->
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="cpanel/css/cpanel.css">
+
+  <!-- Javascript -->
   <script type="text/javascript" src="cpanel/js/globalcpanel.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/homeCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/themeCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/miniSkylineScreenCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/notificationCenterCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/directives.js"></script>
 
 </head>
@@ -56,7 +66,7 @@
   <!-- Navigation -->
   <!-- ========== -->
 
-  <nav class="navbar navbar-default" ng-controller="dscmsNavigationCtrl">
+  <nav class="navbar navbar-default navbar-static-top" ng-controller="dscmsNavigationCtrl">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">

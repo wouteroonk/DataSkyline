@@ -19,6 +19,7 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
   $(window).resize(regenerate);
 
   function regenerate() {
+    if ($scope.windows === null) return;
     $element.empty();
     addWindowsToElement($scope.windows, $element);
   }

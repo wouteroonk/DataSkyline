@@ -6,11 +6,11 @@ body {
 
 .dscms-mini-screen {
   background-color: #FFF;
-  border: 1px solid #DDD;
+  border: 1px solid #ECF0F1;
+  border-radius: 3px;
 }
 
 .dscms-mini-screen-window {
-  border: 1px solid #DDD;
   cursor: pointer;
 }
 
@@ -39,8 +39,14 @@ body {
   width: 100%;
 }
 
-#edit-theme-footer {
-  text-align: right;
+.panel-title-theme-edit {
+  line-height: 45px;
+  font-size: 17px;
+}
+
+#edit-theme-config-table tr td:first-child {
+    white-space: nowrap;
+    width: 1px;
 }
 
 notification-center {

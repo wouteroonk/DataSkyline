@@ -6,7 +6,7 @@ dscms.app = angular.module('dscmsDataskylineControlApp', ['ngRoute', 'ui.bootstr
   The page title should be changed to something more specific once a page is loaded.
 */
 dscms.app.run(function($rootScope) {
-    $rootScope.title = "Dataskyline control panel";
+  $rootScope.title = "Dataskyline control panel";
 });
 
 /*
@@ -107,7 +107,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     waitForWS(function() {
       ws.send(stringMessage);
     });
-};
+  };
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.
@@ -133,50 +133,61 @@ dscms.app.factory('dscmsWebSocket', function($location) {
 
 dscms.app.factory('dscmsNotificationCenter', function($timeout) {
   var functions = {};
-  var callbackMethods = {};
-  var callbackIterator = 0;
-  var shouldShowNotification = false;
 
-  var currentPromise = null;
-
-  functions.currentNotification = {};
-
-  functions.subscribe = function(callback) {
-    // Add callback to list and add one to iterator.
-    // This way we can safely use callbackIterator as a UID.
-    callbackMethods[callbackIterator] = callback;
-    callbackIterator++;
-    return callbackIterator - 1;
+  functions.info = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "info",
+      animate: {
+        enter: 'animated fadeInDown',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
   };
 
-  functions.unsubscribe = function(uid) {
-    // Delete callback with uid from list if it exists
-    if (callbackMethods.hasOwnProperty(uid)) {
-      delete callbackMethods[uid];
-      return true;
-    }
-    return false;
+  functions.success = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "success",
+      animate: {
+        enter: 'animated bounceIn',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
   };
 
-  functions.publishNotification = function(title, text, duration) {
-    if (currentPromise !== null) $timeout.cancel(currentPromise);
-    currentPromise = null;
+  functions.warning = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "warning",
+      animate: {
+        enter: 'animated shake',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
+  };
 
-    functions.currentNotification = {
-      'title': title,
-      'text': text
-    };
-    shouldShowNotification = true;
-    currentPromise = $timeout(function() {
-      shouldShowNotification = false;
-      for (var i in callbackMethods) {
-        callbackMethods[i](shouldShowNotification);
-      }
-    }, duration);
-
-    for (var i in callbackMethods) {
-      callbackMethods[i](shouldShowNotification);
-    }
+  functions.danger = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "danger",
+      animate: {
+        enter: 'animated tada',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
   };
   return functions;
 });
