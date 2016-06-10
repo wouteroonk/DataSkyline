@@ -89,6 +89,17 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     });
   };
 
+  // Start a modal for uploading a module
+  $scope.openUploadModuleModal = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/uploadModule.html',
+      controller: 'dscmsUploadModuleCtrl',
+      resolve: {
+
+      }
+    });
+  };
+
   // Delete a module (first ask for confirmation)
   $scope.deleteModule = function(module) {
     // Ask for confirmation

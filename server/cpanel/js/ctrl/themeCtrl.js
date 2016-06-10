@@ -1,19 +1,24 @@
-dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location, dscmsWebSocket, dscmsNotificationCenter) {
+dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter) {
   $scope.themeName = $routeParams.theme;
 
   // A screen is a physical screen, or client
+  // The index of the selected screen
   $scope.selectedScreenPos = null;
+  // We sometimes need the full object for the selected screen
+  // This object should not be used for modifictation
   $scope.tempScreenSelect = null;
+  // List of screens
   $scope.screens = [];
 
-  // Windowinfo message
+  // Windowinfo message with backup for modification check
   $scope.thisScreenWinInf = null;
   $scope.thisScreenWinInfBackup = null;
 
   // List of "empty" windows for the selected screen
+  // This list is used as the config json for mini-skyline-screen.
   $scope.previewConfig = null;
 
-  // Selected view is the view instance that has been selected using the dropdown
+  // The index of the selected view within the selected screen
   $scope.selectedViewPos = null;
 
   // The ID of the window that should be changed (by clicking in the preview)
@@ -23,11 +28,13 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
   // WebSocket stuff
   // =========================
 
+  // Subscribe to the WebSocket to listen for updates
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       // Windowinfo message for getting the views that are associated with the selected screen
       case "windowinfo":
+        // Parse JSON
         var returnedWindowJSON;
         try {
           returnedWindowJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -40,6 +47,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
         break;
       // Getscreens message for getting the screens and their description
       case "getscreens":
+        // Parse JSON
         var returnedScreenJSON;
         try {
           returnedScreenJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -187,7 +195,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
           }
         });
         if (!shouldContinue) return;
-        
+
         // When all is OK, update the window id
         $.grep($scope.thisScreenWinInf.views[$scope.selectedViewPos].windows, function(e) {
           if (e.dsWindow === $scope.windowIdToReplace) {
@@ -276,6 +284,20 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     ) return false;
 
     return true;
+  };
+
+  $scope.openAddViewModal = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/addViewToTheme.html',
+      controller: 'dscmsAddViewToThemeCtrl',
+      resolve: {
+        
+      }
+    });
+
+    modalInstance.result.then(function() {
+      // TODO: Refresh theme list
+    });
   };
 
 });
