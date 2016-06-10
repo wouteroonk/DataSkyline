@@ -567,7 +567,13 @@ function validateModule(pathToModule, res) {
     //Checks to see if it is a valid module
     if (files.length != 1) {
       console.log("Error invalid module structure: files are not in the same folder");
-      removeDir(pathToModule);
+      removeDir(pathToModule, function(success) {
+        if(success) {
+          console.log("removeDir Success");
+        } else {
+          console.error("removeDir Failed");
+        }
+      });
       notifyUser("Error the structure of the module is not valid, the top level of the archive can only contain one folder (and no files)." + "See the documentation for more information.", res);
       return;
     }
@@ -618,17 +624,19 @@ function removeFile(fromPath) {
 }
 
 //removes a dir with the content within this dir.
-function removeDir(path) {
+function removeDir(path, callback) {
   assert.notEqual(path, "", "path can't be empty");
   assert.notEqual(path, undefined, "path can't be undefined");
 
   rmdir(path, function(err, dirs, files) {
     if (err) {
       console.log(err);
+      return callback(false);
     }
     console.log(dirs);
     console.log(files);
     console.log('all files are removed');
+    return callback(true);
   });
 }
 
@@ -681,8 +689,7 @@ function removeTheme(themename) {
   return true;
 }
 
-// TODO: Send update to everyone
-// Removes a module directory and all connections to it
+
 function removeModule(foldername , callback) {
   assert.notEqual(foldername, "" , "foldername can't be empty");
   assert.notEqual(foldername, undefined , "foldername can't be undefined");
@@ -696,14 +703,20 @@ function removeModule(foldername , callback) {
           var newlist = [];
           for(var k = 0; k < themes[j].screenViews.length ; k++ ) {
             if(themes[j].screenViews[k].screenParentModule !== foldername) {
+              console.log("In theme: "+themes[j].themeName + " we found: " + themes[j].screenViews[k].screenParentModule);
               newlist.push(themes[j].screenViews[k]);
             }
           }
           themes[j].screenViews = newlist;
         }
         turnJSONIntoFile(config , "config.json");
-        removeDir("./modules/"+foldername);
-        return callback(true);
+        removeDir("./modules/"+foldername, function(success) {
+          if(success){
+            return callback(true);
+          } else {
+            console.error("Could not remove directory?");
+          }
+        });
       }
     }
     console.error(foldername+" was not found!");
