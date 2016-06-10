@@ -135,12 +135,10 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     }
   });
 
-  if(!sessionStorage.hasIdentified){
     dscmsWebSocket.requestOwnLocalIP(function(ip){
       dscmsWebSocket.sendServerMessage("identification " + ip);
-      sessionStorage.hasIdentified = true;
     });
-  }
+
 
 
 
