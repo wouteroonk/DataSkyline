@@ -6,7 +6,7 @@ dscms.app = angular.module('dscmsDataskylineControlApp', ['ngRoute', 'ui.bootstr
   The page title should be changed to something more specific once a page is loaded.
 */
 dscms.app.run(function($rootScope) {
-    $rootScope.title = "Dataskyline control panel";
+  $rootScope.title = "Dataskyline control panel";
 });
 
 /*
@@ -107,7 +107,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     waitForWS(function() {
       ws.send(stringMessage);
     });
-};
+  };
 
   // Damn, this is way too hacky
   // A function that gets the local IP and has to do this using a callback method.
@@ -128,5 +128,66 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     };
   };
 
+  return functions;
+});
+
+dscms.app.factory('dscmsNotificationCenter', function($timeout) {
+  var functions = {};
+
+  functions.info = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "info",
+      animate: {
+        enter: 'animated fadeInDown',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
+  };
+
+  functions.success = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "success",
+      animate: {
+        enter: 'animated bounceIn',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
+  };
+
+  functions.warning = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "warning",
+      animate: {
+        enter: 'animated shake',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
+  };
+
+  functions.danger = function(newTitle, newText, newDuration) {
+    $.notify({
+      title: newTitle,
+      message: newText
+    }, {
+      type: "danger",
+      animate: {
+        enter: 'animated tada',
+        exit: 'animated fadeOutUp'
+      },
+      delay: newDuration
+    });
+  };
   return functions;
 });

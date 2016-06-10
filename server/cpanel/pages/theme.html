@@ -1,25 +1,80 @@
 <div class="container">
-  <h1>{{themeName}}</h1>
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading">
-          <select data-ng-options="s.screenDescription for s in screens" data-ng-model="selectedScreen" class="form-control"></select>
+        <div class="panel-heading text-center">
+          <h2 class="panel-title-theme-edit panel-title pull-left">Editing theme: <span ng-bind="themeName"/></h2>
+          <!-- Select screen -->
+          <div class="btn-group pull-right" role="group">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{screens[selectedScreenPos].screenName}}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li ng-repeat="s in screens"><a ng-click="changeSelectedScreen(s)">{{s.screenName}}</a></li>
+              </ul>
+            </div>
+            <button type="button" class="btn btn-danger" ng-click="cancelEdit()"><span class="glyphicon glyphicon-remove-sign"></span></button>
+            <button type="button" class="btn btn-success" ng-click="saveEdit()"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+          </div>
+
+          <div class="clearfix"></div>
+
         </div>
         <div class="panel-body">
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-4">
-                <mini-skyline-screen class="edit-theme-screen-preview" windows="windowsForCurrentScreen"></mini-skyline-screen>
+                <mini-skyline-screen class="edit-theme-screen-preview" windows="previewConfig"></mini-skyline-screen>
               </div>
               <div class="col-md-8">
-                <select data-ng-options="s.screenDescription for s in screens" data-ng-model="selectedScreen" class="form-control"></select>
+
+                <!-- Select view -->
+
+                <div class="btn-group" role="group">
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{thisScreenWinInf.views[selectedViewPos].viewName}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>
+                    </ul>
+                  </div>
+                  <button type="button" class="btn btn-default">+</button>
+                </div>
+                <hr ng-hide="thisScreenWinInf.views.length === 0">
+
+                <!-- Windows for selected view -->
+
+                <table id="edit-theme-config-table" class="table table-bordered" ng-hide="thisScreenWinInf.views.length === 0">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Position</th>
+                      <th>Window</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="window in thisScreenWinInf.views[selectedViewPos].windows">
+                      <td><button type="button" class="btn btn-xs btn-default" ng-click="startWindowReplace(window)"><span class="glyphicon glyphicon-pencil"></span></button></td>
+                      <td>{{window.dsWindow}}</td>
+                      <td>{{window.name}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr ng-hide="!hasViewGotConfig(thisScreenWinInf.views[selectedViewPos])">
+
+                <!-- Config for selected view -->
+
                 <form>
-                  <fieldset ng-repeat="var in configForCurrentView.configItems" class="form-group">
+                  <fieldset ng-repeat="var in thisScreenWinInf.views[selectedViewPos].config.configItems" class="form-group">
                     <label for="{{var.name}}Input">{{var.name}}</label>
                     <input type="text" class="form-control" id="{{var.name}}Input" value="{{var.value}}">
                   </fieldset>
                 </form>
+
               </div>
             </div>
           </div>
