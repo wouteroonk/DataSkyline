@@ -51,13 +51,15 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         break;
     }
   });
+
+  // Initial server communication
   dscmsWebSocket.sendServerMessage("getthemes");
   dscmsWebSocket.sendServerMessage("getmodules");
   dscmsWebSocket.requestOwnLocalIP(function(ip) {
     dscmsWebSocket.sendServerMessage("identification " + ip);
   });
 
-  //new theme
+  // Start a modal for adding a theme
   $scope.openAddThemeModal = function() {
     var modalInstance = $modal.open({
       templateUrl: 'cpanel/modals/addTheme.html',
@@ -74,6 +76,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     });
   };
 
+  // Start a modal with info about a specified module
   $scope.openModuleInfoModal = function(module) {
     var modalInstance = $modal.open({
       templateUrl: 'cpanel/modals/moduleInfoModal.html',
@@ -86,8 +89,9 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     });
   };
 
+  // Delete a module (first ask for confirmation)
   $scope.deleteModule = function(module) {
-    console.dir(module);
+    // Ask for confirmation
     swal(
       {
         title: "Are you sure?",
@@ -98,12 +102,14 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         confirmButtonText: "Delete",
         closeOnConfirm: true
       }, function(isConfirm) {
+        // Tell server to delete module if confirmed
         if (isConfirm) {
           dscmsWebSocket.sendServerMessage("removemodule " + module.moduleFolderName);
         }
       });
   };
 
+  // Go to the edit page for the selected theme
   $scope.editTheme = function(theme) {
     $location.path('/themes/' + theme.name);
   };
