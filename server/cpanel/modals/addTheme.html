@@ -8,11 +8,11 @@
   </div>
   <fieldset class="form-group">
     <label for="newThemeNameInput">Theme name</label>
-    <input maxlength="20" ng-model="newThemeName" type="text" class="form-control" id="newThemeNameInput">
+    <input maxlength="20" ng-model="newThemeName" ng-enter="addTheme(newThemeName, newThemeDescription)" ng-keydown="nameKeydown($event)" type="text" class="form-control" id="newThemeNameInput">
   </fieldset>
   <fieldset class="form-group">
     <label for="newThemeDescriptionInput">Theme description</label>
-    <input maxlength="150" ng-model="newThemeDescription" type="text" class="form-control" id="newThemeDescriptionInput">
+    <input maxlength="150" ng-model="newThemeDescription" ng-enter="addTheme(newThemeName, newThemeDescription)" type="text" class="form-control" id="newThemeDescriptionInput">
   </fieldset>
 </div>
 <div class="modal-footer">

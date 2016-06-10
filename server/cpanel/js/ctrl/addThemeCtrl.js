@@ -1,4 +1,8 @@
 dscms.app.controller('dscmsAddThemeCtrl', function($scope, $modalInstance, dscmsWebSocket, themes) {
+  $scope.newThemeName = "";
+  $scope.newThemeDescription = "";
+
+
   $scope.addTheme = function(name, description) {
     $scope.showThemeError = false;
     //console.log($scope.newThemeName + " " + $scope.newThemeDescription);
@@ -28,6 +32,13 @@ dscms.app.controller('dscmsAddThemeCtrl', function($scope, $modalInstance, dscms
 
   $scope.cancel = function() {
     $modalInstance.dismiss('cancel');
+  };
+
+  $scope.nameKeydown = function(e) {
+    if (e.keyCode == 32) {
+      $scope.newThemeName += "-"; // append '-' to input
+      e.preventDefault();
+    }
   };
 
 });
