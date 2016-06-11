@@ -35,7 +35,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="module in modules">
+              <tr ng-repeat="module in modules.slice(((modulesTableCurrentPage-1)*modulesTableItemsPerPage), ((modulesTableCurrentPage)*modulesTableItemsPerPage))">
                 <td>{{module.moduleName}}</td>
                 <td>{{module.moduleDeveloper}}</td>
                 <td>
@@ -51,6 +51,7 @@
               </tr>
             </tbody>
           </table>
+          <pager ng-hide="modules.length <= modulesTableItemsPerPage" total-items="modules.length" ng-model="modulesTableCurrentPage" items-per-page="modulesTableItemsPerPage"></pager>
         </div>
       </div>
     </div>
@@ -71,7 +72,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="theme in themes">
+              <tr ng-repeat="theme in themes.slice(((themesTableCurrentPage-1)*themesTableItemsPerPage), ((themesTableCurrentPage)*themesTableItemsPerPage))">
                 <td>{{theme.name}}</td>
                 <td>{{theme.description}}</td>
                 <td>
@@ -82,6 +83,7 @@
               </tr>
             </tbody>
           </table>
+          <pager ng-hide="themes.length <= themesTableItemsPerPage" total-items="themes.length" ng-model="themesTableCurrentPage" items-per-page="themesTableItemsPerPage"></pager>
         </div>
       </div>
     </div>

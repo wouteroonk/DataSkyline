@@ -37,8 +37,8 @@
 
                 <!-- Select view -->
 
-                <div class="btn-group" role="group">
-                  <div class="btn-group" role="group">
+                <div class="{{thisScreenWinInf.views.length !== 0 ? 'btn-group' : ''}}" role="group">
+                  <div class="btn-group" role="group" ng-hide="thisScreenWinInf.views.length === 0">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       {{thisScreenWinInf.views[selectedViewPos].viewName}}
                       <span class="caret"></span>
