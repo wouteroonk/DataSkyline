@@ -1,6 +1,6 @@
 {
-	"moduleName":"Twitter Module",
-	"moduleDescription":"Displays Tweets by various users",
-	"moduleDeveloper":"Donald Trump",
-	"moduleLicense":"None defined"
+	"moduleName":"Twitter Test Module",
+	"moduleDescription":"Simulates various types of Twitter feeds.",
+	"moduleDeveloper":"Steyn Potze",
+	"moduleLicense":"WTFPLv2"
 }

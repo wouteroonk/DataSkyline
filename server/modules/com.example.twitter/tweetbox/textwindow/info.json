@@ -1,5 +1,5 @@
 {
 	"windowName":"Text Window",
-	"windowDescription":"Display Twitter profile avatar",
+	"windowDescription":"Display the textual part of a tweet",
 	"windowHtmlReference":"com.example.twitter/tweetbox/textwindow/text.html"
 }

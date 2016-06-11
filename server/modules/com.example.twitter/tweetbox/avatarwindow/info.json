@@ -1,5 +1,5 @@
 {
 	"windowName":"Avatar Window",
-	"windowDescription":"Display Twitter profile avatar",
+	"windowDescription":"Displays the profile image of the tweets author.",
 	"windowHtmlReference":"com.example.twitter/tweetbox/avatarwindow/avatar.html"
 }

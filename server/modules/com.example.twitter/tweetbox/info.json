@@ -1,5 +1,5 @@
 {
-	"viewName":"Avatar View",
-	"viewDescription":"Display Twitter profile avatar (Circle)",
+	"viewName":"Tweetbox View",
+	"viewDescription":"Displays a single tweet by a specified user.",
 	"viewJavascriptReference":"com.example.twitter/tweetbox/tb.js"
 }
