@@ -39,9 +39,19 @@
 
                 <div class="btn-group" role="group">
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      {{thisScreenWinInf.views[selectedViewPos].viewName}}
-                      <span class="caret"></span>
+                    <!-- Dropdown with view instances -->
+                    <!-- Should only be enabled if any view instances are present -->
+                    <!-- Otherwise, instruct user -->
+                    <button
+                      type="button"
+                      class="btn btn-default"
+                      ng-class="{dropdown-toggle: thisScreenWinInf.views.length > 0}"
+                      ng-disabled="thisScreenWinInf.views.length === 0"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false">
+                      {{thisScreenWinInf.views.length === 0 ? "No view instances configured for this screen" : thisScreenWinInf.views[selectedViewPos].viewName}}
+                      <span ng-hide="thisScreenWinInf.views.length === 0" class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
                       <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>

@@ -113,3 +113,12 @@ notification-center strong {
   cursor: inherit;
   display: block;
 }
+
+/* Pager */
+.pager li>a{
+  background-color: #18bc9c;
+}
+
+.pager .disabled>a{
+  background-color: #ecf0f1 !important;
+}

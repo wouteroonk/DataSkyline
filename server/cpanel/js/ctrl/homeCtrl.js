@@ -8,6 +8,16 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   $scope.themes = [];
   $scope.modules = [];
+
+  // Pagination for tables
+  // modules
+  $scope.modulesTableItemsPerPage = 5;
+  $scope.modulesTableCurrentPage = 1;
+
+  // themes
+  $scope.themesTableItemsPerPage = 5;
+  $scope.themesTableCurrentPage = 1;
+
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
