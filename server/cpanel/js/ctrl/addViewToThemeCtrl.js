@@ -1,3 +1,9 @@
+/**
+  Created by Steyn Potze on 2016-06-10
+  An instance of this controller is always coupled to an "add view to theme" modal.
+  As the name says, this controller contains functionallity for a view instance  to a theme.
+  It also subscribes to the websocket connection to get a list of modules and their views.
+*/
 dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance, dscmsWebSocket) {
   $scope.newView = {};
 

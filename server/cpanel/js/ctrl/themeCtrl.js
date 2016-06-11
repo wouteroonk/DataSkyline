@@ -1,3 +1,9 @@
+/**
+  Created by Steyn Potze on 2016-06-07
+  This controller is linked to the edit theme or "/theme/x" page and gets theme
+  information from the server. The controller is very large and should probably
+  be split up. But eh...
+*/
 dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter) {
   $scope.pageClass = "dscms-page-theme";
 
@@ -114,6 +120,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     for (var j = 0; j < allViewWindows.length; j++) {
       var thisWindow = allViewWindows[j];
       // Grab the associated bare window and color it
+      // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
       $.grep($scope.previewConfig.windows, function(e){
         // We shouldn't do anything if this window is already orange
         if (alreadyOrange.indexOf(e.id) !== -1) return;
@@ -130,10 +137,11 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
 
   // Fill windows with views based on windowinfo message
   function addWindowsToPreview(windowinfo) {
-    // Ahh, copying objects...
+    // Ahh, copying objects... (need to use angular.toJson to strip angular attrs)
     $scope.thisScreenWinInf = JSON.parse(angular.toJson(windowinfo));
     $scope.thisScreenWinInfBackup = JSON.parse(angular.toJson(windowinfo));
 
+    // If there is a view for this screen, select it
     if ($scope.thisScreenWinInf.views.length > 0) $scope.selectedViewPos = 0;
     showSelectedViewInPreview();
     $scope.$apply();
@@ -147,6 +155,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     if ($scope.thisScreenWinInf.views.length === 0) return;
     for (var j = 0; j < $scope.thisScreenWinInf.views[$scope.selectedViewPos].windows.length; j++) {
       var thisWindow = $scope.thisScreenWinInf.views[$scope.selectedViewPos].windows[j];
+      // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
       $.grep($scope.previewConfig.windows, function(e){
         if (e.id == thisWindow.dsWindow)
           e.hue = "#3149E2";
@@ -177,9 +186,9 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
 
       // Set the hue for an empty window
       miniWindow.hue = "#3DCD95";
+      // TODO: We need preview images (server side)
 
-      // On click
-      // TODO: Make this do something (e.g. select window for view)
+      // On click, check if a window needs replacing. If so, replace it with clicked window.
       miniWindow.onClick = function (element, id) {
         if ($scope.windowIdToReplace === null) return;
 
@@ -189,6 +198,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
         for (var i = 0; i < $scope.thisScreenWinInf.views.length; i++)
           allViewWindows = allViewWindows.concat($scope.thisScreenWinInf.views[i].windows);
 
+        // Loop through all windows and check if occupied
         var shouldContinue = true;
         $.grep(allViewWindows, function(e) {
           if (e.dsWindow === id) {
@@ -211,6 +221,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
         });
       };
 
+      // Add the created window to the miniscreen configuration object
       miniScreenConf.windows.push(miniWindow);
     }
     $scope.previewConfig = miniScreenConf;
@@ -223,14 +234,16 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
   // Scope functions (mainly executed via ng-click)
   // =========================
 
+  // Select another view
   $scope.changeSelectedView = function(v) {
     $scope.thisScreenWinInf.views.forEach(function(e, i) {
       if (e === v) $scope.selectedViewPos = i;
     });
   };
 
+  // Select another screen
   $scope.changeSelectedScreen = function(s) {
-
+    // Warn the user when changes have not been saved
     if (angular.toJson($scope.thisScreenWinInf) !== angular.toJson($scope.thisScreenWinInfBackup)) {
       swal(
         {
@@ -242,6 +255,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
           confirmButtonText: "Continue anyway",
           closeOnConfirm: true
         }, function(isConfirm) {
+          // If the user still wants to change screens, do it
           if (isConfirm) {
             $scope.screens.forEach(function(e, i) {
               if (e === s) $scope.selectedScreenPos = i;
@@ -250,16 +264,42 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
           }
         });
     } else {
+      // When there are no changes, just change screens
       $scope.screens.forEach(function(e, i) {
         if (e === s) $scope.selectedScreenPos = i;
       });
     }
   };
 
+  // Cancel theme edit (go back to home)
   $scope.cancelEdit = function() {
-    $location.path('/');
+    // Warn the user when changes have not been saved
+    if (angular.toJson($scope.thisScreenWinInf) !== angular.toJson($scope.thisScreenWinInfBackup)) {
+      swal(
+        {
+          title: "Are you sure?",
+          text: "You have unsaved changes. Canceling will discard them.",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Cancel anyway",
+          closeOnConfirm: true
+        }, function(isConfirm) {
+          // If the user still wants to go to home page, do it
+          if (isConfirm) {
+            $location.path('/');
+            $scope.$apply();
+          }
+        });
+    } else {
+      // When there are no changes, just go to home
+      $location.path('/');
+    }
   };
 
+  // Save the edits for the selected screen and themeName
+  // TODO: This needs server side implementation
+  // NOTE: Object sent to server is fully compatible with windowinfo message
   $scope.saveEdit = function() {
     dscmsWebSocket.sendServerMessage(
       "updatetheme " +
@@ -267,14 +307,18 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
+    // TODO: Remove this when server is ready
     dscmsNotificationCenter.warning("Sorry!", "This feature is not yet implemented.", 2000);
   };
 
+  // Set the windowIdToReplace variable to change window for a view
+  // Also, give user instructions
   $scope.startWindowReplace = function(win) {
     dscmsNotificationCenter.info("", "Click on a green window placeholder in the mini preview to move \"" + win.name + "\".", 3000);
     $scope.windowIdToReplace = win.dsWindow;
   };
 
+  // Check if the selected view has configurable options
   $scope.hasViewGotConfig = function(v) {
     if (v === undefined) return false;
     if (
@@ -288,6 +332,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     return true;
   };
 
+  // Instantiate an add view modal
   $scope.openAddViewModal = function() {
     var modalInstance = $modal.open({
       templateUrl: 'cpanel/modals/addViewToTheme.html',
@@ -297,8 +342,9 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       }
     });
 
+    // Modal will probably return view object. Add it to windowinfo and reload preview
     modalInstance.result.then(function() {
-      // TODO: Refresh theme list
+      // TODO: Wait for modal implementation and respond to view added
     });
   };
 

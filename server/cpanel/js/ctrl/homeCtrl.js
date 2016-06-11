@@ -1,3 +1,8 @@
+/**
+  Created by Hugo van der Geest and Viradj Jainandunsing on ???
+  This controller loads various items on the home page, such as a list of modules
+  and a list of themes. It also instantiates the module upload and theme creation modals.
+*/
 dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location, $modal) {
   $scope.pageClass = "dscms-page-home";
 

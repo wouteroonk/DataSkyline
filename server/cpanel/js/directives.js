@@ -16,6 +16,8 @@ dscms.app.directive('miniSkylineScreen', function() {
   };
 });
 
+// This directive executes some code specified in its attribute if the
+// enter key is pressed when the element ng-enter has been applied to is in focus.
 dscms.app.directive('ngEnter', function () {
     return function (scope, element, attrs) {
         element.bind("keydown keypress", function (event) {

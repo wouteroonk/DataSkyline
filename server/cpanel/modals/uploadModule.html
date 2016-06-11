@@ -1,15 +1,15 @@
 <div class="modal-header">
-  <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <h4 class="modal-title">Upload module</h4>
+    <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Upload module</h4>
 </div>
 <div class="modal-body">
-  <label class="btn btn-default btn-block btn-lg btn-file">
-    {{selectedFileName === null ? "Click to select zip file..." : "\"" + selectedFileName + "\" selected (" + selectedFileSizeHR + ")"}}
-    <input type="file" onchange="angular.element(this).scope().fileSelected()" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" id="module-upload-file-input" />
+    <label class="btn btn-default btn-block btn-lg btn-file">
+        {{selectedFileName === null ? "Click to select zip file..." : "\"" + selectedFileName + "\" selected (" + selectedFileSizeHR + ")"}}
+        <input type="file" onchange="angular.element(this).scope().fileSelected()" accept=".zip,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed" id="module-upload-file-input" />
 
-  </label>
+    </label>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-  <button ng-click="uploadModule()" type="button" class="btn btn-success">Upload</button>
+    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+    <button ng-click="uploadModule()" type="button" class="btn btn-success">Upload</button>
 </div>

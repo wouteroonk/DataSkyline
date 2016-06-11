@@ -1,15 +1,25 @@
+/**
+  Created by Hugo van der Geest and Steyn Potze on 2016-06-10
+  This controller is linked to the module upload modal and can upload a zip file
+  to the server.
+*/
 dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInstance, dscmsWebSocket) {
 
     $scope.selectedFileName = null;
     $scope.selectedFileSize = null;
     $scope.selectedFileSizeHR = null;
 
+    // Executed from ng-click on "upload" button
     $scope.uploadModule = function() {
+        // Get the file from the file input
         var file = $('#module-upload-file-input')[0].files[0];
 
+        // "Convert" file to formdata format so that the server can read it
         var fd = new FormData();
         fd.append("file", file);
 
+        // Post the file to the server
+        // TODO: Make a specific endpoint for this
         $http.post("/", fd, {
             withCredentials: true,
             headers: {
@@ -17,19 +27,23 @@ dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInst
             },
             transformRequest: angular.identity
         }).success(function(res) {
-            console.log(":)");
-            console.dir(res);
+            // TODO: Do something on success?
         }).error(function() {
-            console.log(":(");
+            // TODO: Show error?
         });
 
         $modalInstance.close();
     };
 
+    // Executed from ng-click on "cancel" and "close modal" buttons
     $scope.cancel = function() {
         $modalInstance.dismiss('cancel');
     };
 
+    // Executed from onchange on file input
+    // When a new file is selected, update file info parameters.
+    // If file info parameters are available, they are shown on screen. If not,
+    // the user will see something like "Click here to upload zip..."
     $scope.fileSelected = function() {
         $scope.selectedFileName = $('#module-upload-file-input')[0].files[0].name;
         $scope.selectedFileSize = $('#module-upload-file-input')[0].files[0].size;
@@ -37,6 +51,8 @@ dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInst
         $scope.$apply();
     };
 
+    // This helper function converts bytes to a human readable format,
+    // e.g. 19891213 becomes 19.9 MB
     function humanFileSize(bytes, si) {
         var thresh = si ? 1000 : 1024;
         if (Math.abs(bytes) < thresh) {

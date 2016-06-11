@@ -131,6 +131,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   return functions;
 });
 
+// The notification center is a shell around Bootstrap Notify
 dscms.app.factory('dscmsNotificationCenter', function($timeout) {
   var functions = {};
 

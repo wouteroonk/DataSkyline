@@ -1,3 +1,10 @@
+/**
+  Created by Steyn Potze on 2016-06-10
+  An instance of this controller is always coupled to the big Skyline preview on the home page.
+  This controller creates previews for all available Dataskyline screens for the current theme.
+  Using this feature, the user is able to see what the Dataskyline is showing,
+  without being on location.
+*/
 dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket) {
 
   $scope.screens = [];
@@ -16,7 +23,7 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket)
           console.dir(message);
           return;
         }
-        
+
         break;
       // Getscreens message for getting the screens and their description
       case "getscreens":
