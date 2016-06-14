@@ -75,10 +75,15 @@
               <tr ng-repeat="theme in themes.slice(((themesTableCurrentPage-1)*themesTableItemsPerPage), ((themesTableCurrentPage)*themesTableItemsPerPage))">
                 <td>{{theme.name}}</td>
                 <td>{{theme.description}}</td>
-                <td>
-                  <button ng-click="editTheme(theme)" type="button" class="btn btn-xs btn-primary pull-right">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                  </button>
+								<td>
+                  <div class="btn-group pull-right" data-toggle="buttons">
+                    <button ng-click="editTheme(theme)" type="button" class="btn btn-xs btn-primary">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button ng-click="deleteTheme(theme)" type="button" class="btn btn-xs btn-danger">
+                      <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
