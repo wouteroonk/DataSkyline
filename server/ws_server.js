@@ -255,6 +255,12 @@ wsServer.on('request', function(request) {
       case "getscreens" :
           connection.send("getscreens " + JSON.stringify(getScreenList()));
             break;
+      case "updatewindowinfo" :
+            var theme = data.shift();
+            var ip = data.shift();
+            var windowinfo = arrayToString(data); //TODO: Change this so it'll properly read JSON
+            updateWindowInfo(theme, ip, windowinfo);
+            break;
       // Should not get here (client error)
       default:
           console.error("This message doesn't exist?");
@@ -441,6 +447,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
             "instanceName": themes[i].screenViews[j].instanceName,
+            "instanceID": themes[i].screenViews[j].instanceID,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
             "windows": windowinfo
@@ -471,6 +478,7 @@ function allWindows(jsonSC, jsonfile) {
 
     if(screenjson === undefined) continue;
     var obj = {
+      "componentID": jsonSC.screenComponents[i].componentID ,
       "name": windowjson.windowName,
       "type": screenjson.windowShape,
       "pixelWidth": screenjson.windowPixelWidth,
@@ -794,6 +802,65 @@ function updateCurrentTheme(themename) {
   console.error(themename + " does not exist");
   // return false if theme does not exist
   return false;
+}
+
+function updateWindowInfo(themename, ip, windowinfo) {
+  // Pre-information loading
+  var config = getJSONfromPath("config.json");
+  var themes = config.themes;
+  var screens = config.screens;
+
+  var correctTheme = undefined;
+  var correctScreen = undefined;
+
+  for(var i = 0 ; i < themes.length; i++) {
+    if(themes[i].themeName === themename) {
+      correctTheme = themes[i];
+    }
+  }
+  if(correctTheme === undefined) {
+    console.error("Theme is undefined");
+    return false;
+  }
+
+  for(var i = 0 ; i < screens.length ; i++){
+    if(screens[i].screenAddress === ip) {
+      correctScreen = screens[i];
+    }
+  }
+  if(correctScreen === undefined) {
+    console.error("Screen is undefined");
+    return false;
+  }
+  // Pre-information loading finished
+
+  var configViews = correctTheme.screenViews;
+  var infoViews = windowinfo.views;
+
+  // update Views in JSON
+  var found = false;
+  for(var i = 0; i < configViews.length ; i++){
+    for(var j = 0 ; j < infoViews.length ; j++){
+      if(configViews[i].instanceID === infoViews[j].instanceID) {
+        found = true;
+        configViews[i].instanceName = infoViews[j].instanceName;
+        for(var k = 0 ; k < configViews[i].screenComponents.length ; k++){
+          for(var l = 0 ; l < infoViews[j].windows.length ; l++){
+            if(configViews[i].screenComponents[k].componentID === infoViews[j].windows[k].componentID){
+              configViews[i].screenComponents[k].dsWindow = infoViews[j].windows[k].dsWindow;
+            }
+          }
+        }
+      }
+    }
+  }
+  if(!found) {
+    console.error("View instance add function not implemented yet, returning FALSE!");
+    // Er is een view toegevoegd
+    return false;
+  }
+  console.log("View instance Edit succesful");
+  return true;
 }
 
 //TODO: rename this method (returnModuleList)

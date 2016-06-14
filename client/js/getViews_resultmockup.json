@@ -5,11 +5,14 @@
   "views": [
     {
       "viewName": "",
+	  "instanceName":"",
+	  "instanceID":1,
       "parentModule": "parking spaces",
       "managerUrl": "com.steynpotze.twitter/parking/js/parking.js",
       "windows": [
         {
-          "name": "garageLogo",
+		  "componentID":1,
+          "name": "garageLogo ",
           "type": "elipse",
           "pixelWidth": 200,
           "pixelHeight": 200,
@@ -19,12 +22,14 @@
           "htmlUrl": "logoshower.html"
         },
         {
+		  "componentID":2,
           "name": "availability",
           "type": "rectangle",
           "pixelWidth": 500,
           "pixelHeight": 200,
           "coordX":10,
           "coordY":10,
+          "dsWindow":1.1,
           "htmlUrl": "availability.html"
         }
       ]
