@@ -136,6 +136,26 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         }
       });
   };
+	
+	// Delete a module (first ask for confirmation)
+  $scope.deleteTheme = function(theme) {
+    // Ask for confirmation
+    swal(
+      {
+        title: "Are you sure?",
+        text: "This will delete \"" + theme.name + "\" forever.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Delete",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        // Tell server to delete module if confirmed
+        if (isConfirm) {
+          dscmsWebSocket.sendServerMessage("removetheme " + theme.name);
+        }
+      });
+  };
 
   // Go to the edit page for the selected theme
   $scope.editTheme = function(theme) {
