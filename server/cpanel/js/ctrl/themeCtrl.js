@@ -350,4 +350,14 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     });
   };
 
+  // =========================
+  // Tooltips
+  // =========================
+
+  $('[data-toggle="general-tooltip"]').tooltip({
+    'selector': '',
+    'placement': 'top',
+    'container':'body'
+  });
+
 });
