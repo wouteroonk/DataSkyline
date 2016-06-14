@@ -259,7 +259,11 @@ wsServer.on('request', function(request) {
             var theme = data.shift();
             var ip = data.shift();
             var windowinfo = arrayToString(data); //TODO: Change this so it'll properly read JSON
-            updateWindowInfo(theme, ip, windowinfo);
+            if(updateWindowInfo(theme, ip, windowinfo)) {
+              connection.send("updatewindowinfo " + "200");
+            } else {
+              connection.send("updatewindowinfo " + "400");
+            };
             break;
       // Should not get here (client error)
       default:
