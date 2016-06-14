@@ -302,8 +302,10 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
   // NOTE: Object sent to server is fully compatible with windowinfo message
   $scope.saveEdit = function() {
     dscmsWebSocket.sendServerMessage(
-      "updatetheme " +
+      "updatewindowinfo " +
       $scope.themeName +
+      " " +
+      $scope.screens[$scope.selectedScreenPos].screenAddress +
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
