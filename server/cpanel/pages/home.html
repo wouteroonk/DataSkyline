@@ -22,8 +22,11 @@
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
           <h3 class="panel-title-with-button panel-title pull-left">Modules</h3>
-          <button type="button" class="btn btn-default pull-right" ng-click="openUploadModuleModal()"><span class="glyphicon glyphicon-plus"></span>
-          </button>
+
+          <div class="pull-right" data-toggle="buttons">
+          <button type="button" class="btn btn-link" ><span class="glyphicon glyphicon-question-sign"></span>
+          <button type="button" class="btn btn-default" ng-click="openUploadModuleModal()"><span class="glyphicon glyphicon-plus"></span></button>
+          </div>
         </div>
         <div class="panel-body">
           <table class="table table-striped">
@@ -59,7 +62,10 @@
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
           <h3 class="panel-title-with-button panel-title pull-left">Themes</h3>
+          <div class="pull-right" data-toggle="buttons">
+            <button type="button" class="btn btn-link"><span class="glyphicon glyphicon-question-sign"></span>
           <button type="button" class="btn btn-default pull-right" ng-click="openAddThemeModal()"><span class="glyphicon glyphicon-plus"></span>
+          </div>
           </button>
         </div>
         <div class="panel-body">
