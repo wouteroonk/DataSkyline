@@ -142,9 +142,14 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
     }, {
       type: "info",
       animate: {
-        enter: 'animated fadeInDown',
-        exit: 'animated fadeOutUp'
+        enter: 'animated fadeInUp',
+        exit: 'animated fadeOutRight'
       },
+      placement: {
+        align: "right",
+        from: "bottom"
+      },
+      z_index: 9999,
       delay: newDuration
     });
   };
@@ -157,8 +162,13 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
       type: "success",
       animate: {
         enter: 'animated bounceIn',
-        exit: 'animated fadeOutUp'
+        exit: 'animated fadeOutRight'
       },
+      placement: {
+        align: "right",
+        from: "bottom"
+      },
+      z_index: 9999,
       delay: newDuration
     });
   };
@@ -171,8 +181,13 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
       type: "warning",
       animate: {
         enter: 'animated shake',
-        exit: 'animated fadeOutUp'
+        exit: 'animated fadeOutRight'
       },
+      placement: {
+        align: "right",
+        from: "bottom"
+      },
+      z_index: 9999,
       delay: newDuration
     });
   };
@@ -185,8 +200,13 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
       type: "danger",
       animate: {
         enter: 'animated tada',
-        exit: 'animated fadeOutUp'
+        exit: 'animated fadeOutRight'
       },
+      placement: {
+        align: "right",
+        from: "bottom"
+      },
+      z_index: 9999,
       delay: newDuration
     });
   };
