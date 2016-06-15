@@ -864,6 +864,7 @@ function updateWindowInfo(themename, ip, windowinfo) {
     return false;
   }
   console.log("View instance Edit succesful");
+  turnJSONIntoFile(config,"test.json");
   return true;
 }
 
