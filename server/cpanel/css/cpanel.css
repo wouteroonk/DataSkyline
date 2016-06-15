@@ -131,3 +131,7 @@ notification-center strong {
 .pager .disabled>a{
   background-color: #ecf0f1 !important;
 }
+
+.dscms-nav-doc {
+  position: fixed;
+}
