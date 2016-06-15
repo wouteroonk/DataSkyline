@@ -52,7 +52,10 @@ dscms.app.controller('dscmsAddThemeCtrl', function($scope, $modalInstance, dscms
   // Prevent user from entering space character (replace space with "-")
   $scope.nameKeydown = function(e) {
     if (e.keyCode == 32) {
-      $scope.newThemeName += "-"; // append '-' to input
+      var maxLength = document.getElementById("newThemeNameInput").maxLength;
+      if($scope.newThemeName.length < maxLength){
+        $scope.newThemeName += "-"; // append '-' to input
+      }
       e.preventDefault();
     }
   };
