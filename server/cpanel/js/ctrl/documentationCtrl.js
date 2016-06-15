@@ -1,8 +1,26 @@
 /**
   Created by Wouter Oonk
 */
-dscms.app.controller('dscmsDocumentationCtrl', function($scope, dscmsWebSocket) {
+
+// $rootScope, $location, $anchorScroll, $routeParams
+dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, $anchorScroll, $routeParams, dscmsWebSocket) {
     $scope.pageClass = "dscms-page-documentation";
+
+    $scope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
+        // if ($location.hash()) {
+//         console.log($location.hash());
+//         // $location.hash("dscms-themes");
+//
+// console.dir($location);
+
+      $scope.gotoId($location.hash());
+
+        // $anchorScroll();
+        // }
+    });
+
+
+
 
     $scope.gotoId = function(eID) {
 
@@ -13,7 +31,8 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, dscmsWebSocket) 
         var stopY = elmYPosition(eID);
         var distance = stopY > startY ? stopY - startY : startY - stopY;
         if (distance < 100) {
-            scrollTo(0, stopY); return;
+            scrollTo(0, stopY);
+            return;
         }
         var speed = Math.round(distance / 100);
         if (speed >= 20) speed = 20;
@@ -21,14 +40,19 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, dscmsWebSocket) 
         var leapY = stopY > startY ? startY + step : startY - step;
         var timer = 0;
         if (stopY > startY) {
-            for ( var i=startY; i<stopY; i+=step ) {
-                setTimeout("window.scrollTo(0, "+leapY+")", timer * speed);
-                leapY += step; if (leapY > stopY) leapY = stopY; timer++;
-            } return;
+            for (var i = startY; i < stopY; i += step) {
+                setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+                leapY += step;
+                if (leapY > stopY) leapY = stopY;
+                timer++;
+            }
+            return;
         }
-        for ( var j=startY; j>stopY; j-=step ) {
-            setTimeout("window.scrollTo(0, "+leapY+")", timer * speed);
-            leapY -= step; if (leapY < stopY) leapY = stopY; timer++;
+        for (var j = startY; j > stopY; j -= step) {
+            setTimeout("window.scrollTo(0, " + leapY + ")", timer * speed);
+            leapY -= step;
+            if (leapY < stopY) leapY = stopY;
+            timer++;
         }
 
         function currentYPosition() {
@@ -49,9 +73,9 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, dscmsWebSocket) 
             while (node.offsetParent && node.offsetParent != document.body) {
                 node = node.offsetParent;
                 y += node.offsetTop;
-            } return y;
+            }
+            return y;
         }
 
     };
-
 });
