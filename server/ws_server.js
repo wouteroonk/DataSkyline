@@ -192,7 +192,7 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = arrayToString(data); //TODO: Change this so it'll properly read JSON
+          var returnedJSON = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
             sendSkylineUpdate("addview");
@@ -203,7 +203,7 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = arrayToString(data); //TODO: Change this so it'll function like the others (it actually works this way)
+          var themedescription = data.join(" "); //TODO: Change this so it'll function like the others (it actually works this way)
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
             sendSkylineUpdate("addtheme");
@@ -263,7 +263,7 @@ wsServer.on('request', function(request) {
       case "updatewindowinfo" :
             var theme = data.shift();
             var ip = data.shift();
-            var windowinfo = arrayToString(data); //TODO: Change this so it'll properly read JSON
+            var windowinfo = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
             if(updateWindowInfo(theme, ip, windowinfo)) {
               connection.send("updatewindowinfo " + "200");
             } else {
