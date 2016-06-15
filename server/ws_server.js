@@ -1026,7 +1026,6 @@ function getModuleInformation(directory, callback) {
           "viewName":viewinfo.viewName,
           "viewDescription":viewinfo.viewDescription,
           "viewJavascriptReference":viewinfo.viewJavascriptReference
-          ""
         };
       } catch(e) {
         // unimportant directory!
