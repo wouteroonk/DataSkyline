@@ -47,7 +47,12 @@ var server = http.createServer(function(request, response) {
   if (request.method == 'POST') {
     //for now there is no check for which path, it is assumed that all post requests are module uploads.
     // TODO: Fix this
-    handleModuleUpload(request, response);
+    if(filteredUrl === '/uploadmodule'){
+      handleModuleUpload(request, response);
+    } else {
+      console.log("Unhandled POST request");
+    }
+
   }
   // Serve control panel when root is accessed
   else if (filteredUrl === '/') {
@@ -173,10 +178,13 @@ wsServer.on('request', function(request) {
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
+          console.log("specifictheme in top part: "+ specifictheme);
           if(specifictheme === undefined) {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING UNDEFINED");
           } else {
-            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress, specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING DEFINED");
           }
           break;
       // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
@@ -187,7 +195,7 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = arrayToString(data); //TODO: Change this so it'll properly read JSON
+          var returnedJSON = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
             sendSkylineUpdate("addview");
@@ -198,7 +206,7 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = arrayToString(data); //TODO: Change this so it'll function like the others (it actually works this way)
+          var themedescription = data.join(" "); //TODO: Change this so it'll function like the others (it actually works this way)
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
             sendSkylineUpdate("addtheme");
@@ -258,7 +266,7 @@ wsServer.on('request', function(request) {
       case "updatewindowinfo" :
             var theme = data.shift();
             var ip = data.shift();
-            var windowinfo = arrayToString(data); //TODO: Change this so it'll properly read JSON
+            var windowinfo = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
             if(updateWindowInfo(theme, ip, windowinfo)) {
               connection.send("updatewindowinfo " + "200");
             } else {
@@ -297,7 +305,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   })[0];
   // Guard to make sure IP was in list
   if (json === undefined) return false;
-  var windowinfoJSON = getWindowInfoForScreenConfig(json);
+  var windowinfoJSON = getWindowInfoForScreenConfig(json,theme);
   client.send("windowinfo " + JSON.stringify(windowinfoJSON));
   return true;
 }
@@ -426,6 +434,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   var results = [];
   for (var i = 0; i < themes.length; i++) {
     if(specifictheme === undefined){
+      console.log("----------------- current Theme!");
       if(themes[i].themeName === selectedTheme){
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
@@ -443,6 +452,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
       }
     } else {
       if(themes[i].themeName === specifictheme){
+        console.log("----------------- Specific Theme!");
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
@@ -507,7 +517,12 @@ function handleModuleUpload(req, res) {
   upload(req, res, function(err) {
     if (err) {
       //emptyTmp(fileName);
-      notifyUser("an error occured while uploading the file, please try again! Error-Code: UP01", res);
+      console.log(err);
+      res.end("an error occured while uploading the file, please try again! Error-Code: UP01");
+      return;
+    }
+    if(!req.file){
+      console.log("req.file is undefined.");
       return;
     }
     unzipFile(req.file.filename, res);
@@ -531,7 +546,7 @@ var storage = multer.diskStorage({
 });
 var upload = multer({
   storage: storage
-}).single('new-module');
+}).single('file');
 
 
 //unzips a zip file to tmp folder.
@@ -547,7 +562,7 @@ function unzipFile(fileName, res) {
   if (splitFileName[splitFileName.length - 1] != 'zip') {
     //the file uploaded is not a zip file.
     removeFile(fromPath);
-    notifyUser(splitFileName[splitFileName.length - 1] + ' type is not supported, only zip type files are currently supported(see documentation' + ' for more information).', res);
+    res.end(splitFileName[splitFileName.length - 1] + ' type is not supported, only zip type files are currently supported(see documentation' + ' for more information).');
     return;
   }
   //the file is a zip
@@ -555,7 +570,7 @@ function unzipFile(fileName, res) {
   mkdirp(dir, function(err) {
     if (err) {
       console.log(err);
-      notifyUser("an error occured while uploading the file, please try again! Error-code: UP02", res);
+      res.end("An error occured while uploading the file, please try again! Error-code: UP02");
     } else {
       simpleUnzip(fromPath, dir);
       removeFile(fromPath); // removes the zip file.
@@ -563,6 +578,31 @@ function unzipFile(fileName, res) {
     }
   });
 }
+
+//validate the Info.json file.
+function validateInfoJson(pathToFile, err){
+  assert.notEqual(pathToFile, "", "pathToFile can't be empty");
+  assert.notEqual(pathToFile, undefined, "pathToFile can't be undefined");
+  console.log(pathToFile);
+  var info = getJSONfromPath(pathToFile+"info.json");
+  if(info){
+    if(!info.moduleName || !info.moduleDeveloper){
+       return err("The moduleName and moduleDeveloper are required in the info.json of the module.");
+    }
+    sendModuleList(function(json){
+      var list = json.modules;
+      for(var i = 0; i < list.length; i++){
+        if(list[i].moduleName == info.moduleName){
+          return err("The module name '"+ info.moduleName +"' already exists, consider changing the moduleName in the info.json.");
+        }
+      }
+      return err(undefined);
+    });
+  } else {
+    return err("The module doesn't have a info json file, this file is required. Make sure it's located in the right place.");
+  }
+}
+
 //validates a module for a given path
 function validateModule(pathToModule, res) {
   assert.notEqual(pathToModule, "", "pathToModule can't be empty");
@@ -573,12 +613,12 @@ function validateModule(pathToModule, res) {
   fs.readdir(pathToModule, function(err, files) {
     if (err) {
       console.log(err);
-      notifyUser("An error occured while uploading the file, please try again! Error-code: UP03", res);
+      res.end("An error occured while uploading the file, please try again! Error-code: UP03");
       return;
     }
-    //Checks to see if it is a valid module
+    //Checks to see if it the module is in one top folder.
     if (files.length != 1) {
-      console.log("Error invalid module structure: files are not in the same folder");
+      console.log("Error invalid module structure: files are not in the same folder.");
       removeDir(pathToModule, function(success) {
         if(success) {
           console.log("removeDir Success");
@@ -586,33 +626,64 @@ function validateModule(pathToModule, res) {
           console.error("removeDir Failed");
         }
       });
-      notifyUser("Error the structure of the module is not valid, the top level of the archive can only contain one folder (and no files)." + "See the documentation for more information.", res);
+      res.end("Error the structure of the module is not valid, the top level of the archive can only contain one folder (and no files)." + "See the documentation for more information.");
       return;
     }
-    //check to see if the module already exists in the system
-    fs.stat('modules/' + files[0], function(err, stats) {
-      if (err) {
-        //succes module doesnt exist.
-        fs.rename(pathToModule + '/' + files[0], 'modules/' + files[0], function(err) { //optionnaly change to name in info.json
-          if (err) {
-            console.log(err);
-            notifyUser("An error has occured while uploading your module. Error-code: UP04", res);
-
+    //check the info json of the module..
+    validateInfoJson(pathToModule+"/"+files[0]+"/", function(err){
+      if(err){
+        console.log("Error in info.json");
+        res.end(err);
+        removeDir(pathToModule,  function(success) {
+          if(success) {
+            console.log("removeDir Success");
           } else {
-            //module is added to the system
-            notifyUser("The module: " + files[0] + " is added to the system and ready for use.", res);
+            console.error("removeDir Failed");
           }
-          removeDir(pathToModule); //remove the leftover files from the tmp folder.
-
         });
         return;
       }
+      //check to see if the module folder already exists in the system.
+      fs.stat('modules/' + files[0], function(err, stats) {
+        if (err) {
+          //succes module doesnt exist.
+          fs.rename(pathToModule + '/' + files[0], 'modules/' + files[0], function(err) { //optionnaly change to name in info.json
+            if (err) {
+              console.log(err);
+              res.end("An error has occured while uploading your module. Error-code: UP04");
 
-      console.log("module already exists!");
-      removeDir(pathToModule);
-      notifyUser("A module with this name already exists, consider re-naming this module or removing the existing module.", res);
+            } else {
+              //module is added to the system
+              res.end("200");
+              sendSkylineUpdateCpanel();
+            }
+            removeDir(pathToModule,  function(success) {
+              if(success) {
+                console.log("removeDir Success");
+              } else {
+                console.error("removeDir Failed");
+              }
+            }); //remove the leftover files from the tmp folder.
+
+          });
+          return;
+        }
+
+        console.log("module folder name already exists!");
+        removeDir(pathToModule, function(success) {
+          if(success) {
+            console.log("removeDir Success");
+          } else {
+            console.error("removeDir Failed");
+          }
+        });
+        res.end("A module with the folder name "+ files[0] +" already exists, consider renaming the folder with the contents of the module.");
+
+      });
 
     });
+
+
   });
 }
 //unzips a zip file to a given path.
@@ -650,11 +721,6 @@ function removeDir(path, callback) {
     console.log('all files are removed');
     return callback(true);
   });
-}
-
-//sends a respond to a user.
-function notifyUser(message, res) {
-  res.end("<script>alert('" + message + "'); window.location = '/';</script>");
 }
 
 // TODO: Send update to Cpanel and Touch interface (Or everyone)
@@ -842,9 +908,15 @@ function updateWindowInfo(themename, ip, windowinfo) {
   var infoViews = windowinfo.views;
 
   // update Views in JSON
+  console.log("Correct Theme JSON:");
+  console.dir(correctTheme);
+
   var found = false;
   for(var i = 0; i < configViews.length ; i++){
     for(var j = 0 ; j < infoViews.length ; j++){
+      console.log("Config ID: "+configViews[i].instanceID);
+      console.log("Config ID: "+infoViews[j].instanceID);
+      console.log("---");
       if(configViews[i].instanceID === infoViews[j].instanceID) {
         found = true;
         configViews[i].instanceName = infoViews[j].instanceName;
@@ -864,6 +936,7 @@ function updateWindowInfo(themename, ip, windowinfo) {
     return false;
   }
   console.log("View instance Edit succesful");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
@@ -940,6 +1013,53 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+getModuleInformation("com.example.twitter", function(obj) {
+  console.dir(obj);
+});
+function getModuleInformation(directory, callback) {
+  readDirectories("modules/"+directory, function(viewdirs) {
+    var obj = {};
+    for(var i = 0 ; i < viewdirs.length ; i++) {
+      try{
+        var viewinfo = require("./modules/"+directory+"/"+viewdirs[i]+"/info.json");
+        obj = {
+          "viewName":viewinfo.viewName,
+          "viewDescription":viewinfo.viewDescription,
+          "viewJavascriptReference":viewinfo.viewJavascriptReference
+        };
+      } catch(e) {
+        // unimportant directory!
+        return callback(undefined);
+      }
+    }
+    return callback(obj);
+  });
+}
+
+function getWindowInformation(directory, viewdirs, callback) {
+  readDirectories("./modules/"+directory+"/"+viewdirs, function(windowdirs){
+    for(var j = 0 ; j < windowdirs.length ; j++){
+      try{
+        var viewinfo = require("./modules/"+directory+"/"+viewdirs+"/"+windowdirs[j]+"/info.json");
+
+        var windows = [];
+        var obj = {
+          "windowName":viewinfo.windowName,
+          "windowDescription":viewinfo.windowDescription,
+          "windowHtmlReference":viewinfo.windowHtmlReference
+        };
+        windows.push(obj);
+      } catch(e) {
+        // unimportant directory!
+        return callback(undefined);
+      }
+
+      }
+    return callback(windows);
+  });
+};
+
+
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){

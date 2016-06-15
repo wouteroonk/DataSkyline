@@ -302,13 +302,15 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
   // NOTE: Object sent to server is fully compatible with windowinfo message
   $scope.saveEdit = function() {
     dscmsWebSocket.sendServerMessage(
-      "updatetheme " +
+      "updatewindowinfo " +
       $scope.themeName +
+      " " +
+      $scope.screens[$scope.selectedScreenPos].screenAddress +
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
-    // TODO: Remove this when server is ready
-    dscmsNotificationCenter.warning("Sorry!", "This feature is not yet implemented.", 2000);
+    dscmsNotificationCenter.success("Good!", "The changes to \"" + $scope.screens[$scope.selectedScreenPos].screenName + "\" have been saved.", 2000);
+    $scope.thisScreenWinInf = $scope.thisScreenWinInfBackup;
   };
 
   // Set the windowIdToReplace variable to change window for a view
@@ -347,5 +349,15 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       // TODO: Wait for modal implementation and respond to view added
     });
   };
+
+  // =========================
+  // Tooltips
+  // =========================
+
+  $('[data-toggle="general-tooltip"]').tooltip({
+    'selector': '',
+    'placement': 'top',
+    'container':'body'
+  });
 
 });

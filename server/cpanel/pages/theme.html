@@ -6,12 +6,12 @@
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
-        <div class="panel-heading text-center">
+        <div class="panel-heading">
           <h2 class="panel-title-with-button panel-title pull-left">Editing theme: <span ng-bind="themeName"/></h2>
 
           <!-- Select screen -->
           <div class="btn-group pull-right" role="group">
-            <div class="btn-group" role="group">
+            <div title="Select screen to edit" data-toggle="general-tooltip" class="btn-group" role="group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{screens[selectedScreenPos].screenName}}
                 <span class="caret"></span>
@@ -20,8 +20,7 @@
                 <li ng-repeat="s in screens"><a ng-click="changeSelectedScreen(s)">{{s.screenName}}</a></li>
               </ul>
             </div>
-            <button type="button" class="btn btn-danger" ng-click="cancelEdit()"><span class="glyphicon glyphicon-remove-sign"></span></button>
-            <button type="button" class="btn btn-success" ng-click="saveEdit()"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+            <button type="button" title="Save screen for theme" data-toggle="general-tooltip" class="btn btn-success" ng-click="saveEdit()"><span class="glyphicon glyphicon-floppy-disk"></span></button>
           </div>
 
           <div class="clearfix"></div>
@@ -30,35 +29,36 @@
         <div class="panel-body">
           <div class="container-fluid">
             <div class="row">
-              <div class="col-md-4">
+              <div id="edit-theme-preview-col" class="col-md-4">
                 <mini-skyline-screen class="edit-theme-screen-preview" windows="previewConfig"></mini-skyline-screen>
               </div>
-              <div class="col-md-8">
+              <div id="edit-theme-control-col" class="col-md-8">
 
                 <!-- Select view -->
-
-                <div class="btn-group" role="group">
-                  <div class="btn-group" role="group">
-                    <!-- Dropdown with view instances -->
-                    <!-- Should only be enabled if any view instances are present -->
-                    <!-- Otherwise, instruct user -->
-                    <button
-                      type="button"
-                      class="btn btn-default"
-                      ng-class="{dropdown-toggle: thisScreenWinInf.views.length > 0}"
-                      ng-disabled="thisScreenWinInf.views.length === 0"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false">
-                      {{thisScreenWinInf.views.length === 0 ? "No view instances configured for this screen" : thisScreenWinInf.views[selectedViewPos].viewName}}
-                      <span ng-hide="thisScreenWinInf.views.length === 0" class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>
-                    </ul>
-                  </div>
-                  <button type="button" class="btn btn-default" ng-click="openAddViewModal()"><span class="glyphicon glyphicon-plus"></span></button>
+                <div class="btn-group pull-left" title="Select view instance to edit" data-toggle="general-tooltip">
+                  <!-- Dropdown with view instances -->
+                  <!-- Should only be enabled if any view instances are present -->
+                  <!-- Otherwise, instruct user -->
+                  <button
+                    type="button"
+                    class="btn btn-default dropdown-toggle"
+                    ng-class="{'dropdown-toggle': thisScreenWinInf.views.length > 0}"
+                    ng-disabled="thisScreenWinInf.views.length === 0"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+                    {{thisScreenWinInf.views.length === 0 ? "No view instances configured for this screen" : thisScreenWinInf.views[selectedViewPos].viewName}}
+                    <span ng-hide="thisScreenWinInf.views.length === 0" class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>
+                  </ul>
                 </div>
+
+                <button type="button" title="Add view to screen" data-toggle="general-tooltip" class="btn btn-default pull-right" ng-click="openAddViewModal()"><span class="glyphicon glyphicon-plus"></span></button>
+
+                <div class="clearfix"></div>
+
                 <hr ng-hide="thisScreenWinInf.views.length === 0">
 
                 <!-- Windows for selected view -->
@@ -94,6 +94,10 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="panel-footer">
+          <button type="button" class="btn btn-danger pull-right" ng-click="cancelEdit()">Cancel</button>
+          <div class="clearfix"></div>
         </div>
       </div>
     </div>
