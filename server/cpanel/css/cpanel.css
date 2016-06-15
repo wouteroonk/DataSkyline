@@ -72,6 +72,15 @@ h1, h2, h3, h4, h5, h6, p, div, span {
   white-space: nowrap;
   width: 1px;
 }
+
+#edit-theme-preview-col {
+  padding-left: 0;
+}
+
+#edit-theme-control-col {
+  padding-right: 0;
+}
+
 notification-center {
   height: 20%;
   width: 100%;
