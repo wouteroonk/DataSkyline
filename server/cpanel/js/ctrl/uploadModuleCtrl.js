@@ -3,7 +3,7 @@
   This controller is linked to the module upload modal and can upload a zip file
   to the server.
 */
-dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInstance, dscmsWebSocket) {
+dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInstance, dscmsWebSocket, dscmsNotificationCenter) {
 
     $scope.selectedFileName = null;
     $scope.selectedFileSize = null;
@@ -13,26 +13,31 @@ dscms.app.controller('dscmsUploadModuleCtrl', function($scope, $http, $modalInst
     $scope.uploadModule = function() {
         // Get the file from the file input
         var file = $('#module-upload-file-input')[0].files[0];
-
+        if(!file){
+          dscmsNotificationCenter.warning("Please select a file to upload." , "");
+          return;
+        }
         // "Convert" file to formdata format so that the server can read it
         var fd = new FormData();
         fd.append("file", file);
 
         // Post the file to the server
         // TODO: Make a specific endpoint for this
-        $http.post("/", fd, {
+        $http.post("/uploadmodule", fd, {
             withCredentials: true,
             headers: {
                 'Content-Type': undefined
             },
             transformRequest: angular.identity
         }).success(function(res) {
-            // TODO: Do something on success?
-        }).error(function() {
-            // TODO: Show error?
+          console.log(res);
+            if(res === "200") {
+              $modalInstance.close();
+              dscmsNotificationCenter.success("", "The module is added to the control panel", 3000);
+            } else {
+              dscmsNotificationCenter.danger("Oops!", res, 5000);
+            }
         });
-
-        $modalInstance.close();
     };
 
     // Executed from ng-click on "cancel" and "close modal" buttons
