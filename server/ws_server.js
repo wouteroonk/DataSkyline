@@ -178,10 +178,13 @@ wsServer.on('request', function(request) {
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
+          console.log("specifictheme in top part: "+ specifictheme);
           if(specifictheme === undefined) {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING UNDEFINED");
           } else {
-            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress, specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING DEFINED");
           }
           break;
       // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
@@ -302,7 +305,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   })[0];
   // Guard to make sure IP was in list
   if (json === undefined) return false;
-  var windowinfoJSON = getWindowInfoForScreenConfig(json);
+  var windowinfoJSON = getWindowInfoForScreenConfig(json,theme);
   client.send("windowinfo " + JSON.stringify(windowinfoJSON));
   return true;
 }
@@ -431,6 +434,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   var results = [];
   for (var i = 0; i < themes.length; i++) {
     if(specifictheme === undefined){
+      console.log("----------------- current Theme!");
       if(themes[i].themeName === selectedTheme){
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
@@ -448,6 +452,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
       }
     } else {
       if(themes[i].themeName === specifictheme){
+        console.log("----------------- Specific Theme!");
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
@@ -903,9 +908,15 @@ function updateWindowInfo(themename, ip, windowinfo) {
   var infoViews = windowinfo.views;
 
   // update Views in JSON
+  console.log("Correct Theme JSON:");
+  console.dir(correctTheme);
+
   var found = false;
   for(var i = 0; i < configViews.length ; i++){
     for(var j = 0 ; j < infoViews.length ; j++){
+      console.log("Config ID: "+configViews[i].instanceID);
+      console.log("Config ID: "+infoViews[j].instanceID);
+      console.log("---");
       if(configViews[i].instanceID === infoViews[j].instanceID) {
         found = true;
         configViews[i].instanceName = infoViews[j].instanceName;
@@ -925,7 +936,7 @@ function updateWindowInfo(themename, ip, windowinfo) {
     return false;
   }
   console.log("View instance Edit succesful");
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
@@ -1002,6 +1013,54 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+getModuleInformation("com.example.twitter", function(obj) {
+  console.dir(obj);
+});
+function getModuleInformation(directory, callback) {
+  readDirectories("modules/"+directory, function(viewdirs) {
+    var obj = {};
+    for(var i = 0 ; i < viewdirs.length ; i++) {
+      try{
+        var viewinfo = require("./modules/"+directory+"/"+viewdirs[i]+"/info.json");
+        obj = {
+          "viewName":viewinfo.viewName,
+          "viewDescription":viewinfo.viewDescription,
+          "viewJavascriptReference":viewinfo.viewJavascriptReference
+          ""
+        };
+      } catch(e) {
+        // unimportant directory!
+        return callback(undefined);
+      }
+    }
+    return callback(obj);
+  });
+}
+
+function getWindowInformation(directory, viewdirs, callback) {
+  readDirectories("./modules/"+directory+"/"+viewdirs, function(windowdirs){
+    for(var j = 0 ; j < windowdirs.length ; j++){
+      try{
+        var viewinfo = require("./modules/"+directory+"/"+viewdirs+"/"+windowdirs[j]+"/info.json");
+
+        var windows = [];
+        var obj = {
+          "windowName":viewinfo.windowName,
+          "windowDescription":viewinfo.windowDescription,
+          "windowHtmlReference":viewinfo.windowHtmlReference
+        };
+        windows.push(obj);
+      } catch(e) {
+        // unimportant directory!
+        return callback(undefined);
+      }
+
+      }
+    return callback(windows);
+  });
+};
+
+
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){
