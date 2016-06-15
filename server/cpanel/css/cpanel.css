@@ -162,3 +162,6 @@ notification-center strong {
 .hr-dashed {
   border-top-style: dashed;
 }
+.dscms-nav-doc {
+  position: fixed;
+}
