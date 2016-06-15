@@ -11,6 +11,14 @@ ul {
   z-index: 9998;
 }
 
+.btn-link-help {
+  color: #CECECE;
+}
+
+.btn-link-help:hover {
+  color: #AEAEAE;
+}
+
 /** Animate pagination **/
 
 .dscmsPage {
