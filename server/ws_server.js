@@ -13,6 +13,7 @@ var AdmZip = require("adm-zip");
 var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
+var Promise = require('promise');
 
 // The selected dataskyline theme
 var configPath = "config.json";
@@ -249,7 +250,6 @@ wsServer.on('request', function(request) {
               connection.send("getmodules "+JSON.stringify(obj));
             });
             break;
-      // "settheme: is requested by the touchpanel, when a "ball" is clicked, this message is called which will update all screens
             // TODO: send update to all display screens (here or in updateCurrentTheme method)
       case "settheme" :
             var themename = data.shift();
@@ -392,7 +392,6 @@ function readDirectories(path, callback) {
       for (var i = 0; i < list.length; i++) {
         var item = list[i];
         if (fs.lstatSync(path + "/" + item).isDirectory()) {
-          console.log(item);
           listing.push(item);
         }
       }
@@ -443,6 +442,8 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
+            "instanceName": themes[i].screenViews[j].instanceName,
+            "instanceID": themes[i].screenViews[j].instanceID,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
             "windows": windowinfo
@@ -914,9 +915,6 @@ function updateWindowInfo(themename, ip, windowinfo) {
   var found = false;
   for(var i = 0; i < configViews.length ; i++){
     for(var j = 0 ; j < infoViews.length ; j++){
-      console.log("Config ID: "+configViews[i].instanceID);
-      console.log("Config ID: "+infoViews[j].instanceID);
-      console.log("---");
       if(configViews[i].instanceID === infoViews[j].instanceID) {
         found = true;
         configViews[i].instanceName = infoViews[j].instanceName;
@@ -942,24 +940,36 @@ function updateWindowInfo(themename, ip, windowinfo) {
 
 //TODO: rename this method (returnModuleList)
 // Returns list with all modules in the modules directory (callback needed for list)
+
+sendModuleList(function(list) {
+  console.dir(list.modules[1].moduleInfo);
+});
 function sendModuleList(callback) {
   readDirectories("modules", function(list) {
-    var modulelist = [];
+    var listOfPromises = [];
     for(var i = 0 ; i < list.length ; i++) {
-      var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
-      var obj = {
-        "moduleFolderName" : list[i],
-        "moduleName" : info.moduleName,
-        "moduleDescription" : info.moduleDescription,
-        "moduleDeveloper" : info.moduleDeveloper,
-        "moduleLicense" : info.moduleLicense
-      };
-      modulelist.push(obj);
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
+        var tmplist = list[i];
+        getModuleInformation(list[i], function(moduleinfo) {
+          var obj = {
+            "moduleFolderName" : tmplist,
+            "moduleName" : info.moduleName,
+            "moduleDescription" : info.moduleDescription,
+            "moduleDeveloper" : info.moduleDeveloper,
+            "moduleLicense" : info.moduleLicense,
+            "moduleInfo" : moduleinfo
+          };
+          resolve(obj);
+        });
+      }));
     }
-    var finalobj = {
-      "modules" : modulelist
-    };
-    return callback(finalobj);
+    Promise.all(listOfPromises).then(function(results) {
+      var finalobj = {
+        "modules" : results
+      };
+      return callback(finalobj);
+    });
   });
 }
 
@@ -980,15 +990,6 @@ var obj = {
   "thingOne":1,
   "thingTwo":2
 };
-
-function arrayToString(array) {
-  var string = "";
-  for(var i = 0 ; i < array.length ; i++) {
-    string += array[i]+ " ";
-  }
-  console.log(string.substring(0,string.length-1));
-  return string.substring(0,string.length-1);
-}
 
 // given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {
@@ -1013,50 +1014,73 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
-getModuleInformation("com.example.twitter", function(obj) {
-  console.dir(obj);
+getModuleInformation("com.example.twitter", function(list) {
+  //console.dir(list);
 });
+
 function getModuleInformation(directory, callback) {
   readDirectories("modules/"+directory, function(viewdirs) {
-    var obj = {};
+    var listOfPromises = [];
     for(var i = 0 ; i < viewdirs.length ; i++) {
-      try{
-        var viewinfo = require("./modules/"+directory+"/"+viewdirs[i]+"/info.json");
-        obj = {
-          "viewName":viewinfo.viewName,
-          "viewDescription":viewinfo.viewDescription,
-          "viewJavascriptReference":viewinfo.viewJavascriptReference
-          ""
-        };
-      } catch(e) {
-        // unimportant directory!
-        return callback(undefined);
-      }
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        try{
+          var viewinfo = require("./modules/"+directory+"/"+viewdirs[i]+"/info.json");
+          getWindowInformation(directory + "/" + viewdirs[i], function(windows) {
+            var obj = {
+              "viewName":viewinfo.viewName,
+              "viewDescription":viewinfo.viewDescription,
+              "viewJavascriptReference":viewinfo.viewJavascriptReference,
+              "windows": windows
+            };
+            resolve(obj);
+          });
+        } catch(e) {
+          resolve(13);
+        }
+      }));
     }
-    return callback(obj);
+    Promise.all(listOfPromises).then(function(results) {
+      var list = [];
+      for (var i = 0; i < results.length; i++) {
+        if (results[i] === 13) {
+          continue;
+        }
+        list.push(results[i]);
+        //console.log(results);
+      }
+      return callback(list);
+    });
   });
 }
 
-function getWindowInformation(directory, viewdirs, callback) {
-  readDirectories("./modules/"+directory+"/"+viewdirs, function(windowdirs){
+function getWindowInformation(directory, callback) {
+  readDirectories("./modules/"+directory, function(windowdirs){
+    var listOfPromises = [];
     for(var j = 0 ; j < windowdirs.length ; j++){
-      try{
-        var viewinfo = require("./modules/"+directory+"/"+viewdirs+"/"+windowdirs[j]+"/info.json");
-
-        var windows = [];
-        var obj = {
-          "windowName":viewinfo.windowName,
-          "windowDescription":viewinfo.windowDescription,
-          "windowHtmlReference":viewinfo.windowHtmlReference
-        };
-        windows.push(obj);
-      } catch(e) {
-        // unimportant directory!
-        return callback(undefined);
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        try{
+          var viewinfo = require("./modules/"+directory+"/"+windowdirs[j]+"/info.json");
+          var obj = {
+            "windowName":viewinfo.windowName,
+            "windowDescription":viewinfo.windowDescription,
+            "windowHtmlReference":viewinfo.windowHtmlReference
+          };
+          resolve(obj);
+        } catch(e) {
+          resolve(13);
+        }
+      }));
+    }
+    Promise.all(listOfPromises).then(function(results) {
+      var list = [];
+      for (var i = 0; i < results.length; i++) {
+        if (results[i] === 13) {
+          continue;
+        }
+        list.push(results[i]);
       }
-
-      }
-    return callback(windows);
+      return callback(list);
+    });
   });
 };
 
