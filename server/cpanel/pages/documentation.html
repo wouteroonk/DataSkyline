@@ -1,10 +1,10 @@
 <div class="container">
     <div class="row" ng-controller="dscmsDocumentationCtrl">
         <div class="col-md-2">
-            <ul class="nav nav-pills dscms-nav-doc col-md-1">
-                <li role="presentation"><a ng-click="gotoId('dscms-global-info')">Global information</a></li>
-                <li role="presentation"><a ng-click="gotoId('dscms-modules')">Modules</a></li>
-                <li role="presentation"><a ng-click="gotoId('dscms-themes')">Themes</a></li>
+            <ul class="nav nav-pills nav-stacked dscms-nav-doc">
+                <li id="dscms-global-info-nav"><a ng-click="gotoId('dscms-global-info')">Global information</a></li>
+                <li id="dscms-modules-nav"><a ng-click="gotoId('dscms-modules')">Modules</a></li>
+                <li id="dscms-themes-nav"><a ng-click="gotoId('dscms-themes')">Themes</a></li>
             </ul>
         </div>
         <div class="col-md-10">

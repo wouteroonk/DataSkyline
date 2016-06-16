@@ -2,26 +2,17 @@
   Created by Wouter Oonk
 */
 
-// $rootScope, $location, $anchorScroll, $routeParams
-dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, $anchorScroll, $routeParams, $timeout, dscmsWebSocket) {
+dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, dscmsWebSocket) {
   $scope.pageClass = "dscms-page-documentation";
 
   $scope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
-    // if ($location.hash()) {
-    //         console.log($location.hash());
-    //         // $location.hash("dscms-themes");
-    //
-    // console.dir($location);
 
     $scope.gotoId($location.hash());
 
-    // $anchorScroll();
-    // }
   });
 
   $(function() {
-    var currentHash = $location.hash();
-    var currentWait = null;
+    var currentHash = "";
     $(document).scroll(function() {
       $('.anchor').each(function() {
         var top = window.pageYOffset;
@@ -29,25 +20,22 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, $anch
         var hash = $(this).attr('id');
         // 30 is an arbitrary padding choice,
         // if you want a precise check then use distance===0
-        if (distance < 30 && distance > -30 && currentHash != hash) {
-          $timeout.cancel(currentWait);
-          currentWait = $timeout(function() {
-            $location.hash(hash);
-          }, 0);
+        if (distance < 81 && distance > -81 && currentHash != hash) {
+          angular.element( document.querySelector('.active')).removeClass('active');
+          angular.element( document.querySelector('#' + hash + '-nav')).addClass('active');
           currentHash = hash;
         }
       });
     });
   });
 
-
   $scope.gotoId = function(eID) {
 
     // This scrolling function
     // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
 
-    var startY = currentYPosition() + 70;
-    var stopY = elmYPosition(eID) - 70;
+    var startY = currentYPosition();
+    var stopY = elmYPosition(eID) - 80;
     var distance = stopY > startY ? stopY - startY : startY - stopY;
     if (distance < 100) {
       scrollTo(0, stopY);
