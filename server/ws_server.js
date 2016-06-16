@@ -13,6 +13,7 @@ var AdmZip = require("adm-zip");
 var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
+var Promise = require('promise');
 
 // The selected dataskyline theme
 var configPath = "config.json";
@@ -178,10 +179,13 @@ wsServer.on('request', function(request) {
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
+          console.log("specifictheme in top part: "+ specifictheme);
           if(specifictheme === undefined) {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING UNDEFINED");
           } else {
-            console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log((sendWindowInfoForIPToClient(connection, ipAddress, specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            console.log("SENDING DEFINED");
           }
           break;
       // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
@@ -246,7 +250,6 @@ wsServer.on('request', function(request) {
               connection.send("getmodules "+JSON.stringify(obj));
             });
             break;
-      // "settheme: is requested by the touchpanel, when a "ball" is clicked, this message is called which will update all screens
             // TODO: send update to all display screens (here or in updateCurrentTheme method)
       case "settheme" :
             var themename = data.shift();
@@ -302,7 +305,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   })[0];
   // Guard to make sure IP was in list
   if (json === undefined) return false;
-  var windowinfoJSON = getWindowInfoForScreenConfig(json);
+  var windowinfoJSON = getWindowInfoForScreenConfig(json,theme);
   client.send("windowinfo " + JSON.stringify(windowinfoJSON));
   return true;
 }
@@ -389,7 +392,6 @@ function readDirectories(path, callback) {
       for (var i = 0; i < list.length; i++) {
         var item = list[i];
         if (fs.lstatSync(path + "/" + item).isDirectory()) {
-          console.log(item);
           listing.push(item);
         }
       }
@@ -431,6 +433,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   var results = [];
   for (var i = 0; i < themes.length; i++) {
     if(specifictheme === undefined){
+      console.log("----------------- current Theme!");
       if(themes[i].themeName === selectedTheme){
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
@@ -439,6 +442,8 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
           if(windowinfo.length === 0) continue;
           var obj = {
             "viewName": themes[i].screenViews[j].viewName,
+            "instanceName": themes[i].screenViews[j].instanceName,
+            "instanceID": themes[i].screenViews[j].instanceID,
             "parentModule": themes[i].screenViews[j].screenParentModule,
             "managerUrl": viewjson.viewJavascriptReference,
             "windows": windowinfo
@@ -448,6 +453,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
       }
     } else {
       if(themes[i].themeName === specifictheme){
+        console.log("----------------- Specific Theme!");
         for(var j = 0; j < themes[i].screenViews.length ; j++){
           var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
@@ -903,6 +909,9 @@ function updateWindowInfo(themename, ip, windowinfo) {
   var infoViews = windowinfo.views;
 
   // update Views in JSON
+  console.log("Correct Theme JSON:");
+  console.dir(correctTheme);
+
   var found = false;
   for(var i = 0; i < configViews.length ; i++){
     for(var j = 0 ; j < infoViews.length ; j++){
@@ -925,30 +934,42 @@ function updateWindowInfo(themename, ip, windowinfo) {
     return false;
   }
   console.log("View instance Edit succesful");
-  turnJSONIntoFile(config,"test.json");
+  turnJSONIntoFile(config,"config.json");
   return true;
 }
 
 //TODO: rename this method (returnModuleList)
 // Returns list with all modules in the modules directory (callback needed for list)
+
+sendModuleList(function(list) {
+  console.dir(list.modules[1].moduleInfo);
+});
 function sendModuleList(callback) {
   readDirectories("modules", function(list) {
-    var modulelist = [];
+    var listOfPromises = [];
     for(var i = 0 ; i < list.length ; i++) {
-      var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
-      var obj = {
-        "moduleFolderName" : list[i],
-        "moduleName" : info.moduleName,
-        "moduleDescription" : info.moduleDescription,
-        "moduleDeveloper" : info.moduleDeveloper,
-        "moduleLicense" : info.moduleLicense
-      };
-      modulelist.push(obj);
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
+        var tmplist = list[i];
+        getModuleInformation(list[i], function(moduleinfo) {
+          var obj = {
+            "moduleFolderName" : tmplist,
+            "moduleName" : info.moduleName,
+            "moduleDescription" : info.moduleDescription,
+            "moduleDeveloper" : info.moduleDeveloper,
+            "moduleLicense" : info.moduleLicense,
+            "moduleInfo" : moduleinfo
+          };
+          resolve(obj);
+        });
+      }));
     }
-    var finalobj = {
-      "modules" : modulelist
-    };
-    return callback(finalobj);
+    Promise.all(listOfPromises).then(function(results) {
+      var finalobj = {
+        "modules" : results
+      };
+      return callback(finalobj);
+    });
   });
 }
 
@@ -969,15 +990,6 @@ var obj = {
   "thingOne":1,
   "thingTwo":2
 };
-
-function arrayToString(array) {
-  var string = "";
-  for(var i = 0 ; i < array.length ; i++) {
-    string += array[i]+ " ";
-  }
-  console.log(string.substring(0,string.length-1));
-  return string.substring(0,string.length-1);
-}
 
 // given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {
@@ -1002,6 +1014,74 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
+
+function getModuleInformation(directory, callback) {
+  readDirectories("modules/"+directory, function(viewdirs) {
+    var listOfPromises = [];
+    for(var i = 0 ; i < viewdirs.length ; i++) {
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        try{
+          var viewinfo = require("./modules/"+directory+"/"+viewdirs[i]+"/info.json");
+          getWindowInformation(directory + "/" + viewdirs[i], function(windows) {
+            var obj = {
+              "viewName":viewinfo.viewName,
+              "viewDescription":viewinfo.viewDescription,
+              "viewJavascriptReference":viewinfo.viewJavascriptReference,
+              "windows": windows
+            };
+            resolve(obj);
+          });
+        } catch(e) {
+          resolve(13);
+        }
+      }));
+    }
+    Promise.all(listOfPromises).then(function(results) {
+      var list = [];
+      for (var i = 0; i < results.length; i++) {
+        if (results[i] === 13) {
+          continue;
+        }
+        list.push(results[i]);
+        //console.log(results);
+      }
+      return callback(list);
+    });
+  });
+}
+
+function getWindowInformation(directory, callback) {
+  readDirectories("./modules/"+directory, function(windowdirs){
+    var listOfPromises = [];
+    for(var j = 0 ; j < windowdirs.length ; j++){
+      listOfPromises.push(new Promise(function(resolve, reject) {
+        try{
+          var viewinfo = require("./modules/"+directory+"/"+windowdirs[j]+"/info.json");
+          var obj = {
+            "windowName":viewinfo.windowName,
+            "windowDescription":viewinfo.windowDescription,
+            "windowHtmlReference":viewinfo.windowHtmlReference
+          };
+          resolve(obj);
+        } catch(e) {
+          resolve(13);
+        }
+      }));
+    }
+    Promise.all(listOfPromises).then(function(results) {
+      var list = [];
+      for (var i = 0; i < results.length; i++) {
+        if (results[i] === 13) {
+          continue;
+        }
+        list.push(results[i]);
+      }
+      return callback(list);
+    });
+  });
+};
+
+
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){
