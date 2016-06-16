@@ -1014,9 +1014,6 @@ function ConnectionObject(connection, address) {
   this.connection = connection;
   this.address = address;
 }
-getModuleInformation("com.example.twitter", function(list) {
-  //console.dir(list);
-});
 
 function getModuleInformation(directory, callback) {
   readDirectories("modules/"+directory, function(viewdirs) {
