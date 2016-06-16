@@ -34,7 +34,6 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, $anch
           currentWait = $timeout(function() {
             $location.hash(hash);
           }, 0);
-          console.log(hash);
           currentHash = hash;
         }
       });
@@ -47,8 +46,8 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, $anch
     // This scrolling function
     // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
 
-    var startY = currentYPosition();
-    var stopY = elmYPosition(eID);
+    var startY = currentYPosition() + 70;
+    var stopY = elmYPosition(eID) - 70;
     var distance = stopY > startY ? stopY - startY : startY - stopY;
     if (distance < 100) {
       scrollTo(0, stopY);
