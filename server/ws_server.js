@@ -14,7 +14,6 @@ var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
 var Promise = require('promise');
-
 // The selected dataskyline theme
 var configPath = "config.json";
 var selectedTheme = (getJSONfromPath(configPath).themes[0].themeName || "none");
@@ -376,14 +375,16 @@ function getJSONfromPath(filename) {
     var file = pathing.resolve('./' + filename);
     delete require.cache[file]; // Clear cache (otherwise files won't update)
     var json = require(file);
-    var thing = fs.readFileSync(file, 'utf8');
     return json;
   } catch (err) {
-    return undefined;
+    console.error(err);
+    /*
+    console.log("backup file to the rescue");
+    var backup = require("./"+backupPath);
+    turnJSONIntoFile(backup,"config.json");
+    return backup;*/
+    }
   }
-
-
-}
 
 // Returns a list with directories given a path (callback is needed to get the path)
 function readDirectories(path, callback) {
@@ -995,10 +996,20 @@ var obj = {
 
 // given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {
+  fs.writeFileSync(filename,JSON.stringify(jsonObj), 'utf8');
+  /*
   fs.writeFile(filename,JSON.stringify(jsonObj), function(err) {
-    if(err) return console.log(err);
+    if(filename === configPath){
+      console.log("Hello");
+        fs.writeFile(backupPath,JSON.stringify(jsonObj), function(err) {
+          if(err) return console.error(err);
+
+          console.log(backupPath+ " created!");
+        });
+    }
+    if(err) return console.error(err);
     console.log(filename+" created!");
-  });
+  });*/
 }
 
 // returns list with all screens
@@ -1096,7 +1107,6 @@ function alreadyIdentified(ip) {
   }
   return false;
 }
-
 //TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
 
 //TODO: Client moet "identification" bericht sturen wanneer je verbinding legt met de server

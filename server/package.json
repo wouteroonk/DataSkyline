@@ -13,7 +13,6 @@
     "mime": "latest",
     "adm-zip": "latest",
     "rmdir": "latest",
-    "mkdirp": "latest",
-    "promise": "latest"
+    "mkdirp": "latest"
   }
 }

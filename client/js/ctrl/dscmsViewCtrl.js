@@ -106,7 +106,6 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
 
         } else {
           console.log("Could not execute, view not ready. Retrying...");
-          waitForWS(callback);
         }
 
       }, 50);
