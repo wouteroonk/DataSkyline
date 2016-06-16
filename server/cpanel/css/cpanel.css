@@ -2,8 +2,21 @@ h1, h2, h3, h4, h5, h6, p, div, span {
   font-family: 'Open Sans', sans-serif;
 }
 
+ul {
+    padding-left: 1.2em;
+    overflow: hidden;
+}​
+
 .nav {
   z-index: 9998;
+}
+
+.btn-link-help {
+  color: #CECECE;
+}
+
+.btn-link-help:hover {
+  color: #AEAEAE;
 }
 
 /** Animate pagination **/
@@ -26,6 +39,11 @@ h1, h2, h3, h4, h5, h6, p, div, span {
   z-index: 9000;
 }
 
+.dscms-page-documentation.ng-enter {
+  animation: none;
+  z-index: 8999;
+}
+
 .dscms-page-home.ng-leave {
   animation: fadeOut 0.5s both ease;
   z-index: 8999;
@@ -33,6 +51,11 @@ h1, h2, h3, h4, h5, h6, p, div, span {
 
 .dscms-page-theme.ng-leave {
   animation: slideOutDown 0.5s both ease;
+  z-index: 8999;
+}
+
+.dscms-page-documentation.ng-leave {
+  animation: none;
   z-index: 8999;
 }
 
@@ -130,4 +153,28 @@ notification-center strong {
 
 .pager .disabled>a{
   background-color: #ecf0f1 !important;
+}
+
+/* Documentation */
+
+.documentation-subhero {
+  width: 25%;
+  height: auto;
+  padding: 15px;
+}
+
+.documentation-medium-img {
+  width: 50%;
+  height: auto;
+}
+
+.hr-solid {
+
+}
+
+.hr-dashed {
+  border-top-style: dashed;
+}
+.dscms-nav-doc {
+  position: fixed;
 }
