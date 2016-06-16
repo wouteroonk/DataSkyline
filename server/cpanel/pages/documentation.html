@@ -245,7 +245,13 @@ DSCMSView.run = function() {
                   <hr class="hr-dashed" />
                   <h3>Making windows</h3>
                   <p>
-                    The Dataskyline creates <code>div</code> elements and positions them to fill the holes in the front panel of the client screen.
+                    When you create an instance of a view, you have to select where you want to place the view's windows.
+                    The system then knows where to place <code>div</code> elements, which will be filled with the contents
+                    of your window's HTML files.
+                  </p>
+                  <p>
+                    Windows are <mark>not</mark> full web pages. You shouln't use <code>&lt;html&gt;</code>,
+                    <code>&lt;body&gt;</code>, etc tags in your windows.
                   </p>
                 </div>
             </div>
