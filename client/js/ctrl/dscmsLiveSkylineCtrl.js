@@ -39,6 +39,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
                 break;
 
             case "skylineupdate":
+                console.log("Niggers");
                 // Get own IP to send to server
                 dscmsWebSocket.requestOwnLocalIP(function(ip) {
                     // Ask server to send window info, handled by callback defined above
@@ -54,6 +55,11 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
             default:
                 break;
         }
+    });
+
+    dscmsWebSocket.requestOwnLocalIP(function(ip) {
+        // Ask server to send window info, handled by callback defined above
+        dscmsWebSocket.sendServerMessage("identification " + ip);
     });
 
     // Get own IP to send to server
