@@ -268,6 +268,7 @@ wsServer.on('request', function(request) {
             var windowinfo = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
             if(updateWindowInfo(theme, ip, windowinfo)) {
               connection.send("updatewindowinfo " + "200");
+              sendSkylineUpdate("updatewindowinfo");
             } else {
               connection.send("updatewindowinfo " + "400");
             };
@@ -354,7 +355,7 @@ function logConnections() {
   console.log("$$ Connected clients: ");
   console.log("index - address");
   for(var i = 0 ; i < connectionList.length ; i++){
-    if(connectionList[i] !== null && connectionList[i].address !== null) {
+    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
       console.log(i + " - " + connectionList[i].address);
     }
   }
@@ -367,11 +368,9 @@ function getJSONfromPath(filename) {
   assert.notEqual(filename, undefined, "filename can't be undefined");
 
   try {
-    var json = undefined;
     var file = pathing.resolve('./' + filename);
     delete require.cache[file]; // Clear cache (otherwise files won't update)
-    //json = fs.readFileSync(file, 'utf8');
-    json = require(file);
+    var json = require(file);
     return json;
   } catch (err) {
     console.error(err);

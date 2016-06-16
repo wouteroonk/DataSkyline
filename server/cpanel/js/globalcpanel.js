@@ -22,6 +22,10 @@ dscms.app.config(function($routeProvider) {
     templateUrl: 'cpanel/pages/theme.html',
     controller: 'dscmsThemeCtrl'
   }).
+  when('/documentation', {
+    templateUrl: 'cpanel/pages/documentation.html',
+    controller: 'dscmsDocumentationCtrl'
+  }).
   otherwise({
     redirectTo: '/'
   });

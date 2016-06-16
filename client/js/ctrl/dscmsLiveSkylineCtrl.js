@@ -38,6 +38,15 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
                 initWindow(returnedJSON);
                 break;
 
+            case "skylineupdate":
+                console.log("Niggers");
+                // Get own IP to send to server
+                dscmsWebSocket.requestOwnLocalIP(function(ip) {
+                    // Ask server to send window info, handled by callback defined above
+                    dscmsWebSocket.requestWindowsForIP(ip);
+                });
+                break;
+
                 // The test message is used for testing purposes and should be deleted.
             case "test":
                 console.log(message.data.substring(message.data.indexOf(' ') + 1));
@@ -46,6 +55,11 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
             default:
                 break;
         }
+    });
+
+    dscmsWebSocket.requestOwnLocalIP(function(ip) {
+        // Ask server to send window info, handled by callback defined above
+        dscmsWebSocket.sendServerMessage("identification " + ip);
     });
 
     // Get own IP to send to server
