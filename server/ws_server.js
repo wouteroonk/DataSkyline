@@ -163,6 +163,7 @@ wsServer.on('request', function(request) {
   // When a message is received
   connection.on('message', function(message) {
     var data = message.utf8Data.split(' ');
+    //logConnections();
     // Get the message type and perform matching action
     switch (data.shift()) {
       // Identify yourself
@@ -179,7 +180,6 @@ wsServer.on('request', function(request) {
       case "requestwindows":
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
-          console.log("specifictheme in top part: "+ specifictheme);
           if(specifictheme === undefined) {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
             console.log("SENDING UNDEFINED");
@@ -314,6 +314,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
 // Send update message to all "identified" connections
 function sendSkylineUpdate(change) {
   for(var i = 0 ; i < connectionList.length ; i++ ){
+    if(!connectionList[i]) console.log("Unknown connection");
     if(connectionList[i] !== null && connectionList[i].address !== undefined) {
         connectionList[i].connection.send("skylineupdate " + change);
     }
@@ -324,6 +325,7 @@ function sendSkylineUpdate(change) {
 function sendSkylineUpdateDisplays(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
+    if(!connectionList[i]) console.log("Unknown connection");
     if(connectionList[i] !== null && connectionList[i].address !== undefined) {
       if(isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
@@ -334,6 +336,7 @@ function sendSkylineUpdateDisplays(change) {
 function sendSkylineUpdateCpanel(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
+    if(!connectionList[i]) console.log("Unknown connection");
     if(connectionList[i] !== null && connectionList[i].address !== undefined) {
       if(!isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
@@ -356,6 +359,7 @@ function logConnections() {
   console.log("$$ Connected clients: ");
   console.log("index - address");
   for(var i = 0 ; i < connectionList.length ; i++){
+    console.log("Clistlength: "+connectionList.length);
     if(connectionList[i] !== null && connectionList[i].address !== undefined) {
       console.log(i + " - " + connectionList[i].address);
     }
@@ -373,7 +377,6 @@ function getJSONfromPath(filename) {
     delete require.cache[file]; // Clear cache (otherwise files won't update)
     var json = require(file);
     var thing = fs.readFileSync(file, 'utf8');
-    console.log("HELLO? " + thing);
     return json;
   } catch (err) {
     return undefined;
@@ -508,7 +511,6 @@ function allWindows(jsonSC, jsonfile) {
     };
     results.push(obj);
   }
-  console.log(results);
   return results;
 }
 
@@ -944,9 +946,6 @@ function updateWindowInfo(themename, ip, windowinfo) {
 //TODO: rename this method (returnModuleList)
 // Returns list with all modules in the modules directory (callback needed for list)
 
-sendModuleList(function(list) {
-  console.dir(list.modules[1].moduleInfo);
-});
 function sendModuleList(callback) {
   readDirectories("modules", function(list) {
     var listOfPromises = [];
@@ -1088,6 +1087,7 @@ function getWindowInformation(directory, callback) {
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){
+    if(!connectionList[i]) console.log("Unknown connection");
     if(connectionList[i] !== null && connectionList[i].address !== undefined){
       if(connectionList[i].address === ip) {
         return true;
