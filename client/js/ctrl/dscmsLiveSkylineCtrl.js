@@ -14,7 +14,7 @@
         screen to show the module on, amount and size of views;
       - VIEWS are send to clients and are basically mini websites.
 */
-dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compile, dscmsWebSocket) {
+dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compile, $route, dscmsWebSocket) {
     // Subscribe to websocket updates
     dscmsWebSocket.subscribe(function(message) {
         var commands = message.data.split(' ');
@@ -39,8 +39,6 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
                 break;
 
             case "skylineupdate":
-                console.log("Niggers");
-                // Get own IP to send to server
                 dscmsWebSocket.requestOwnLocalIP(function(ip) {
                     // Ask server to send window info, handled by callback defined above
                     dscmsWebSocket.requestWindowsForIP(ip);
@@ -77,7 +75,10 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
         // Fade out the previous contents, if there were any
         $('#dscms-modules').fadeOut($('#dscms-modules').is(':empty') ? 0 : 2000, function() {
             // Remove previous content
-            $('#dscms-modules').empty();
+            if (!$('#dscms-modules').is(':empty')) {
+              location.reload(true);
+              return;
+            }
 
             // Loop through views to initiate them
             $scope.views = data.views;
