@@ -309,8 +309,6 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
-    dscmsNotificationCenter.success("Good!", "The changes to \"" + $scope.screens[$scope.selectedScreenPos].screenName + "\" have been saved.", 2000);
-    $scope.thisScreenWinInf = $scope.thisScreenWinInfBackup;
   };
 
   // Set the windowIdToReplace variable to change window for a view
