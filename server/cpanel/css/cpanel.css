@@ -163,6 +163,11 @@ notification-center strong {
   padding: 15px;
 }
 
+.documentation-medium-img {
+  width: 50%;
+  height: auto;
+}
+
 .hr-solid {
 
 }
