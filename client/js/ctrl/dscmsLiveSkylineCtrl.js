@@ -68,6 +68,9 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
 
     // Init window loads views into the window and initiates their JS files
     var initWindow = function(data) {
+        if (!$('#dscms-modules').is(':empty') && !dscmsWebSocket.shouldReloadOnWindowInfo) {
+          return;
+        }
         // Update the title because we now know which screen we are
         $rootScope.title = "DataSkyline - " + data.screenName;
         $scope.$apply();

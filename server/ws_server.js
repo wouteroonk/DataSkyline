@@ -352,13 +352,13 @@ function isDisplayScreen(ip) {
 }
 
 function logConnections() {
-  console.log("$$ Connected clients: ");
-  console.log("index - address");
-  for(var i = 0 ; i < connectionList.length ; i++){
-    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
-      console.log(i + " - " + connectionList[i].address);
-    }
-  }
+  // console.log("$$ Connected clients: ");
+  // console.log("index - address");
+  // for(var i = 0 ; i < connectionList.length ; i++){
+  //   if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+  //     console.log(i + " - " + connectionList[i].address);
+  //   }
+  // }
 }
 
 
