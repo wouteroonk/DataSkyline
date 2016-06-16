@@ -269,6 +269,7 @@ wsServer.on('request', function(request) {
             var windowinfo = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
             if(updateWindowInfo(theme, ip, windowinfo)) {
               connection.send("updatewindowinfo " + "200");
+              sendSkylineUpdate("updatewindowinfo");
             } else {
               connection.send("updatewindowinfo " + "400");
             };
@@ -371,6 +372,8 @@ function getJSONfromPath(filename) {
     var file = pathing.resolve('./' + filename);
     delete require.cache[file]; // Clear cache (otherwise files won't update)
     var json = require(file);
+    var thing = fs.readFileSync(file, 'utf8');
+    console.log("HELLO? " + thing);
     return json;
   } catch (err) {
     return undefined;
