@@ -309,8 +309,6 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
-    // TODO: Remove this when server is ready
-    dscmsNotificationCenter.warning("Sorry!", "This feature is not yet implemented.", 2000);
   };
 
   // Set the windowIdToReplace variable to change window for a view
