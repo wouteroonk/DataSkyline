@@ -355,7 +355,7 @@ function logConnections() {
   console.log("$$ Connected clients: ");
   console.log("index - address");
   for(var i = 0 ; i < connectionList.length ; i++){
-    if(connectionList[i] !== null && connectionList[i].address !== null) {
+    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
       console.log(i + " - " + connectionList[i].address);
     }
   }
