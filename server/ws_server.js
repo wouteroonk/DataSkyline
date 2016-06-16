@@ -13,10 +13,11 @@ var AdmZip = require("adm-zip");
 var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
+var sem = require("semaphore")(1);
 
 // The selected dataskyline theme
 var configPath = "config.json";
-var selectedTheme = (getJSONfromPath(configPath).themes[0].themeName || "none");
+var selectedTheme = (getJSONfromPath(configPath, true).themes[0].themeName || "none");
 
 // list of currently connected clients (users)
 var clients = [];
@@ -179,6 +180,9 @@ wsServer.on('request', function(request) {
           var ipAddress = data.shift();
           var specifictheme = data.shift(); // [Optional]
           if(specifictheme === undefined) {
+            sem.take(function(){
+              console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
+            })
             console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
           } else {
             console.log((sendWindowInfoForIPToClient(connection, ipAddress,specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
@@ -297,7 +301,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
   // Finds out whenever this IP address is listen in our JSON file
   if (validIPs.indexOf(ip) === -1) return false;
   // Get screen where screenAddress is equal to ip
-  var json = getJSONfromPath(configPath).screens.filter(function(screen) {
+  var json = getJSONfromPath(configPath, true).screens.filter(function(screen) {
     return screen.screenAddress === ip;
   })[0];
   // Guard to make sure IP was in list
@@ -360,14 +364,21 @@ function logConnections() {
 
 
 // Given a file name, return a json object
-function getJSONfromPath(filename) {
+function getJSONfromPath(filename, readOnly) {
   assert.notEqual(filename, "", "filename can't be empty");
   assert.notEqual(filename, undefined, "filename can't be undefined");
 
   try {
     var file = pathing.resolve('./' + filename);
     delete require.cache[file]; // Clear cache (otherwise files won't update)
-    var json = require(file);
+    var json = undefined;
+    sem.take(function(){
+      json = require(file);
+      if(readOnly){
+        sem.leave();
+      }
+    });
+    assert.notEqual(json, undefined, "Error the json file is undefined");
     return json;
   } catch (err) {
     return undefined;
@@ -402,7 +413,7 @@ function readDirectories(path, callback) {
 function getScreenIPs() {
   console.log("Reading addresses from JSON");
 
-  var json = getJSONfromPath(configPath);
+  var json = getJSONfromPath(configPath, true);
   var list = [];
   for (var i = 0; i < json.screens.length; i++) {
     list.push(json.screens[i].screenAddress);
@@ -414,7 +425,7 @@ function getScreenIPs() {
 // Gets the windowinfo message for a screen config entry
 function getWindowInfoForScreenConfig(jsonfile,specifictheme) {
   assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
-  var themes = getJSONfromPath(configPath).themes;
+  var themes = getJSONfromPath(configPath, true).themes;
   var obj = {
     "screenName": jsonfile.screenName,
     "screenWidth": jsonfile.screenWidth,
@@ -433,7 +444,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
     if(specifictheme === undefined){
       if(themes[i].themeName === selectedTheme){
         for(var j = 0; j < themes[i].screenViews.length ; j++){
-          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json",true);
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
           if(windowinfo.length === 0) continue;
@@ -449,7 +460,7 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
     } else {
       if(themes[i].themeName === specifictheme){
         for(var j = 0; j < themes[i].screenViews.length ; j++){
-          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json",true);
           if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
           var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
           if(windowinfo.length === 0) continue;
@@ -476,7 +487,7 @@ function allWindows(jsonSC, jsonfile) {
 
   var results = [];
   for (var i = 0; i < jsonSC.screenComponents.length; i++) {
-    var windowjson = getJSONfromPath("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
+    var windowjson = getJSONfromPath("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json", true);
     if (windowjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
     var screenjson = undefined;
     for (var j = 0; j < jsonfile.screenWindows.length; j++) {
@@ -579,7 +590,7 @@ function validateInfoJson(pathToFile, err){
   assert.notEqual(pathToFile, "", "pathToFile can't be empty");
   assert.notEqual(pathToFile, undefined, "pathToFile can't be undefined");
   console.log(pathToFile);
-  var info = getJSONfromPath(pathToFile+"info.json");
+  var info = getJSONfromPath(pathToFile+"info.json", true);
   if(info){
     if(!info.moduleName || !info.moduleDeveloper){
        return err("The moduleName and moduleDeveloper are required in the info.json of the module.");
@@ -727,7 +738,7 @@ function addTheme(themename, themedescription) {
     assert.notEqual(themedescription, undefined, "themedescription can't be undefined");
     assert.notEqual(themedescription, "","themedescription can't be empty");
 
-  var config = getJSONfromPath(configPath);
+  var config = getJSONfromPath(configPath, false);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       console.error("Theme '" + themename + "' already exists in the JSON file!");
@@ -750,7 +761,7 @@ function removeTheme(themename) {
   assert.notEqual(themename, "", "themename is empty");
   assert.notEqual(themename, undefined, "themename is undefined");
 
-  var config = getJSONfromPath(configPath);
+  var config = getJSONfromPath(configPath, false);
   var newlist = [];
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName !== themename) {
@@ -770,7 +781,7 @@ function removeModule(foldername , callback) {
   readDirectories("modules", function(directory) {
     for(var i = 0 ; i  < directory.length ; i++) {
       if(directory[i] === foldername) {
-        var config = getJSONfromPath("config.json");
+        var config = getJSONfromPath("config.json", false);
         var themes = config.themes;
         for(var j = 0 ; j < themes.length ; j ++) {
           var newlist = [];
@@ -810,7 +821,7 @@ function addViewToTheme(themename, viewjson) {
   assert.notEqual(viewObj.screenConfigFile, undefined,  "ScreenConfigFile is undefined");
   assert.notEqual(viewObj.screenComponents, undefined,  "ScreenComponents is undefined");
 
-  var config = getJSONfromPath(configPath);
+  var config = getJSONfromPath(configPath, false);
   for(var i = 0 ; i < config.themes.length ; i++) {
     if(config.themes[i].themeName === themename) {
       config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
@@ -832,7 +843,7 @@ function removeViewInTheme(themename, viewname) {
   assert.notEqual(viewname, "", "Viewname can't be empty");
   assert.notEqual(viewname, undefined, "Viewname can't be undefined");
 
-  var config = getJSONfromPath(configPath);
+  var config = getJSONfromPath(configPath false);
   var themes = config.themes;
   for(var i = 0 ; i < themes.length ; i++) {
     if(themes[i].themeName === themename) {
@@ -856,7 +867,7 @@ function updateCurrentTheme(themename) {
   assert.notEqual(themename, "" , "Themename can't be empty");
   assert.notEqual(themename, undefined, "Themename can't be undefined");
   // check if themename exists
-  var json = getJSONfromPath(configPath);
+  var json = getJSONfromPath(configPath, true);
   for(var i = 0 ; i < json.themes.length ; i++){
     if(json.themes[i].themeName === themename) {
       // set theme and return true if found
@@ -871,7 +882,7 @@ function updateCurrentTheme(themename) {
 
 function updateWindowInfo(themename, ip, windowinfo) {
   // Pre-information loading
-  var config = getJSONfromPath("config.json");
+  var config = getJSONfromPath("config.json", false);
   var themes = config.themes;
   var screens = config.screens;
 
@@ -935,7 +946,7 @@ function sendModuleList(callback) {
   readDirectories("modules", function(list) {
     var modulelist = [];
     for(var i = 0 ; i < list.length ; i++) {
-      var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json");
+      var info = getJSONfromPath("modules/"+list[i]+"/"+"info.json", true);
       var obj = {
         "moduleFolderName" : list[i],
         "moduleName" : info.moduleName,
@@ -954,7 +965,7 @@ function sendModuleList(callback) {
 
 // Returns all themes in JSON format
 function getThemeList() {
-  var themes = getJSONfromPath(configPath).themes;
+  var themes = getJSONfromPath(configPath, true).themes;
   var list = [];
   for(var i = 0 ; i < themes.length ; i++) {
     var listitem = {"name" : themes[i].themeName, "description" : themes[i].themeDescription};
@@ -980,16 +991,19 @@ function arrayToString(array) {
 }
 
 // given a JSON object and a filename, create a JSON file
-function turnJSONIntoFile(jsonObj, filename) {
+function turnJSONIntoFile(jsonObj, filename, shouldLeave) {
   fs.writeFile(filename,JSON.stringify(jsonObj), function(err) {
     if(err) return console.log(err);
     console.log(filename+" created!");
+    if(shouldLeave){
+      sem.leave();  
+    }
   });
 }
 
 // returns list with all screens
 function getScreenList() {
-  var config = getJSONfromPath(configPath);
+  var config = getJSONfromPath(configPath, true);
   return config.screens;
 }
 
