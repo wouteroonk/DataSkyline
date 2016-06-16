@@ -55,6 +55,7 @@
   <script type="text/javascript" src="cpanel/js/ctrl/moduleInfoCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/homeCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/themeCtrl.js"></script>
+  <script type="text/javascript" src="cpanel/js/ctrl/documentationCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/bigHomePreviewCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/ctrl/miniSkylineScreenCtrl.js"></script>
   <script type="text/javascript" src="cpanel/js/directives.js"></script>
@@ -72,7 +73,7 @@
   <!-- Navigation -->
   <!-- ========== -->
 
-  <nav class="navbar navbar-default navbar-static-top" ng-controller="dscmsNavigationCtrl">
+  <nav class="navbar navbar-default navbar-static-top navbar-fixed-top" ng-controller="dscmsNavigationCtrl">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -83,6 +84,7 @@
         </button>
         <a class="navbar-brand" href="#/">Dataskyline control</a>
       </div>
+      <a type="button" class="btn btn-link navbar-btn pull-right" href="#/documentation" ><span class="glyphicon glyphicon-question-sign"></span></a>
       <!-- Main content for navbar, will be hidden on mobile -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <!-- Left aligned -->
