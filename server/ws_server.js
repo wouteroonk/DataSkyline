@@ -163,6 +163,7 @@ wsServer.on('request', function(request) {
 
   // When a message is received
   connection.on('message', function(message) {
+    var themename = "";
     var data = message.utf8Data.split(' ');
     //logConnections();
     // Get the message type and perform matching action
@@ -197,7 +198,7 @@ wsServer.on('request', function(request) {
             break;
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
-          var themename = data.shift();
+          themename = data.shift();
           var returnedJSON = JSON.parse(data.join(" "));
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
@@ -208,7 +209,7 @@ wsServer.on('request', function(request) {
             break;
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
-          var themename = data.shift();
+          themename = data.shift();
           var themedescription = data.join(" ");
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
@@ -219,7 +220,7 @@ wsServer.on('request', function(request) {
             break;
       // "removetheme" is requested by the control panel, it will remove a theme from the configuration JSON file given a themename
       case "removetheme" :
-          var themename = data.shift();
+          themename = data.shift();
           if(removeTheme(themename)) {
             connection.send("removetheme " + "200");
             sendSkylineUpdate("removetheme");
@@ -228,7 +229,7 @@ wsServer.on('request', function(request) {
           }
             break;
       case "removeview" :
-          var themename = data.shift();
+          themename = data.shift();
           var viewname = data.shift();
           removeViewInTheme(themename,viewname);
           connection.send("removeview " + "200");
@@ -253,7 +254,7 @@ wsServer.on('request', function(request) {
             });
             break;
       case "settheme" :
-            var themename = data.shift();
+            themename = data.shift();
             if(updateCurrentTheme(themename)) {
               connection.send("settheme " + "200");
               sendSkylineUpdate("settheme");
@@ -273,7 +274,7 @@ wsServer.on('request', function(request) {
               sendSkylineUpdate("updatewindowinfo");
             } else {
               connection.send("updatewindowinfo " + "400");
-            };
+            }
             break;
       // Should not get here (client error)
       default:
@@ -315,7 +316,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
 // Send update message to all "identified" connections
 function sendSkylineUpdate(change) {
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(connectionList[i] && connectionList[i].connection != undefined){
+    if(connectionList[i] && connectionList[i].connection !== undefined){
         connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -325,7 +326,7 @@ function sendSkylineUpdate(change) {
 function sendSkylineUpdateDisplays(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(connectionList[i] && connectionList[i].connection != undefined){
+    if(connectionList[i] && connectionList[i].connection !== undefined){
       if(isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -335,7 +336,7 @@ function sendSkylineUpdateDisplays(change) {
 function sendSkylineUpdateCpanel(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(connectionList[i] && connectionList[i].connection != undefined){
+    if(connectionList[i] && connectionList[i].connection !== undefined){
       if(!isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -358,7 +359,7 @@ function logConnections() {
   console.log("index - address");
   console.log(connectionList.length);
   for(var i = 0 ; i < connectionList.length ; i++){
-    if(connectionList[i] && connectionList[i].connection != undefined){
+    if(connectionList[i] && connectionList[i].connection !== undefined){
       console.log(i + " - " + connectionList[i].address);
     }
   }
@@ -874,8 +875,8 @@ function updateWindowInfo(themename, ip, windowinfo) {
   var themes = config.themes;
   var screens = config.screens;
 
-  var correctTheme = undefined;
-  var correctScreen = undefined;
+  var correctTheme;
+  var correctScreen;
 
   for(var i = 0 ; i < themes.length; i++) {
     if(themes[i].themeName === themename) {
@@ -887,8 +888,8 @@ function updateWindowInfo(themename, ip, windowinfo) {
     return false;
   }
 
-  for(var i = 0 ; i < screens.length ; i++){
-    if(screens[i].screenAddress === ip) {
+  for(var j = 0 ; j < screens.length ; j++){
+    if(screens[j].screenAddress === ip) {
       correctScreen = screens[i];
     }
   }
@@ -906,15 +907,15 @@ function updateWindowInfo(themename, ip, windowinfo) {
   console.dir(correctTheme);
 
   var found = false;
-  for(var i = 0; i < configViews.length ; i++){
-    for(var j = 0 ; j < infoViews.length ; j++){
-      if(configViews[i].instanceID === infoViews[j].instanceID) {
+  for(var m = 0; m < configViews.length ; m++){
+    for(var n = 0 ; n < infoViews.length ; n++){
+      if(configViews[m].instanceID === infoViews[n].instanceID) {
         found = true;
-        configViews[i].instanceName = infoViews[j].instanceName;
+        configViews[m].instanceName = infoViews[n].instanceName;
         for(var k = 0 ; k < configViews[i].screenComponents.length ; k++){
-          for(var l = 0 ; l < infoViews[j].windows.length ; l++){
-            if(configViews[i].screenComponents[k].componentID === infoViews[j].windows[k].componentID){
-              configViews[i].screenComponents[k].dsWindow = infoViews[j].windows[k].dsWindow;
+          for(var l = 0 ; l < infoViews[n].windows.length ; l++){
+            if(configViews[m].screenComponents[k].componentID === infoViews[n].windows[k].componentID){
+              configViews[m].screenComponents[k].dsWindow = infoViews[n].windows[k].dsWindow;
             }
           }
         }
@@ -1079,7 +1080,7 @@ function getWindowInformation(directory, callback) {
       return callback(list);
     });
   });
-};
+}
 
 function identifyConnection(co){
   assert.notEqual(co, undefined, "co can't be undefined");
@@ -1103,7 +1104,7 @@ function identifyConnection(co){
 }
 
 function removeIdentification(co) {
-  assert.notEqual(co, undefined, "co can't be undefined")
+  assert.notEqual(co, undefined, "co can't be undefined");
 
   for(var i = 0 ; i < connectionList.length ; i++){
     if(connectionList[i] && co.address === connectionList[i].address) {
@@ -1116,7 +1117,7 @@ function removeIdentification(co) {
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){
-    if(connectionList[i] && connectionList[i].connection != undefined){
+    if(connectionList[i] && connectionList[i].connection !== undefined){
       if(connectionList[i].address === ip) {
         return true;
       }
