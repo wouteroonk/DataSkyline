@@ -292,7 +292,6 @@ wsServer.on('request', function(request) {
   });
 });
 
-
 // Send a windowinfo message for a specific IP to a client
 function sendWindowInfoForIPToClient(client, ip, theme) {
   assert.notEqual(client, undefined, "client can't be undefined");
@@ -439,43 +438,27 @@ function getViewsForScreenConfig(jsonfile,themes,specifictheme) {
   assert.notEqual(themes, undefined, "jsonSC can't be undefined!");
   var results = [];
   for (var i = 0; i < themes.length; i++) {
-    if(specifictheme === undefined){
-      console.log("----------------- current Theme!");
-      if(themes[i].themeName === selectedTheme){
-        for(var j = 0; j < themes[i].screenViews.length ; j++){
-          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
-          if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
-          var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
-          if(windowinfo.length === 0) continue;
-          var obj = {
-            "viewName": themes[i].screenViews[j].viewName,
-            "instanceName": themes[i].screenViews[j].instanceName,
-            "instanceID": themes[i].screenViews[j].instanceID,
-            "parentModule": themes[i].screenViews[j].screenParentModule,
-            "managerUrl": viewjson.viewJavascriptReference,
-            "windows": windowinfo
-          };
-          results.push(obj);
-        }
-      }
+    var theme = "";
+    if(specifictheme === undefined) {
+      theme = selectedTheme;
     } else {
-      if(themes[i].themeName === specifictheme){
-        console.log("----------------- Specific Theme!");
-        for(var j = 0; j < themes[i].screenViews.length ; j++){
-          var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
-          if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
-          var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
-          if(windowinfo.length === 0) continue;
-          var obj = {
-            "viewName": themes[i].screenViews[j].viewName,
-            "instanceName": themes[i].screenViews[j].instanceName,
-            "instanceID": themes[i].screenViews[j].instanceID,
-            "parentModule": themes[i].screenViews[j].screenParentModule,
-            "managerUrl": viewjson.viewJavascriptReference,
-            "windows": windowinfo
-          };
-          results.push(obj);
-        }
+      theme = specifictheme;
+    }
+    if(themes[i].themeName === theme){
+      for(var j = 0; j < themes[i].screenViews.length ; j++){
+        var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+        if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
+        var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+        if(windowinfo.length === 0) continue;
+        var obj = {
+           "viewName": themes[i].screenViews[j].viewName,
+          "instanceName": themes[i].screenViews[j].instanceName,
+          "instanceID": themes[i].screenViews[j].instanceID,
+          "parentModule": themes[i].screenViews[j].screenParentModule,
+          "managerUrl": viewjson.viewJavascriptReference,
+          "windows": windowinfo
+        };
+        results.push(obj);
       }
     }
   }
