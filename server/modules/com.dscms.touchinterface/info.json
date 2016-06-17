@@ -2,5 +2,5 @@
 	"moduleName":"Touch Interface Module",
 	"moduleDescription":"Displays the UI for the touchscreen",
 	"moduleDeveloper":"Wouter Oonk",
-	"moduleLicense":"None defined"
+	"moduleLicense":"WTFPLv2"
 }
