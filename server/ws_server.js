@@ -151,6 +151,8 @@ wsServer.on('request', function(request) {
     return;
   }
 
+  var co = {};
+
   // TODO: What is "echo-protocol"?
   var connection = request.accept('echo-protocol', request.origin);
   var index = connectionCount; //Assign index to new connection
@@ -169,7 +171,8 @@ wsServer.on('request', function(request) {
       case "identification" :
           var address = data.shift();
           if(!alreadyIdentified(address)) {
-            connectionList[index] = new ConnectionObject(connection,address);
+            co = new ConnectionObject(connection,address);//TODO: Test this!
+            identifyConnection(co);
           } else {
             console.log(address + " tried to overwrite his own connection!");
           }
@@ -195,7 +198,7 @@ wsServer.on('request', function(request) {
       // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
       case "addview":
           var themename = data.shift();
-          var returnedJSON = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
+          var returnedJSON = JSON.parse(data.join(" "));
           if(addViewToTheme(themename, returnedJSON)) {
             connection.send("addview " + "200");
             sendSkylineUpdate("addview");
@@ -206,7 +209,7 @@ wsServer.on('request', function(request) {
       // "addtheme" is requested by the control panel, it will need a themename and description, with this information, a new theme will be added to the configuration file
       case "addtheme":
           var themename = data.shift();
-          var themedescription = data.join(" "); //TODO: Change this so it'll function like the others (it actually works this way)
+          var themedescription = data.join(" ");
           if(addTheme(themename,themedescription)) {
             connection.send("addtheme " + "200");
             sendSkylineUpdate("addtheme");
@@ -249,7 +252,6 @@ wsServer.on('request', function(request) {
               connection.send("getmodules "+JSON.stringify(obj));
             });
             break;
-            // TODO: send update to all display screens (here or in updateCurrentTheme method)
       case "settheme" :
             var themename = data.shift();
             if(updateCurrentTheme(themename)) {
@@ -265,7 +267,7 @@ wsServer.on('request', function(request) {
       case "updatewindowinfo" :
             var theme = data.shift();
             var ip = data.shift();
-            var windowinfo = JSON.parse(data.join(" ")); //TODO: Change this so it'll properly read JSON
+            var windowinfo = JSON.parse(data.join(" "));
             if(updateWindowInfo(theme, ip, windowinfo)) {
               connection.send("updatewindowinfo " + "200");
               sendSkylineUpdate("updatewindowinfo");
@@ -284,7 +286,8 @@ wsServer.on('request', function(request) {
   connection.on('close', function(reasonCode, description) {
     console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
     clients[index] = null;
-    connectionList[index] = null;
+    removeIdentification(co);//TODO: Test this!
+
     logConnections();
   });
 });
@@ -313,8 +316,7 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
 // Send update message to all "identified" connections
 function sendSkylineUpdate(change) {
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(!connectionList[i]) console.log("Unknown connection");
-    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+    if(connectionList[i] && connectionList[i].connection != undefined){
         connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -324,8 +326,7 @@ function sendSkylineUpdate(change) {
 function sendSkylineUpdateDisplays(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(!connectionList[i]) console.log("Unknown connection");
-    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+    if(connectionList[i] && connectionList[i].connection != undefined){
       if(isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -335,8 +336,7 @@ function sendSkylineUpdateDisplays(change) {
 function sendSkylineUpdateCpanel(change) {
   if(change === undefined) change = "undefined";
   for(var i = 0 ; i < connectionList.length ; i++ ){
-    if(!connectionList[i]) console.log("Unknown connection");
-    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+    if(connectionList[i] && connectionList[i].connection != undefined){
       if(!isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
     }
   }
@@ -357,9 +357,9 @@ function isDisplayScreen(ip) {
 function logConnections() {
   console.log("$$ Connected clients: ");
   console.log("index - address");
+  console.log(connectionList.length);
   for(var i = 0 ; i < connectionList.length ; i++){
-    console.log("Clistlength: "+connectionList.length);
-    if(connectionList[i] !== null && connectionList[i].address !== undefined) {
+    if(connectionList[i] && connectionList[i].connection != undefined){
       console.log(i + " - " + connectionList[i].address);
     }
   }
@@ -809,7 +809,6 @@ function removeModule(foldername , callback) {
   });
 }
 
-// TODO: Send update to everyone
 // adds a "view" to the theme given a themename and a JSON object that needs to be inserted (JSON file should contain a "view")
 // TODO: Test these assertions
 function addViewToTheme(themename, viewjson) {
@@ -822,19 +821,24 @@ function addViewToTheme(themename, viewjson) {
   assert.notEqual(viewObj.screenConfigFile, undefined,  "ScreenConfigFile is undefined");
   assert.notEqual(viewObj.screenComponents, undefined,  "ScreenComponents is undefined");
 
-  var config = getJSONfromPath(configPath);
-  for(var i = 0 ; i < config.themes.length ; i++) {
-    if(config.themes[i].themeName === themename) {
-      config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
-      turnJSONIntoFile(config,"config.json");
-      return true;
+  //TODO: Test this!
+  if(viewjson.hasOwnProperty('screenName') && viewjson.hasOwnProperty('screenParentModule') && viewjson.hasOwnProperty('screenConfigFile') && viewjson.hasOwnProperty('screenComponents')){
+    var config = getJSONfromPath(configPath);
+    for(var i = 0 ; i < config.themes.length ; i++) {
+      if(config.themes[i].themeName === themename) {
+        config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
+        turnJSONIntoFile(config,"config.json");
+        return true;
+      }
     }
+    console.error("Theme '" + themename + "' does not exist in the JSON file!");
+    return false ;
+  } else {
+    console.error("Invalid viewjson");
+    return false;
   }
-  console.error("Theme '" + themename + "' does not exist in the JSON file!");
-  return false ;
 }
 
-// TODO: Send update to everyone
 //TODO: Make the return type Boolean!
 // removes a view from the selected theme given a themename and a viewname
 function removeViewInTheme(themename, viewname) {
@@ -1094,12 +1098,42 @@ function getWindowInformation(directory, callback) {
   });
 };
 
+function identifyConnection(co){
+  assert.notEqual(co, undefined, "co can't be undefined");
 
+  for(var i = 0 ; i < connectionList.length ; i++) {
+    if(connectionList[i] && co.address === connectionList[i].address) {
+      console.log("Duplicate IP, Overwriting!");
+      connectionList[i].connection = co.connection;
+
+      assert.notEqual(connectionList[i].connection, undefined , "Something went wrong while adding the connection");
+      return true;
+    }
+  }
+  if(connectionList.length <= maxConnections) {
+    connectionList.push(co);
+    return true;
+  } else {
+    console.log("Max client limit reached!");
+    return false;
+  }
+}
+
+function removeIdentification(co) {
+  assert.notEqual(co, undefined, "co can't be undefined")
+
+  for(var i = 0 ; i < connectionList.length ; i++){
+    if(connectionList[i] && co.address === connectionList[i].address) {
+      connectionList[i].connection = undefined;
+      return true;
+    }
+  }
+  return false;
+}
 
 function alreadyIdentified(ip) {
   for(var i = 0 ; i < connectionList.length ; i++){
-    if(!connectionList[i]) console.log("Unknown connection");
-    if(connectionList[i] !== null && connectionList[i].address !== undefined){
+    if(connectionList[i] && connectionList[i].connection != undefined){
       if(connectionList[i].address === ip) {
         return true;
       }
@@ -1107,6 +1141,5 @@ function alreadyIdentified(ip) {
   }
   return false;
 }
-//TODO: IPV 200 sturen kunnen we ook gewoon een algemene "refresh" response sturen naar alle clients!
 
-//TODO: Client moet "identification" bericht sturen wanneer je verbinding legt met de server
+//TODO: Verander "IPs" bijhouden systeem
