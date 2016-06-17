@@ -949,7 +949,7 @@ function sendModuleList(callback) {
                         "moduleDescription": info.moduleDescription,
                         "moduleDeveloper": info.moduleDeveloper,
                         "moduleLicense": info.moduleLicense,
-                        "moduleInfo": moduleinfo
+                        "moduleViews": moduleinfo
                     };
                     resolve(obj);
                 });

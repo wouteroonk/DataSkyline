@@ -178,3 +178,14 @@ notification-center strong {
 .dscms-nav-doc {
   position: fixed;
 }
+
+/* Add theme */
+.add-theme-hr {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  border: none;
+}
+
+.add-theme-window-count {
+  color: #bfbfbf;
+}

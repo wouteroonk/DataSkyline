@@ -1,10 +1,23 @@
 <div class="modal-header">
-  <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <h4 class="modal-title">Add a view</h4>
+    <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Add a view</h4>
 </div>
 <div class="modal-body">
+    <div class="list-group">
+      <a ng-click="changeViewPos($index)" ng-repeat="view in views" class="list-group-item" ng-class="{active: views[selectedViewPos] === view}">
+          <span class="badge">{{view.viewParent.moduleName}}</span>
+          <h4 class="list-group-item-heading">{{view.viewName}}</h4>
+          <p class="list-group-item-text">
+            {{view.viewDescription}}
+          </p>
+          <hr class="add-theme-hr" />
+          <p class="list-group-item-text">
+            <small class="add-theme-window-count">View with {{view.windows.length}} window{{(view.windows.length == 0 || view.windows.length > 1 ? 's' : '')}}</small>
+          </p>
+      </a>
+    </ul>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-  <button ng-click="addView()" type="button" class="btn btn-success">Add view</button>
+    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+    <button ng-click="addView()" type="button" class="btn btn-success">Add view</button>
 </div>

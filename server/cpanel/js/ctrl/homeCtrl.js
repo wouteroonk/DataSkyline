@@ -51,7 +51,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
           return;
         }
         //Do something with JSON
-        console.dir(returnedJSON);
         $scope.modules = returnedJSON.modules;
 
         $scope.$apply();

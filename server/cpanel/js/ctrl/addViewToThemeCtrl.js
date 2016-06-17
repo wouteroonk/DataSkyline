@@ -5,22 +5,45 @@
   It also subscribes to the websocket connection to get a list of modules and their views.
 */
 dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance, dscmsWebSocket) {
-  $scope.newView = {};
+    $scope.newView = {};
+    $scope.views = [];
+    $scope.selectedViewPos = null;
 
-  dscmsWebSocket.subscribe(function(message) {
-    var commands = message.data.split(' ');
-    switch (commands.shift()) {
-      case "windowinfo":
+    dscmsWebSocket.subscribe(function(message) {
+        var commands = message.data.split(' ');
+        switch (commands.shift()) {
+            case "getmodules":
+                var returnedJSON;
+                try {
+                    returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+                } catch (e) {
+                    console.log("Server did not return JSON in getmodules message: " + message.data);
+                    console.dir(message);
+                    return;
+                }
+                $scope.views = [];
+                $.each(returnedJSON.modules, function(i, module) {
+                  $.each(module.moduleViews, function(i, view) {
+                    view['viewParent'] = module;
+                  });
+                  $scope.views = $scope.views.concat(module.moduleViews);
+                });
+                $scope.$apply();
+                break;
+        }
+    });
 
-        break;
-    }
-  });
+    dscmsWebSocket.sendServerMessage("getmodules");
 
-  $scope.addView = function() {
-    $modalInstance.close($scope.newView);
-  };
+    $scope.changeViewPos = function(index) {
+      $scope.selectedViewPos = index;
+    };
 
-  $scope.cancel = function() {
-    $modalInstance.dismiss('cancel');
-  };
+    $scope.addView = function() {
+        $modalInstance.close($scope.newView);
+    };
+
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    };
 });
