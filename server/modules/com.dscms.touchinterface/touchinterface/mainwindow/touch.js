@@ -6976,6 +6976,8 @@
 
 DSCMSView.run = function(DSCMSViewTools) {
 
+    dscmsWebSocket.shouldReloadOnWindowInfo = false;
+
     var clickedButton;
 
     function initThemes(themes) {

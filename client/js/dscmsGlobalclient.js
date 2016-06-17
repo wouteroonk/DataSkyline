@@ -95,6 +95,8 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     return false;
   };
 
+  functions.shouldReloadOnWindowInfo = true;
+
   functions.sendServerMessage = function(stringMessage) {
     waitForWS(function() {
       ws.send(stringMessage);
