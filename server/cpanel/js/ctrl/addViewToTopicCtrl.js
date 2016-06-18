@@ -1,10 +1,10 @@
 /**
   Created by Steyn Potze on 2016-06-10
-  An instance of this controller is always coupled to an "add view to theme" modal.
-  As the name says, this controller contains functionallity for a view instance  to a theme.
+  An instance of this controller is always coupled to an "add view to topic" modal.
+  As the name says, this controller contains functionallity for a view instance  to a topic.
   It also subscribes to the websocket connection to get a list of modules and their views.
 */
-dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance, dscmsWebSocket, dscmsNotificationCenter) {
+dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance, dscmsWebSocket, dscmsNotificationCenter) {
     $scope.newView = {};
     $scope.views = [];
     $scope.selectedViewPos = null;
@@ -41,7 +41,7 @@ dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance,
 
     $scope.addView = function() {
         if ($scope.views[$scope.selectedViewPos] === undefined) {
-          dscmsNotificationCenter.danger("Whoops!", "You need to select a view to add to the theme.", 2000);
+          dscmsNotificationCenter.danger("Whoops!", "You need to select a view to add to the topic.", 2000);
           return;
         }
         $modalInstance.close($scope.views[$scope.selectedViewPos]);

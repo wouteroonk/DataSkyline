@@ -4,19 +4,19 @@
     <div class="col-md-12" ng-controller="dscmsBigHomePreviewCtrl">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Preview for selected theme</h3>
+          <h3 class="panel-title">Preview for selected topic</h3>
         </div>
         <div class="panel-body">
           <ul>
             <li ng-repeat="screen in screens">
-              <mini-skyline-screen class="edit-theme-screen-preview" windows="previewConfigs[screen.screenName]"></mini-skyline-screen>
+              <mini-skyline-screen class="edit-topic-screen-preview" windows="previewConfigs[screen.screenName]"></mini-skyline-screen>
             </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-  <!-- List of modules, list of themes -->
+  <!-- List of modules, list of topics -->
   <div class="row">
     <div class="col-md-6">
       <div class="panel panel-default">
@@ -61,10 +61,10 @@
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading clearfix">
-          <h3 class="panel-title-with-button panel-title pull-left">Themes</h3>
+          <h3 class="panel-title-with-button panel-title pull-left">Topics</h3>
           <div class="pull-right" data-toggle="buttons">
-            <a type="button" class="btn btn-link btn-link-help" href="#/documentation#dscms-themes"><span class="glyphicon glyphicon-question-sign"></span></a>
-          <button type="button" class="btn btn-default pull-right" ng-click="openAddThemeModal()"><span class="glyphicon glyphicon-plus"></span>
+            <a type="button" class="btn btn-link btn-link-help" href="#/documentation#dscms-topics"><span class="glyphicon glyphicon-question-sign"></span></a>
+          <button type="button" class="btn btn-default pull-right" ng-click="openAddTopicModal()"><span class="glyphicon glyphicon-plus"></span>
           </div>
           </button>
         </div>
@@ -72,21 +72,21 @@
           <table class="table table-striped">
             <thead>
               <tr>
-                <th>Theme</th>
+                <th>Topic</th>
                 <th>Description</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="theme in themes.slice(((themesTableCurrentPage-1)*themesTableItemsPerPage), ((themesTableCurrentPage)*themesTableItemsPerPage))">
-                <td>{{theme.name}}</td>
-                <td>{{theme.description}}</td>
+              <tr ng-repeat="topic in topics.slice(((topicsTableCurrentPage-1)*topicsTableItemsPerPage), ((topicsTableCurrentPage)*topicsTableItemsPerPage))">
+                <td>{{topic.name}}</td>
+                <td>{{topic.description}}</td>
 								<td>
                   <div class="btn-group pull-right" data-toggle="buttons">
-                    <button ng-click="editTheme(theme)" type="button" class="btn btn-xs btn-primary">
+                    <button ng-click="editTopic(topic)" type="button" class="btn btn-xs btn-primary">
                       <span class="glyphicon glyphicon-pencil"></span>
                     </button>
-                    <button ng-click="deleteTheme(theme)" type="button" class="btn btn-xs btn-danger">
+                    <button ng-click="deleteTopic(topic)" type="button" class="btn btn-xs btn-danger">
                       <span class="glyphicon glyphicon-trash"></span>
                     </button>
                   </div>
@@ -94,7 +94,7 @@
               </tr>
             </tbody>
           </table>
-          <pager ng-hide="themes.length <= themesTableItemsPerPage" total-items="themes.length" ng-model="themesTableCurrentPage" items-per-page="themesTableItemsPerPage"></pager>
+          <pager ng-hide="topics.length <= topicsTableItemsPerPage" total-items="topics.length" ng-model="topicsTableCurrentPage" items-per-page="topicsTableItemsPerPage"></pager>
         </div>
       </div>
     </div>

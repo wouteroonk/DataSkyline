@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Add a new topic</h4>
+</div>
+<div class="modal-body">
+  <div ng-show="showTopicError == true" id="add-thema-message" type="hidden" class="alert alert-warning" role="alert">
+    <strong>Oops!</strong> {{addTopicError}}
+  </div>
+  <fieldset class="form-group">
+    <label for="newTopicNameInput">Topic name</label>
+    <input maxlength="20" ng-model="newTopicName" ng-enter="addTopic(newTopicName, newTopicDescription)" ng-keydown="nameKeydown($event)" type="text" class="form-control" id="newTopicNameInput">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="newTopicDescriptionInput">Topic description</label>
+    <input maxlength="150" ng-model="newTopicDescription" ng-enter="addTopic(newTopicName, newTopicDescription)" type="text" class="form-control" id="newTopicDescriptionInput">
+  </fieldset>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+  <button ng-click="addTopic(newTopicName, newTopicDescription)" type="button" class="btn btn-success">Add topic</button>
+</div>

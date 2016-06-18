@@ -8,16 +8,16 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
   var DSCMSView = {
     // The run function will be executed when all windows have been added to the DOM
     run: function() {
-      console.error("View \"" + $scope.dscmsView.viewName + "\" does not have a valid Javascript file.");
+      console.error("View \"" + $scope.dscmsView.name + "\" does not have a valid Javascript file.");
     }
   };
 
   // The DSCMSViewTools object is a set of tools that can be used in the views own JS code
   var DSCMSViewTools = {
     // Name of the view type
-    myName: $scope.dscmsView.viewName,
+    myName: $scope.dscmsView.name,
     // Name of the parent module
-    myParentModule: $scope.dscmsView.parentModule,
+    mywidth: $scope.dscmsView.parentModuleFolderName,
     // List of DOM IDs for this views windows, with window name as key
     myWindows: {},
     // The config file for this view instance as defined on the server
@@ -34,7 +34,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // Loop through windows and add them to the screen
     for (var i = 0; i < $scope.dscmsView.windows.length; i++) {
       // Create a unique window identifier
-      var windowIdentifier = "dscms-" + $scope.dscmsView.parentModule.split('.').join('-') + "-" + $scope.dscmsView.viewName.split(' ').join('-') + "-" + $scope.dscmsViewId + "-" + i;
+      var windowIdentifier = "dscms-" + $scope.dscmsView.parentModuleFolderName.split('.').join('-') + "-" + $scope.dscmsView.viewName.split(' ').join('-') + "-" + $scope.dscmsViewId + "-" + i;
       // Store the identifier in a list for the view manager
       DSCMSViewTools.myWindows[$scope.dscmsView.windows[i].name] = windowIdentifier;
 
@@ -43,16 +43,16 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
 
       // Change shape to ellipse if view requires it
       // Default is rectangle
-      if ($scope.dscmsView.windows[i].type === "ellipse") {
+      if ($scope.dscmsView.windows[i].shape === "ellipse") {
         $('#' + windowIdentifier).addClass("dscmsEllipse");
       }
       // Size
-      $('#' + windowIdentifier).css('width', $scope.dscmsView.windows[i].pixelWidth);
-      $('#' + windowIdentifier).css('height', $scope.dscmsView.windows[i].pixelHeight);
+      $('#' + windowIdentifier).css('width', $scope.dscmsView.windows[i].width);
+      $('#' + windowIdentifier).css('height', $scope.dscmsView.windows[i].height);
       // Position
       $('#' + windowIdentifier).css('position', 'absolute');
-      $('#' + windowIdentifier).css('top', $scope.dscmsView.windows[i].coordY + "px");
-      $('#' + windowIdentifier).css('left', $scope.dscmsView.windows[i].coordX + "px");
+      $('#' + windowIdentifier).css('top', $scope.dscmsView.windows[i].y + "px");
+      $('#' + windowIdentifier).css('left', $scope.dscmsView.windows[i].x + "px");
       // Testing (so we can see window borders)
       $('#' + windowIdentifier).css('border', 'dashed 1px');
 
@@ -64,7 +64,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // Get the views Javascript file from the server and instantiate it
     $http({
       method: 'GET',
-      url: "http://localhost:8080/modules/" + $scope.dscmsView.managerUrl
+      url: "http://localhost:8080/modules/" + $scope.dscmsView.jsProgramUrl
     }).then(function success(response) {
       dscmsRunJS(response.data);
     }, function error(response) {

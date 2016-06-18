@@ -10,7 +10,7 @@
   This controller does not
     * Actually contain the code that connects to the server (a function in the global script should be called)
     * Figure out how many views a module needs or what its properties are (this should already be done by the server)
-      - MODULES are what the server uses and contain information such as theme,
+      - MODULES are what the server uses and contain information such as topic,
         screen to show the module on, amount and size of views;
       - VIEWS are send to clients and are basically mini websites.
 */
@@ -66,7 +66,7 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
         dscmsWebSocket.requestWindowsForIP(ip);
     });
 
-    // Init window loads views into the window and initiates their JS files
+    // Init window loads viewInstances into the window and initiates their JS files
     var initWindow = function(data) {
         if (!$('#dscms-modules').is(':empty') && !dscmsWebSocket.shouldReloadOnWindowInfo) {
           return;
@@ -83,14 +83,14 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
               return;
             }
 
-            // Loop through views to initiate them
-            $scope.views = data.views;
-            for (var i = 0; i < $scope.views.length; i++) {
+            // Loop through viewInstances to initiate them
+            $scope.viewInstances = data.viewInstances;
+            for (var i = 0; i < $scope.viewInstances.length; i++) {
                 // Further initialisation is handled by dscmsViewCtrl
-                $('#dscms-modules').append($compile("<dscms-view id='dscms-view-" + i + "' dscms-data-object='views' dscms-view-id='" + i + "'>test</dscms-view>")($scope));
+                $('#dscms-modules').append($compile("<dscms-view id='dscms-view-" + i + "' dscms-data-object='viewInstances' dscms-view-id='" + i + "'>test</dscms-view>")($scope));
             }
 
-            // Make views visible again
+            // Make viewInstances visible again
             $('#dscms-modules').show();
         });
     };

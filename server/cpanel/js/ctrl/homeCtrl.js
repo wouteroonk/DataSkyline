@@ -1,12 +1,12 @@
 /**
   Created by Hugo van der Geest and Viradj Jainandunsing on ???
   This controller loads various items on the home page, such as a list of modules
-  and a list of themes. It also instantiates the module upload and theme creation modals.
+  and a list of topics. It also instantiates the module upload and topic creation modals.
 */
 dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location, $modal) {
   $scope.pageClass = "dscms-page-home";
 
-  $scope.themes = [];
+  $scope.topics = [];
   $scope.modules = [];
 
   // Pagination for tables
@@ -14,30 +14,30 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   $scope.modulesTableItemsPerPage = 5;
   $scope.modulesTableCurrentPage = 1;
 
-  // themes
-  $scope.themesTableItemsPerPage = 5;
-  $scope.themesTableCurrentPage = 1;
+  // topics
+  $scope.topicsTableItemsPerPage = 5;
+  $scope.topicsTableCurrentPage = 1;
 
   dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       case "skylineupdate":
-        dscmsWebSocket.sendServerMessage("getthemes");
+        dscmsWebSocket.sendServerMessage("gettopics");
         dscmsWebSocket.sendServerMessage("getmodules");
         break;
-      case "getthemes":
+      case "gettopics":
         // Whatever you want to do
         //feature
         var returnedJSON;
         try {
           returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
         } catch (e) {
-          console.log("Server did not return JSON in allthemes message: " + message.data);
+          console.log("Server did not return JSON in alltopics message: " + message.data);
           console.dir(message);
           return;
         }
         // Do something with JSON
-        $scope.themes = returnedJSON.themes;
+        $scope.topics = returnedJSON.topics;
         $scope.$apply();
 
         break;
@@ -55,10 +55,10 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
         $scope.$apply();
         break;
-      case "addtheme":
+      case "addtopic":
         if (message.data.substring(message.data.indexOf(' ') + 1) == 200) {
-          console.log("added the theme");
-          $('#add-theme-modal').modal('hide');
+          console.log("added the topic");
+          $('#add-topic-modal').modal('hide');
           return;
         } else {
           alert("Something went wrong Error: " + message.data);
@@ -70,26 +70,26 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   });
 
   // Initial server communication
-  dscmsWebSocket.sendServerMessage("getthemes");
+  dscmsWebSocket.sendServerMessage("gettopics");
   dscmsWebSocket.sendServerMessage("getmodules");
   dscmsWebSocket.requestOwnLocalIP(function(ip) {
     dscmsWebSocket.sendServerMessage("identification " + ip);
   });
 
-  // Start a modal for adding a theme
-  $scope.openAddThemeModal = function() {
+  // Start a modal for adding a topic
+  $scope.openAddTopicModal = function() {
     var modalInstance = $modal.open({
-      templateUrl: 'cpanel/modals/addTheme.html',
-      controller: 'dscmsAddThemeCtrl',
+      templateUrl: 'cpanel/modals/addTopic.html',
+      controller: 'dscmsAddTopicCtrl',
       resolve: {
-        themes: function() {
-          return $scope.themes;
+        topics: function() {
+          return $scope.topics;
         }
       }
     });
 
     modalInstance.result.then(function() {
-      // TODO: Refresh theme list
+      // TODO: Refresh topic list
     });
   };
 
@@ -138,12 +138,12 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   };
 
 	// Delete a module (first ask for confirmation)
-  $scope.deleteTheme = function(theme) {
+  $scope.deleteTopic = function(topic) {
     // Ask for confirmation
     swal(
       {
         title: "Are you sure?",
-        text: "This will delete \"" + theme.name + "\" forever.",
+        text: "This will delete \"" + topic.name + "\" forever.",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
@@ -152,14 +152,14 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       }, function(isConfirm) {
         // Tell server to delete module if confirmed
         if (isConfirm) {
-          dscmsWebSocket.sendServerMessage("removetheme " + theme.name);
+          dscmsWebSocket.sendServerMessage("removetopic " + topic.name);
         }
       });
   };
 
-  // Go to the edit page for the selected theme
-  $scope.editTheme = function(theme) {
-    $location.path('/themes/' + theme.name);
+  // Go to the edit page for the selected topic
+  $scope.editTopic = function(topic) {
+    $location.path('/topics/' + topic.name);
   };
 
 });

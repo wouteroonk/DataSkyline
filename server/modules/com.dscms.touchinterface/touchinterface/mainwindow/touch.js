@@ -6980,14 +6980,14 @@ DSCMSView.run = function(DSCMSViewTools) {
 
     var clickedButton;
 
-    function initThemes(themes) {
+    function initTopics(topics) {
         //Default colours of the dataskyline
         var colors = ["dscms-bgBlue", "dscms-bgGreen", "dscms-bgPink", "dscms-bgOrange", "dscms-bgPurple"];
 
         //Create buttons
         var j = 0;
-        while (j < themes.length) {
-            $("#" + DSCMSViewTools.myWindows["Touch Window"]).append("<div id='button_" + j + "' class='button " + colors[j % colors.length] + "'>" + themes[j].name + "</div>");
+        while (j < topics.length) {
+            $("#" + DSCMSViewTools.myWindows["Touch Window"]).append("<div id='button_" + j + "' class='button " + colors[j % colors.length] + "'>" + topics[j].name + "</div>");
             j++;
         }
 
@@ -7016,7 +7016,7 @@ DSCMSView.run = function(DSCMSViewTools) {
         //Button click
         $(".button").click(function() {
             clickedButton = $(this);
-            dscmsWebSocket.setTheme(clickedButton.context.innerText);
+            dscmsWebSocket.setTopic(clickedButton.context.innerText);
         });
     }
 
@@ -7024,27 +7024,27 @@ DSCMSView.run = function(DSCMSViewTools) {
         var commands = message.data.split(' ');
 
         switch (commands.shift()) {
-            case "getthemes":
+            case "gettopics":
 
                 var returnedJSON;
                 try {
                     returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
                 } catch (e) {
-                    console.log("Server did not return JSON in allthemes message: " + message.data);
+                    console.log("Server did not return JSON in alltopics message: " + message.data);
                     return;
                 }
 
-                initThemes(returnedJSON.themes);
+                initTopics(returnedJSON.topics);
 
                 break;
-            case "settheme":
+            case "settopic":
                 switch (commands.shift()) {
                     case "200":
                         $(".active").removeClass("active")
                         clickedButton.addClass("active");
                         break;
                     default:
-                        console.log("Server can't set the theme: " + clickedButton.context.innerText);
+                        console.log("Server can't set the topic: " + clickedButton.context.innerText);
                 }
                 break;
             default:
@@ -7053,5 +7053,5 @@ DSCMSView.run = function(DSCMSViewTools) {
         }
     });
 
-    dscmsWebSocket.getThemes();
+    dscmsWebSocket.getTopics();
 }
