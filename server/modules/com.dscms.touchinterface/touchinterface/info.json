@@ -1,5 +1,8 @@
 {
 	"name":"Touchscreen View",
 	"description":"Display the touch UI",
-	"jsProgramUrl":"com.dscms.touchinterface/touchinterface/mainwindow/touch.js"
+	"jsProgramUrl":"com.dscms.touchinterface/touchinterface/mainwindow/touch.js",
+	"configTemplate": {
+		"configItems": []
+	}
 }

@@ -34,7 +34,7 @@ ul {
   z-index: 9000;
 }
 
-.dscms-page-theme.ng-enter {
+.dscms-page-topic.ng-enter {
   animation: slideInUp 0.5s both ease;
   z-index: 9000;
 }
@@ -49,7 +49,7 @@ ul {
   z-index: 8999;
 }
 
-.dscms-page-theme.ng-leave {
+.dscms-page-topic.ng-leave {
   animation: slideOutDown 0.5s both ease;
   z-index: 8999;
 }
@@ -84,23 +84,23 @@ ul {
   border-radius: 50%;
 }
 
-.edit-theme-screen-preview {
+.edit-topic-screen-preview {
   width: 100%;
 }
 .panel-title-with-button {
   line-height: 45px;
   font-size: 17px;
 }
-#edit-theme-config-table tr td:first-child {
+#edit-topic-config-table tr td:first-child {
   white-space: nowrap;
   width: 1px;
 }
 
-#edit-theme-preview-col {
+#edit-topic-preview-col {
   padding-left: 0;
 }
 
-#edit-theme-control-col {
+#edit-topic-control-col {
   padding-right: 0;
 }
 
@@ -179,13 +179,13 @@ notification-center strong {
   position: fixed;
 }
 
-/* Add theme */
-.add-theme-hr {
+/* Add topic */
+.add-topic-hr {
   margin-top: 15px;
   margin-bottom: 10px;
   border: none;
 }
 
-.add-theme-window-count {
+.add-topic-window-count {
   color: #bfbfbf;
 }

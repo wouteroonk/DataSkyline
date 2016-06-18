@@ -1,5 +1,9 @@
 {
 	"name":"Avatar Window",
 	"description":"Displays the profile image of the tweets author.",
-	"htmlUrl":"com.example.twitter/tweetbox/avatarwindow/avatar.html"
+	"htmlUrl":"com.example.twitter/tweetbox/avatarwindow/avatar.html",
+	"preferredWidth":"1920",
+	"preferredHeight":"1080",
+	"preferredShape":"rectangle",
+	"screenshotUrl":"com.example.twitter/tweetbox/avatarwindow/screen.jpg"
 }

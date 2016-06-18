@@ -1,5 +1,9 @@
 {
 	"name":"Text Window",
 	"description":"Display the textual part of a tweet",
-	"htmlUrl":"com.example.twitter/tweetbox/textwindow/text.html"
+	"htmlUrl":"com.example.twitter/tweetbox/textwindow/text.html",
+	"preferredWidth":"1920",
+	"preferredHeight":"1080",
+	"preferredShape":"rectangle",
+	"screenshotUrl":"com.example.twitter/tweetbox/textwindow/screen.jpg"
 }

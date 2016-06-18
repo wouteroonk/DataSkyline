@@ -1,5 +1,9 @@
 {
 	"name":"Touch Window",
 	"description":"Display Touchscreen UI",
-	"htmlUrl":"com.dscms.touchinterface/touchinterface/mainwindow/touch.html"
+	"htmlUrl":"com.dscms.touchinterface/touchinterface/mainwindow/touch.html",
+	"preferredWidth":"1920",
+	"preferredHeight":"1080",
+	"preferredShape":"rectangle",
+	"screenshotUrl":"com.dscms.touchinterface/touchinterface/mainwindow/screen.jpg"
 }

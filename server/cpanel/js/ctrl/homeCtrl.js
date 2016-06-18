@@ -39,7 +39,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         // Do something with JSON
         $scope.topics = returnedJSON.topics;
         $scope.$apply();
-
         break;
       case "getmodules":
         var returnedJSON;

@@ -1,5 +1,8 @@
 {
 	"name":"Tweetbox View",
 	"description":"Displays a single tweet by a specified user.",
-	"jsProgramUrl":"com.example.twitter/tweetbox/tb.js"
+	"jsProgramUrl":"com.example.twitter/tweetbox/tb.js",
+	"configTemplate": {
+		"configItems": []
+	}
 }

@@ -17,6 +17,11 @@ var Promise = require('promise');
 
 // Message handlers
 var WindowInfoHandler = require('./messagehandlers/windowinfo.js');
+var GetTopicsHandler = require('./messagehandlers/gettopics.js');
+var AddTopicHandler = require('./messagehandlers/addtopic.js');
+var RemoveTopicHandler = require('./messagehandlers/removetopic.js');
+var RemoveModuleHandler = require('./messagehandlers/removemodule.js');
+var GetModulesHandler = require('./messagehandlers/getmodules.js');
 
 
 // The selected dataskyline topic
@@ -178,6 +183,7 @@ wsServer.on('request', function(request) {
                     console.log((new Date()) + ' Client tried to identify with already registered ip \"' + address + "\".");
                 }
                 break;
+
             // Clients asks for windowinfo for IP and possibly specific topic
             case "requestwindows":
                 var ipAddress = data.shift();
@@ -193,68 +199,86 @@ wsServer.on('request', function(request) {
                 console.log((new Date()) + ' Succeeded sending windowinfo for ' + ipAddress + ' to client.');
                 connection.send("windowinfo " + JSON.stringify(windowInfoObject));
                 break;
-                // "gettopics" is requested by the control panel, it will return the topiclist from the JSON configuration file
+
+            // "gettopics" is requested by the control panel, it will return the topiclist from the JSON configuration file
             case "gettopics":
-                var topics = JSON.stringify(getTopicList());
-                connection.send("gettopics " + topics);
-                break;
-                // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
-            case "addview":
-                topicname = data.shift();
-                var returnedJSON = JSON.parse(data.join(" "));
-                if (addViewToTopic(topicname, returnedJSON)) {
-                    connection.send("addview " + "200");
-                    sendSkylineUpdate("addview");
-                } else {
-                    connection.send("addview " + "400");
+                var topicsObject = GetTopicsHandler.getTopics();
+                if (topicsObject === undefined) {
+                    console.warn((new Date()) + ' Failed sending gettopics to client.');
+                    return;
                 }
+                console.log((new Date()) + ' Succeeded sending gettopics to client.');
+                connection.send("gettopics " + JSON.stringify(topicsObject));
                 break;
-                // "addtopic" is requested by the control panel, it will need a topicname and description, with this information, a new topic will be added to the configuration file
+
+            // "addview" is requested by the control panel, it will give a JSON object (containing a view) that needs to be added to the configuration JSON file.
+            // WARNING: Deprecated: Views are now added via windowinfo message send by client (updatetopic)
+            // case "addview":
+            //     topicname = data.shift();
+            //     var returnedJSON = JSON.parse(data.join(" "));
+            //     if (addViewToTopic(topicname, returnedJSON)) {
+            //         connection.send("addview " + "200");
+            //         sendSkylineUpdate("addview");
+            //     } else {
+            //         connection.send("addview " + "400");
+            //     }
+            //     break;
+
+            // "addtopic" is requested by the control panel, it will need a topicname and description, with this information, a new topic will be added to the configuration file
             case "addtopic":
                 topicname = data.shift();
                 var topicdescription = data.join(" ");
-                if (addTopic(topicname, topicdescription)) {
-                    connection.send("addtopic " + "200");
-                    sendSkylineUpdate("addtopic");
-                } else {
-                    connection.send("addtopic " + "400");
+
+                if (!AddTopicHandler.addTopic(topicname, topicdescription)) {
+                    console.warn((new Date()) + ' Failed adding topic ' + topicname + '.');
+                    connection.send("addtopic 400");
+                    return;
                 }
+                console.log((new Date()) + ' Succeeded adding topic ' + topicname + '.');
+                connection.send("addtopic 200");
                 break;
-                // "removetopic" is requested by the control panel, it will remove a topic from the configuration JSON file given a topicname
+
+            // "removetopic" is requested by the control panel, it will remove a topic from the configuration JSON file given a topicname
             case "removetopic":
                 topicname = data.shift();
-                if (removeTopic(topicname)) {
-                    connection.send("removetopic " + "200");
-                    sendSkylineUpdate("removetopic");
-                } else {
-                    connection.send("removetopic " + "400");
+
+                if (!RemoveTopicHandler.removeTopic(topicname)) {
+                    console.warn((new Date()) + ' Failed removing topic ' + topicname + '.');
+                    connection.send("removetopic 400");
+                    return;
                 }
+                console.log((new Date()) + ' Succeeded removing topic ' + topicname + '.');
+                connection.send("removetopic 200");
+                sendSkylineUpdate("removetopic");
                 break;
-            case "removeview":
-                topicname = data.shift();
-                var viewFolderName = data.shift();
-                removeViewInTopic(topicname, viewFolderName);
-                connection.send("removeview " + "200");
-                sendSkylineUpdate("removeview");
-                break;
-                // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
+
+            // WARNING: Deprecated: Views are now removed via windowinfo message send by client (updatetopic)
+            // case "removeview":
+            //     topicname = data.shift();
+            //     var viewFolderName = data.shift();
+            //     removeViewInTopic(topicname, viewFolderName);
+            //     connection.send("removeview " + "200");
+            //     sendSkylineUpdate("removeview");
+            //     break;
+
+            // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
             case "removemodule":
                 var modulefolder = data.shift();
-                removeModule(modulefolder, function callback(success) {
-                    if (success) {
-                        connection.send("removemodule " + "200");
-                        sendSkylineUpdate("removemodule");
-                    } else {
-                        connection.send("removemodule " + "400");
-                    }
-                });
+                if (!RemoveModuleHandler.removeModule(topicname)) {
+                    console.warn((new Date()) + ' Failed removing module ' + modulefolder + '.');
+                    connection.send("removemodule 400");
+                    return;
+                }
+                console.log((new Date()) + ' Succeeded removing module ' + modulefolder + '.');
+                connection.send("removemodule 200");
+                sendSkylineUpdate("removemodule");
                 break;
-                // "getmodules" is requested by the control panel, this message will return a json object containing all modules with their information
+
+            // "getmodules" is requested by the control panel, this message will return a json object containing all modules with their information
             case "getmodules":
-                sendModuleList(function(obj) {
-                    connection.send("getmodules " + JSON.stringify(obj));
-                });
+                connection.send("getmodules " + JSON.stringify(GetModulesHandler.getModules()));
                 break;
+
             case "settopic":
                 topicname = data.shift();
                 if (updateCurrentTopic(topicname)) {
@@ -264,10 +288,12 @@ wsServer.on('request', function(request) {
                     connection.send("settopic " + "400");
                 }
                 break;
+
             case "getscreens":
                 connection.send("getscreens " + JSON.stringify(getScreenList()));
                 break;
-            case "updatewindowinfo":
+
+            case "updatetopic":
                 var topic = data.shift();
                 var ip = data.shift();
                 var windowinfo = JSON.parse(data.join(" "));
@@ -278,7 +304,8 @@ wsServer.on('request', function(request) {
                     connection.send("updatewindowinfo " + "400");
                 }
                 break;
-                // Should not get here (client error)
+
+            // Should not get here (client error)
             default:
                 console.warn((new Date()) + ' Received message of unknown type.');
                 break;
@@ -685,81 +712,81 @@ function removeDir(path, callback) {
 
 // TODO: Send update to Cpanel and Touch interface (Or everyone)
 // Adds a topic to the config
-function addTopic(topicname, topicdescription) {
-    assert.notEqual(topicname, undefined, "topicname can't be undefined");
-    assert.notEqual(topicname, "", "topicname can't be empty");
-
-    assert.notEqual(topicdescription, undefined, "topicdescription can't be undefined");
-    assert.notEqual(topicdescription, "", "topicdescription can't be empty");
-
-    var config = getJSONfromPath(configPath);
-    for (var i = 0; i < config.topics.length; i++) {
-        if (config.topics[i].name === topicname) {
-            console.error((new Date()) + ' ' + "Topic '" + topicname + "' already exists in the JSON file!");
-            return false;
-        }
-    }
-    var topic = {
-        "name": topicname,
-        "description": topicdescription,
-        "viewInstances": []
-    };
-    config.topics[config.topics.length] = topic;
-    turnJSONIntoFile(config, "config.json");
-    return true;
-}
+// function addTopic(topicname, topicdescription) {
+//     assert.notEqual(topicname, undefined, "topicname can't be undefined");
+//     assert.notEqual(topicname, "", "topicname can't be empty");
+//
+//     assert.notEqual(topicdescription, undefined, "topicdescription can't be undefined");
+//     assert.notEqual(topicdescription, "", "topicdescription can't be empty");
+//
+//     var config = getJSONfromPath(configPath);
+//     for (var i = 0; i < config.topics.length; i++) {
+//         if (config.topics[i].name === topicname) {
+//             console.error((new Date()) + ' ' + "Topic '" + topicname + "' already exists in the JSON file!");
+//             return false;
+//         }
+//     }
+//     var topic = {
+//         "name": topicname,
+//         "description": topicdescription,
+//         "viewInstances": []
+//     };
+//     config.topics[config.topics.length] = topic;
+//     turnJSONIntoFile(config, "config.json");
+//     return true;
+// }
 
 // TODO: Send update to Cpanel and Touch interface (Or everyone)
 // removes a topic from the configuration JSON file given a topicname
-function removeTopic(topicname) {
-    assert.notEqual(topicname, "", "topicname is empty");
-    assert.notEqual(topicname, undefined, "topicname is undefined");
+// function removeTopic(topicname) {
+//     assert.notEqual(topicname, "", "topicname is empty");
+//     assert.notEqual(topicname, undefined, "topicname is undefined");
+//
+//     var config = getJSONfromPath(configPath);
+//     var newlist = [];
+//     for (var i = 0; i < config.topics.length; i++) {
+//         if (config.topics[i].name !== topicname) {
+//             newlist.push(config.topics[i]);
+//         }
+//     }
+//     config.topics = newlist;
+//     turnJSONIntoFile(config, "config.json");
+//     return true;
+// }
 
-    var config = getJSONfromPath(configPath);
-    var newlist = [];
-    for (var i = 0; i < config.topics.length; i++) {
-        if (config.topics[i].name !== topicname) {
-            newlist.push(config.topics[i]);
-        }
-    }
-    config.topics = newlist;
-    turnJSONIntoFile(config, "config.json");
-    return true;
-}
 
-
-function removeModule(foldername, callback) {
-    assert.notEqual(foldername, "", "foldername can't be empty");
-    assert.notEqual(foldername, undefined, "foldername can't be undefined");
-
-    readDirectories("modules", function(directory) {
-        for (var i = 0; i < directory.length; i++) {
-            if (directory[i] === foldername) {
-                var config = getJSONfromPath("config.json");
-                var topics = config.topics;
-                for (var j = 0; j < topics.length; j++) {
-                    var newlist = [];
-                    for (var k = 0; k < topics[j].viewInstances.length; k++) {
-                        if (topics[j].viewInstances[k].parentModuleFolderName !== foldername) {
-                            newlist.push(topics[j].viewInstances[k]);
-                        }
-                    }
-                    topics[j].viewInstances = newlist;
-                }
-                turnJSONIntoFile(config, "config.json");
-                removeDir("./modules/" + foldername, function(success) {
-                    if (success) {
-                        return callback(true);
-                    } else {
-                        console.error("Could not remove directory?");
-                    }
-                });
-            }
-        }
-        console.error((new Date()) + ' ' + foldername + " was not found!");
-        return callback(false);
-    });
-}
+// function removeModule(foldername, callback) {
+//     assert.notEqual(foldername, "", "foldername can't be empty");
+//     assert.notEqual(foldername, undefined, "foldername can't be undefined");
+//
+//     readDirectories("modules", function(directory) {
+//         for (var i = 0; i < directory.length; i++) {
+//             if (directory[i] === foldername) {
+//                 var config = getJSONfromPath("config.json");
+//                 var topics = config.topics;
+//                 for (var j = 0; j < topics.length; j++) {
+//                     var newlist = [];
+//                     for (var k = 0; k < topics[j].viewInstances.length; k++) {
+//                         if (topics[j].viewInstances[k].parentModuleFolderName !== foldername) {
+//                             newlist.push(topics[j].viewInstances[k]);
+//                         }
+//                     }
+//                     topics[j].viewInstances = newlist;
+//                 }
+//                 turnJSONIntoFile(config, "config.json");
+//                 removeDir("./modules/" + foldername, function(success) {
+//                     if (success) {
+//                         return callback(true);
+//                     } else {
+//                         console.error("Could not remove directory?");
+//                     }
+//                 });
+//             }
+//         }
+//         console.error((new Date()) + ' ' + foldername + " was not found!");
+//         return callback(false);
+//     });
+// }
 
 // adds a "view" to the topic given a topicname and a JSON object that needs to be inserted (JSON file should contain a "view")
 // TODO: Test these assertions
@@ -929,25 +956,25 @@ function sendModuleList(callback) {
 }
 
 // Returns all topics in JSON format
-function getTopicList() {
-    var topics = getJSONfromPath(configPath).topics;
-    var list = [];
-    for (var i = 0; i < topics.length; i++) {
-        var listitem = {
-            "name": topics[i].name,
-            "description": topics[i].description
-        };
-        list.push(listitem);
-    }
-    var obj = {
-        "topics": list
-    };
-    return obj;
-}
-var obj = {
-    "thingOne": 1,
-    "thingTwo": 2
-};
+// function getTopicList() {
+//     var topics = getJSONfromPath(configPath).topics;
+//     var list = [];
+//     for (var i = 0; i < topics.length; i++) {
+//         var listitem = {
+//             "name": topics[i].name,
+//             "description": topics[i].description
+//         };
+//         list.push(listitem);
+//     }
+//     var obj = {
+//         "topics": list
+//     };
+//     return obj;
+// }
+// var obj = {
+//     "thingOne": 1,
+//     "thingTwo": 2
+// };
 
 // given a JSON object and a filename, create a JSON file
 function turnJSONIntoFile(jsonObj, filename) {

@@ -5,10 +5,10 @@
 <div class="modal-body">
     <div class="list-group">
       <a ng-click="changeViewPos($index)" ng-repeat="view in views" class="list-group-item" ng-class="{active: views[selectedViewPos] === view}">
-          <span class="badge">{{view.viewParent.moduleName}}</span>
-          <h4 class="list-group-item-heading">{{view.viewName}}</h4>
+          <span class="badge">{{view.viewParent.name}}</span>
+          <h4 class="list-group-item-heading">{{view.name}}</h4>
           <p class="list-group-item-text">
-            {{view.viewDescription}}
+            {{view.description}}
           </p>
           <hr class="add-topic-hr" />
           <p class="list-group-item-text">
