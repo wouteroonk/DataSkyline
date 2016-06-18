@@ -926,34 +926,34 @@ function updateWindowInfo(topicname, ip, windowinfo) {
 //TODO: rename this method (returnModuleList)
 // Returns list with all modules in the modules directory (callback needed for list)
 
-function sendModuleList(callback) {
-    readDirectories("modules", function(list) {
-        var listOfPromises = [];
-        for (var i = 0; i < list.length; i++) {
-            listOfPromises.push(new Promise(function(resolve, reject) {
-                var info = getJSONfromPath("modules/" + list[i] + "/" + "info.json");
-                var tmplist = list[i];
-                getModuleInformation(list[i], function(moduleinfo) {
-                    var obj = {
-                        "folderName": tmplist,
-                        "name": info.name,
-                        "description": info.description,
-                        "developer": info.developer,
-                        "license": info.license,
-                        "views": moduleinfo
-                    };
-                    resolve(obj);
-                });
-            }));
-        }
-        Promise.all(listOfPromises).then(function(results) {
-            var finalobj = {
-                "modules": results
-            };
-            return callback(finalobj);
-        });
-    });
-}
+// function sendModuleList(callback) {
+//     readDirectories("modules", function(list) {
+//         var listOfPromises = [];
+//         for (var i = 0; i < list.length; i++) {
+//             listOfPromises.push(new Promise(function(resolve, reject) {
+//                 var info = getJSONfromPath("modules/" + list[i] + "/" + "info.json");
+//                 var tmplist = list[i];
+//                 getModuleInformation(list[i], function(moduleinfo) {
+//                     var obj = {
+//                         "folderName": tmplist,
+//                         "name": info.name,
+//                         "description": info.description,
+//                         "developer": info.developer,
+//                         "license": info.license,
+//                         "views": moduleinfo
+//                     };
+//                     resolve(obj);
+//                 });
+//             }));
+//         }
+//         Promise.all(listOfPromises).then(function(results) {
+//             var finalobj = {
+//                 "modules": results
+//             };
+//             return callback(finalobj);
+//         });
+//     });
+// }
 
 // Returns all topics in JSON format
 // function getTopicList() {
@@ -1010,71 +1010,71 @@ function ConnectionObject(connection, address) {
     this.address = address;
 }
 
-function getModuleInformation(directory, callback) {
-    readDirectories("modules/" + directory, function(viewdirs) {
-        var listOfPromises = [];
-        for (var i = 0; i < viewdirs.length; i++) {
-            listOfPromises.push(new Promise(function(resolve, reject) {
-                try {
-                    var viewinfo = require("./modules/" + directory + "/" + viewdirs[i] + "/info.json");
-                    getWindowInformation(directory + "/" + viewdirs[i], function(windows) {
-                        var obj = {
-                            "name": viewinfo.name,
-                            "description": viewinfo.description,
-                            "jsProgramUrl": viewinfo.jsProgramUrl,
-                            "windows": windows
-                        };
-                        resolve(obj);
-                    });
-                } catch (e) {
-                    resolve(13);
-                }
-            }));
-        }
-        Promise.all(listOfPromises).then(function(results) {
-            var list = [];
-            for (var i = 0; i < results.length; i++) {
-                if (results[i] === 13) {
-                    continue;
-                }
-                list.push(results[i]);
-                //console.log(results);
-            }
-            return callback(list);
-        });
-    });
-}
+// function getModuleInformation(directory, callback) {
+//     readDirectories("modules/" + directory, function(viewdirs) {
+//         var listOfPromises = [];
+//         for (var i = 0; i < viewdirs.length; i++) {
+//             listOfPromises.push(new Promise(function(resolve, reject) {
+//                 try {
+//                     var viewinfo = require("./modules/" + directory + "/" + viewdirs[i] + "/info.json");
+//                     getWindowInformation(directory + "/" + viewdirs[i], function(windows) {
+//                         var obj = {
+//                             "name": viewinfo.name,
+//                             "description": viewinfo.description,
+//                             "jsProgramUrl": viewinfo.jsProgramUrl,
+//                             "windows": windows
+//                         };
+//                         resolve(obj);
+//                     });
+//                 } catch (e) {
+//                     resolve(13);
+//                 }
+//             }));
+//         }
+//         Promise.all(listOfPromises).then(function(results) {
+//             var list = [];
+//             for (var i = 0; i < results.length; i++) {
+//                 if (results[i] === 13) {
+//                     continue;
+//                 }
+//                 list.push(results[i]);
+//                 //console.log(results);
+//             }
+//             return callback(list);
+//         });
+//     });
+// }
 
-function getWindowInformation(directory, callback) {
-    readDirectories("./modules/" + directory, function(windowdirs) {
-        var listOfPromises = [];
-        for (var j = 0; j < windowdirs.length; j++) {
-            listOfPromises.push(new Promise(function(resolve, reject) {
-                try {
-                    var viewinfo = require("./modules/" + directory + "/" + windowdirs[j] + "/info.json");
-                    var obj = {
-                        "name": viewinfo.name,
-                        "description": viewinfo.description,
-                        "htmlUrl": viewinfo.htmlUrl
-                    };
-                    resolve(obj);
-                } catch (e) {
-                    resolve(13);
-                }
-            }));
-        }
-        Promise.all(listOfPromises).then(function(results) {
-            var list = [];
-            for (var i = 0; i < results.length; i++) {
-                if (results[i] === 13) {
-                    continue;
-                }
-                list.push(results[i]);
-            }
-            return callback(list);
-        });
-    });
-}
+// function getWindowInformation(directory, callback) {
+//     readDirectories("./modules/" + directory, function(windowdirs) {
+//         var listOfPromises = [];
+//         for (var j = 0; j < windowdirs.length; j++) {
+//             listOfPromises.push(new Promise(function(resolve, reject) {
+//                 try {
+//                     var viewinfo = require("./modules/" + directory + "/" + windowdirs[j] + "/info.json");
+//                     var obj = {
+//                         "name": viewinfo.name,
+//                         "description": viewinfo.description,
+//                         "htmlUrl": viewinfo.htmlUrl
+//                     };
+//                     resolve(obj);
+//                 } catch (e) {
+//                     resolve(13);
+//                 }
+//             }));
+//         }
+//         Promise.all(listOfPromises).then(function(results) {
+//             var list = [];
+//             for (var i = 0; i < results.length; i++) {
+//                 if (results[i] === 13) {
+//                     continue;
+//                 }
+//                 list.push(results[i]);
+//             }
+//             return callback(list);
+//         });
+//     });
+// }
 
 function identifyConnection(co) {
     assert.notEqual(co, undefined, "co can't be undefined");
