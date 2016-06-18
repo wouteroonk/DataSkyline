@@ -123,7 +123,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     swal(
       {
         title: "Are you sure?",
-        text: "This will delete \"" + module.moduleName + "\" forever.",
+        text: "This will delete \"" + module.name + "\" forever.",
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
@@ -132,7 +132,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       }, function(isConfirm) {
         // Tell server to delete module if confirmed
         if (isConfirm) {
-          dscmsWebSocket.sendServerMessage("removemodule " + module.moduleFolderName);
+          dscmsWebSocket.sendServerMessage("removemodule " + module.folderName);
         }
       });
   };

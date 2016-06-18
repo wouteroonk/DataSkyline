@@ -51,6 +51,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
           console.dir(message);
           return;
         }
+        console.dir(returnedWindowJSON);
         addWindowsToPreview(returnedWindowJSON);
         break;
       // Getscreens message for getting the screens and their description
@@ -92,7 +93,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     if ($scope.tempScreenSelect === null) return;
 
     $scope.screens.forEach(function(obj, i) {
-      if (obj.screenName === $scope.tempScreenSelect.screenName) {
+      if (obj.screenName === $scope.tempScreenSelect.name) {
         $scope.selectedScreenPos = i;
         return;
       }
@@ -124,7 +125,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       $.grep($scope.previewConfig.windows, function(e){
         // We shouldn't do anything if this window is already orange
         if (alreadyOrange.indexOf(e.id) !== -1) return;
-        if (e.id == thisWindow.dsWindow) {
+        if (e.id == thisWindow.locationID) {
           alreadyOrange.push(e.id);
           e.hue = "#E8B075";
         } else {
@@ -157,7 +158,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       var thisWindow = $scope.thisScreenWinInf.views[$scope.selectedViewPos].windows[j];
       // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
       $.grep($scope.previewConfig.windows, function(e){
-        if (e.id == thisWindow.dsWindow)
+        if (e.id == thisWindow.locationID)
           e.hue = "#3149E2";
       });
     }
@@ -170,19 +171,19 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
 
     // Load empty windows
     var miniScreenConf = {};
-    miniScreenConf.screenWidth = $scope.screens[$scope.selectedScreenPos].screenWidth;
-    miniScreenConf.screenHeight = $scope.screens[$scope.selectedScreenPos].screenHeight;
+    miniScreenConf.screenWidth = $scope.screens[$scope.selectedScreenPos].width;
+    miniScreenConf.screenHeight = $scope.screens[$scope.selectedScreenPos].height;
     miniScreenConf.windows = [];
     // Transfer data from screen windows to mini windows format
-    for (var i = 0; i < $scope.screens[$scope.selectedScreenPos].screenWindows.length; i++) {
-      var dscmsWindow = $scope.screens[$scope.selectedScreenPos].screenWindows[i];
+    for (var i = 0; i < $scope.screens[$scope.selectedScreenPos].windows.length; i++) {
+      var dscmsWindow = $scope.screens[$scope.selectedScreenPos].windows[i];
       var miniWindow = {};
-      miniWindow.id = dscmsWindow.windowIdentifier;
-      miniWindow.pixelWidth = dscmsWindow.windowPixelWidth;
-      miniWindow.pixelHeight = dscmsWindow.windowPixelHeight;
-      miniWindow.coordX = dscmsWindow.windowCoordX;
-      miniWindow.coordY = dscmsWindow.windowCoordY;
-      miniWindow.type = dscmsWindow.windowShape;
+      miniWindow.id = dscmsWindow.id;
+      miniWindow.pixelWidth = dscmsWindow.width;
+      miniWindow.pixelHeight = dscmsWindow.height;
+      miniWindow.coordX = dscmsWindow.x;
+      miniWindow.coordY = dscmsWindow.y;
+      miniWindow.type = dscmsWindow.shape;
 
       // Set the hue for an empty window
       miniWindow.hue = "#3DCD95";
@@ -210,9 +211,9 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
 
         // When all is OK, update the window id
         $.grep($scope.thisScreenWinInf.views[$scope.selectedViewPos].windows, function(e) {
-          if (e.dsWindow === $scope.windowIdToReplace) {
+          if (e.locationID === $scope.windowIdToReplace) {
             resetColors();
-            e.dsWindow = id;
+            e.locationID = id;
             $scope.windowIdToReplace = null;
             showSelectedViewInPreview();
             $scope.$apply();
@@ -227,7 +228,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     $scope.previewConfig = miniScreenConf;
 
     // When done, ask for the views associated with this screen (so we can fill the windows)
-    dscmsWebSocket.sendServerMessage("requestwindows " + $scope.screens[$scope.selectedScreenPos].screenAddress + " " + $scope.themeName);
+    dscmsWebSocket.sendServerMessage("requestwindows " + $scope.screens[$scope.selectedScreenPos].address + " " + $scope.themeName);
   }
 
   // =========================
@@ -305,7 +306,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
       "updatewindowinfo " +
       $scope.themeName +
       " " +
-      $scope.screens[$scope.selectedScreenPos].screenAddress +
+      $scope.screens[$scope.selectedScreenPos].address +
       " " +
       angular.toJson($scope.thisScreenWinInf)
     );
@@ -315,7 +316,7 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
   // Also, give user instructions
   $scope.startWindowReplace = function(win) {
     dscmsNotificationCenter.info("", "Click on a green window placeholder in the mini preview to move \"" + win.name + "\".", 3000);
-    $scope.windowIdToReplace = win.dsWindow;
+    $scope.windowIdToReplace = win.locationID;
   };
 
   // Check if the selected view has configurable options
@@ -343,8 +344,12 @@ dscms.app.controller('dscmsThemeCtrl', function($scope, $routeParams, $location,
     });
 
     // Modal will probably return view object. Add it to windowinfo and reload preview
-    modalInstance.result.then(function() {
-      // TODO: Wait for modal implementation and respond to view added
+    modalInstance.result.then(function(returnedView) {
+      // We need more info before we can do adding
+      console.log("What we have");
+      console.dir(returnedView);
+      console.log("What we need");
+      console.dir($scope.thisScreenWinInf.views[0]);
     });
   };
 

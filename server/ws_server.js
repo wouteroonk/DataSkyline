@@ -32,7 +32,6 @@ var maxConnections = 7;
 // The HTTP server allows clients to talk to the DataSkyline server using the HTTP protocol.
 // In this instance, the HTTP server is used to serve the control panel and is used in the websocket server.
 var server = http.createServer(function(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
 
     // Set CORS headers
     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -50,7 +49,7 @@ var server = http.createServer(function(request, response) {
         if (filteredUrl === '/uploadmodule') {
             handleModuleUpload(request, response);
         } else {
-            console.log("Unhandled POST request");
+            console.warn((new Date()) + ' Received unhandled POST request from ' + request.connection.remoteAddress);
         }
 
     }
@@ -89,11 +88,9 @@ var server = http.createServer(function(request, response) {
                 // Set the content type and write the file
                 response.setHeader('Content-type', mimetype);
                 response.end(data);
-
-                console.log(filteredUrl, mimetype);
             } else {
                 // File does not exist
-                console.log('file not found: ' + filteredUrl);
+                console.warn((new Date()) + ' Unable to handle request for file \"' + filteredUrl + "\": file not found.");
                 response.writeHead(404, "Not Found");
                 response.end();
             }
@@ -127,7 +124,6 @@ function originIsAllowed(origin) {
     while (clients[connectionCount]) {
         if (connectionCount >= maxConnections - 1) {
             if (checked) {
-                console.log("Rejecting connection: too many connections");
                 allowed = false;
                 checked = false;
                 break;
@@ -147,7 +143,7 @@ wsServer.on('request', function(request) {
     // Make sure we only accept requests from an allowed origin
     if (!originIsAllowed(request.origin)) {
         request.reject();
-        console.log('Connection from origin ' + request.remoteAddress + ' rejected.');
+        console.warn((new Date()) + ' Request from ' + request.remoteAddress + " was rejected.");
         return;
     }
 
@@ -158,14 +154,13 @@ wsServer.on('request', function(request) {
     var index = connectionCount; //Assign index to new connection
     clients[index] = connection; //Add to client list
 
-    console.log((new Date()) + ' - Connection accepted from ' + connection.remoteAddress + " with index " + index);
-
+    console.log((new Date()) + ' Connection accepted from ' + connection.remoteAddress);
 
     // When a message is received
     connection.on('message', function(message) {
         var themename = "";
         var data = message.utf8Data.split(' ');
-        //logConnections();
+
         // Get the message type and perform matching action
         switch (data.shift()) {
             // Identify yourself
@@ -175,21 +170,20 @@ wsServer.on('request', function(request) {
                     co = new ConnectionObject(connection, address); //TODO: Test this!
                     identifyConnection(co);
                 } else {
-                    console.log(address + " tried to overwrite his own connection!");
+                    console.log((new Date()) + ' Client tried to identify with already registered ip \"' + address + "\".");
                 }
-                logConnections();
                 break;
                 // "requestwindows" is send by a display screen, when the switch matches this command, it'll send back the correct information for that display screen
             case "requestwindows":
                 var ipAddress = data.shift();
                 var specifictheme = data.shift(); // [Optional]
-                if (specifictheme === undefined) {
-                    console.log((sendWindowInfoForIPToClient(connection, ipAddress) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
-                    console.log("SENDING UNDEFINED");
+                var sendResult = sendWindowInfoForIPToClient(connection, ipAddress, specifictheme);
+                if (sendResult) {
+                  console.log((new Date()) + ' Succeeded sending windowinfo for ' + ipAddress + ' to client.');
                 } else {
-                    console.log((sendWindowInfoForIPToClient(connection, ipAddress, specifictheme) ? "Succeeded" : "Failed") + " at sending windowinfo for " + ipAddress + " to client.");
-                    console.log("SENDING DEFINED");
+                  console.warn((new Date()) + ' Failed sending windowinfo for ' + ipAddress + ' to client.');
                 }
+
                 break;
                 // "getthemes" is requested by the control panel, it will return the themelist from the JSON configuration file
             case "getthemes":
@@ -230,8 +224,8 @@ wsServer.on('request', function(request) {
                 break;
             case "removeview":
                 themename = data.shift();
-                var viewname = data.shift();
-                removeViewInTheme(themename, viewname);
+                var viewFolderName = data.shift();
+                removeViewInTheme(themename, viewFolderName);
                 connection.send("removeview " + "200");
                 sendSkylineUpdate("removeview");
                 break;
@@ -278,18 +272,16 @@ wsServer.on('request', function(request) {
                 break;
                 // Should not get here (client error)
             default:
-                console.error("This message doesn't exist?");
+                console.warn((new Date()) + ' Received message of unknown type.');
                 break;
         }
     });
 
     // When a client disconnects
     connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' - Peer ' + connection.remoteAddress + ' disconnected with index: ' + index);
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + " disconnected.");
         clients[index] = null;
         removeIdentification(co); //TODO: Test this!
-
-        logConnections();
     });
 });
 
@@ -302,9 +294,9 @@ function sendWindowInfoForIPToClient(client, ip, theme) {
     var validIPs = getScreenIPs();
     // Finds out whenever this IP address is listen in our JSON file
     if (validIPs.indexOf(ip) === -1) return false;
-    // Get screen where screenAddress is equal to ip
+    // Get screen where address is equal to ip
     var json = getJSONfromPath(configPath).screens.filter(function(screen) {
-        return screen.screenAddress === ip;
+        return screen.address === ip;
     })[0];
     // Guard to make sure IP was in list
     if (json === undefined) return false;
@@ -354,18 +346,6 @@ function isDisplayScreen(ip) {
     return false;
 }
 
-function logConnections() {
-    console.log("$$ Connected clients: ");
-    console.log("index - address");
-    console.log(connectionList.length);
-    for (var i = 0; i < connectionList.length; i++) {
-        if (connectionList[i] && connectionList[i].connection !== undefined) {
-            console.log(i + " - " + connectionList[i].address);
-        }
-    }
-}
-
-
 // Given a file name, return a json object
 function getJSONfromPath(filename) {
     assert.notEqual(filename, "", "filename can't be empty");
@@ -377,7 +357,7 @@ function getJSONfromPath(filename) {
         var json = require(file);
         return json;
     } catch (err) {
-        console.error(err);
+        console.error((new Date()) + ' ' + err);
         /*
         console.log("backup file to the rescue");
         var backup = require("./"+backupPath);
@@ -394,7 +374,7 @@ function readDirectories(path, callback) {
     var listing = [];
     fs.readdir(path, function(err, list) {
         if (err) {
-            console.log(err);
+            console.error((new Date()) + ' ' + err);
         } else {
             for (var i = 0; i < list.length; i++) {
                 var item = list[i];
@@ -409,33 +389,32 @@ function readDirectories(path, callback) {
 
 // Returns a list of the IP addresses of all DS screens
 function getScreenIPs() {
-    console.log("Reading addresses from JSON");
 
     var json = getJSONfromPath(configPath);
     var list = [];
     for (var i = 0; i < json.screens.length; i++) {
-        list.push(json.screens[i].screenAddress);
+        list.push(json.screens[i].address);
     }
-    console.dir(list);
+
     return list;
 }
 
 // Gets the windowinfo message for a screen config entry
-function getWindowInfoForScreenConfig(jsonfile, specifictheme) {
-    assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
+function getWindowInfoForScreenConfig(screenObj, specifictheme) {
+    assert.notEqual(screenObj, undefined, "jsonSC can't be undefined!");
     var themes = getJSONfromPath(configPath).themes;
     var obj = {
-        "screenName": jsonfile.screenName,
-        "screenWidth": jsonfile.screenWidth,
-        "screenHeight": jsonfile.screenHeight,
-        "views": getViewsForScreenConfig(jsonfile, themes, specifictheme)
+        "screenName": screenObj.name,
+        "screenWidth": screenObj.width,
+        "screenHeight": screenObj.height,
+        "views": getViewsForScreenConfig(screenObj, themes, specifictheme)
     };
     return obj;
 }
 
 // Gets the views list for a windowinfo message for a screen config entry
-function getViewsForScreenConfig(jsonfile, themes, specifictheme) {
-    assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
+function getViewsForScreenConfig(screenObj, themes, specifictheme) {
+    assert.notEqual(screenObj, undefined, "jsonSC can't be undefined!");
     assert.notEqual(themes, undefined, "jsonSC can't be undefined!");
     var results = [];
     for (var i = 0; i < themes.length; i++) {
@@ -445,18 +424,18 @@ function getViewsForScreenConfig(jsonfile, themes, specifictheme) {
         } else {
             theme = specifictheme;
         }
-        if (themes[i].themeName === theme) {
-            for (var j = 0; j < themes[i].screenViews.length; j++) {
-                var viewjson = getJSONfromPath("modules/" + themes[i].screenViews[j].screenParentModule + "/" + themes[i].screenViews[j].viewName + "/info.json");
+        if (themes[i].name === theme) {
+            for (var j = 0; j < themes[i].viewInstances.length; j++) {
+                var viewjson = getJSONfromPath("modules/" + themes[i].viewInstances[j].parentModuleFolderName + "/" + themes[i].viewInstances[j].viewFolderName + "/info.json");
                 if (viewjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
-                var windowinfo = allWindows(themes[i].screenViews[j], jsonfile);
+                var windowinfo = allWindows(themes[i].viewInstances[j], screenObj);
                 if (windowinfo.length === 0) continue;
                 var obj = {
-                    "viewName": themes[i].screenViews[j].viewName,
-                    "instanceName": themes[i].screenViews[j].instanceName,
-                    "instanceID": themes[i].screenViews[j].instanceID,
-                    "parentModule": themes[i].screenViews[j].screenParentModule,
-                    "managerUrl": viewjson.viewJavascriptReference,
+                    "viewFolderName": themes[i].viewInstances[j].viewFolderName,
+                    "instanceName": themes[i].viewInstances[j].instanceName,
+                    "instanceID": themes[i].viewInstances[j].id,
+                    "parentModuleFolderName": themes[i].viewInstances[j].parentModuleFolderName,
+                    "jsProgramUrl": viewjson.jsProgramUrl,
                     "windows": windowinfo
                 };
                 results.push(obj);
@@ -472,27 +451,28 @@ function allWindows(jsonSC, jsonfile) {
     assert.notEqual(jsonfile, undefined, "jsonSC can't be undefined!");
 
     var results = [];
-    for (var i = 0; i < jsonSC.screenComponents.length; i++) {
-        var windowjson = getJSONfromPath("modules/" + jsonSC.screenComponents[i].viewWindow + "/info.json");
+    for (var i = 0; i < jsonSC.windowBindings.length; i++) {
+        // TODO: Make windowFolderName only folder name and use seperate variables for module and view folders
+        var windowjson = getJSONfromPath("modules/" + jsonSC.windowBindings[i].windowFolderName + "/info.json");
         if (windowjson === undefined) continue; // If json file couldn't be read (wrong information in JSON file) then proceed to next
         var screenjson = undefined;
-        for (var j = 0; j < jsonfile.screenWindows.length; j++) {
-            if (jsonfile.screenWindows[j].windowIdentifier === jsonSC.screenComponents[i].dsWindow) {
-                screenjson = jsonfile.screenWindows[j];
+        for (var j = 0; j < jsonfile.windows.length; j++) {
+            if (jsonfile.windows[j].id === jsonSC.windowBindings[i].locationID) {
+                screenjson = jsonfile.windows[j];
             }
         }
 
         if (screenjson === undefined) continue;
         var obj = {
-            "componentID": jsonSC.screenComponents[i].componentID,
-            "name": windowjson.windowName,
-            "type": screenjson.windowShape,
-            "pixelWidth": screenjson.windowPixelWidth,
-            "pixelHeight": screenjson.windowPixelHeight,
-            "dsWindow": jsonSC.screenComponents[i].dsWindow,
-            "coordX": screenjson.windowCoordX,
-            "coordY": screenjson.windowCoordY,
-            "htmlUrl": windowjson.windowHtmlReference
+            "bindingID": jsonSC.windowBindings[i].bindingID,
+            "name": windowjson.name,
+            "shape": screenjson.shape,
+            "width": screenjson.width,
+            "height": screenjson.height,
+            "locationID": jsonSC.windowBindings[i].locationID,
+            "x": screenjson.x,
+            "y": screenjson.y,
+            "htmlUrl": windowjson.htmlUrl
         };
         results.push(obj);
     }
@@ -508,12 +488,12 @@ function handleModuleUpload(req, res) {
     upload(req, res, function(err) {
         if (err) {
             //emptyTmp(fileName);
-            console.log(err);
+            console.error((new Date()) + ' ' + err);
             res.end("an error occured while uploading the file, please try again! Error-Code: UP01");
             return;
         }
         if (!req.file) {
-            console.log("req.file is undefined.");
+            console.error((new Date()) + ' ' + "req.file is undefined.");
             return;
         }
         unzipFile(req.file.filename, res);
@@ -560,7 +540,7 @@ function unzipFile(fileName, res) {
     var dir = './tmp/' + fileName + 'folder';
     mkdirp(dir, function(err) {
         if (err) {
-            console.log(err);
+            console.error((new Date()) + ' ' + err);
             res.end("An error occured while uploading the file, please try again! Error-code: UP02");
         } else {
             simpleUnzip(fromPath, dir);
@@ -574,17 +554,17 @@ function unzipFile(fileName, res) {
 function validateInfoJson(pathToFile, err) {
     assert.notEqual(pathToFile, "", "pathToFile can't be empty");
     assert.notEqual(pathToFile, undefined, "pathToFile can't be undefined");
-    console.log(pathToFile);
+
     var info = getJSONfromPath(pathToFile + "info.json");
     if (info) {
-        if (!info.moduleName || !info.moduleDeveloper) {
-            return err("The moduleName and moduleDeveloper are required in the info.json of the module.");
+        if (!info.name || !info.developer) {
+            return err("The name and developer are required in the info.json of the module.");
         }
         sendModuleList(function(json) {
             var list = json.modules;
             for (var i = 0; i < list.length; i++) {
-                if (list[i].moduleName == info.moduleName) {
-                    return err("The module name '" + info.moduleName + "' already exists, consider changing the moduleName in the info.json.");
+                if (list[i].name == info.name) {
+                    return err("The module name '" + info.name + "' already exists, consider changing the name in the info.json.");
                 }
             }
             return err(undefined);
@@ -599,23 +579,19 @@ function validateModule(pathToModule, res) {
     assert.notEqual(pathToModule, "", "pathToModule can't be empty");
     assert.notEqual(pathToModule, undefined, "pathToModule can't be undefined");
     assert.notEqual(res, undefined, "res can't be undefined");
-    console.log("validating module " + pathToModule);
+
     //reads the content of the folder
     fs.readdir(pathToModule, function(err, files) {
         if (err) {
-            console.log(err);
+            console.error((new Date()) + ' ' + err);
             res.end("An error occured while uploading the file, please try again! Error-code: UP03");
             return;
         }
         //Checks to see if it the module is in one top folder.
         if (files.length != 1) {
-            console.log("Error invalid module structure: files are not in the same folder.");
+            console.error((new Date()) + ' ' + "Error invalid module structure: files are not in the same folder.");
             removeDir(pathToModule, function(success) {
-                if (success) {
-                    console.log("removeDir Success");
-                } else {
-                    console.error("removeDir Failed");
-                }
+
             });
             res.end("Error the structure of the module is not valid, the top level of the archive can only contain one folder (and no files)." + "See the documentation for more information.");
             return;
@@ -623,14 +599,10 @@ function validateModule(pathToModule, res) {
         //check the info json of the module..
         validateInfoJson(pathToModule + "/" + files[0] + "/", function(err) {
             if (err) {
-                console.log("Error in info.json");
+                console.error((new Date()) + ' ' + "Incompatible info.json");
                 res.end(err);
                 removeDir(pathToModule, function(success) {
-                    if (success) {
-                        console.log("removeDir Success");
-                    } else {
-                        console.error("removeDir Failed");
-                    }
+
                 });
                 return;
             }
@@ -640,7 +612,7 @@ function validateModule(pathToModule, res) {
                     //succes module doesnt exist.
                     fs.rename(pathToModule + '/' + files[0], 'modules/' + files[0], function(err) { //optionnaly change to name in info.json
                         if (err) {
-                            console.log(err);
+                            console.error((new Date()) + ' ' + err);
                             res.end("An error has occured while uploading your module. Error-code: UP04");
 
                         } else {
@@ -649,24 +621,16 @@ function validateModule(pathToModule, res) {
                             sendSkylineUpdateCpanel();
                         }
                         removeDir(pathToModule, function(success) {
-                            if (success) {
-                                console.log("removeDir Success");
-                            } else {
-                                console.error("removeDir Failed");
-                            }
+
                         }); //remove the leftover files from the tmp folder.
 
                     });
                     return;
                 }
 
-                console.log("module folder name already exists!");
+                console.warn((new Date()) + ' ' + " This module already exists!");
                 removeDir(pathToModule, function(success) {
-                    if (success) {
-                        console.log("removeDir Success");
-                    } else {
-                        console.error("removeDir Failed");
-                    }
+
                 });
                 res.end("A module with the folder name " + files[0] + " already exists, consider renaming the folder with the contents of the module.");
 
@@ -704,12 +668,9 @@ function removeDir(path, callback) {
 
     rmdir(path, function(err, dirs, files) {
         if (err) {
-            console.log(err);
+            console.error((new Date()) + ' ' + err);
             return callback(false);
         }
-        console.log(dirs);
-        console.log(files);
-        console.log('all files are removed');
         return callback(true);
     });
 }
@@ -725,15 +686,15 @@ function addTheme(themename, themedescription) {
 
     var config = getJSONfromPath(configPath);
     for (var i = 0; i < config.themes.length; i++) {
-        if (config.themes[i].themeName === themename) {
-            console.error("Theme '" + themename + "' already exists in the JSON file!");
+        if (config.themes[i].name === themename) {
+            console.error((new Date()) + ' ' + "Theme '" + themename + "' already exists in the JSON file!");
             return false;
         }
     }
     var theme = {
-        "themeName": themename,
-        "themeDescription": themedescription,
-        "screenViews": []
+        "name": themename,
+        "description": themedescription,
+        "viewInstances": []
     };
     config.themes[config.themes.length] = theme;
     turnJSONIntoFile(config, "config.json");
@@ -749,7 +710,7 @@ function removeTheme(themename) {
     var config = getJSONfromPath(configPath);
     var newlist = [];
     for (var i = 0; i < config.themes.length; i++) {
-        if (config.themes[i].themeName !== themename) {
+        if (config.themes[i].name !== themename) {
             newlist.push(config.themes[i]);
         }
     }
@@ -770,13 +731,12 @@ function removeModule(foldername, callback) {
                 var themes = config.themes;
                 for (var j = 0; j < themes.length; j++) {
                     var newlist = [];
-                    for (var k = 0; k < themes[j].screenViews.length; k++) {
-                        if (themes[j].screenViews[k].screenParentModule !== foldername) {
-                            console.log("In theme: " + themes[j].themeName + " we found: " + themes[j].screenViews[k].screenParentModule);
-                            newlist.push(themes[j].screenViews[k]);
+                    for (var k = 0; k < themes[j].viewInstances.length; k++) {
+                        if (themes[j].viewInstances[k].parentModuleFolderName !== foldername) {
+                            newlist.push(themes[j].viewInstances[k]);
                         }
                     }
-                    themes[j].screenViews = newlist;
+                    themes[j].viewInstances = newlist;
                 }
                 turnJSONIntoFile(config, "config.json");
                 removeDir("./modules/" + foldername, function(success) {
@@ -788,7 +748,7 @@ function removeModule(foldername, callback) {
                 });
             }
         }
-        console.error(foldername + " was not found!");
+        console.error((new Date()) + ' ' + foldername + " was not found!");
         return callback(false);
     });
 }
@@ -801,52 +761,51 @@ function addViewToTheme(themename, viewjson) {
     assert.notEqual(viewjson, undefined, "view json file is undefined");
     var viewObj = viewjson;
     assert.notEqual(viewObj.screenName, undefined, "ScreenName is undefined");
-    assert.notEqual(viewObj.screenParentModule, undefined, "ScreenParentModule is undefined");
-    assert.notEqual(viewObj.screenConfigFile, undefined, "ScreenConfigFile is undefined");
-    assert.notEqual(viewObj.screenComponents, undefined, "ScreenComponents is undefined");
+    assert.notEqual(viewObj.parentModuleFolderName, undefined, "parentModuleFolderName is undefined");
+    assert.notEqual(viewObj.config, undefined, "config is undefined");
+    assert.notEqual(viewObj.windowBindings, undefined, "windowBindings is undefined");
 
     //TODO: Test this!
-    if (viewjson.hasOwnProperty('screenName') && viewjson.hasOwnProperty('screenParentModule') && viewjson.hasOwnProperty('screenConfigFile') && viewjson.hasOwnProperty('screenComponents')) {
+    if (viewjson.hasOwnProperty('screenName') && viewjson.hasOwnProperty('parentModuleFolderName') && viewjson.hasOwnProperty('config') && viewjson.hasOwnProperty('windowBindings')) {
         var config = getJSONfromPath(configPath);
         for (var i = 0; i < config.themes.length; i++) {
-            if (config.themes[i].themeName === themename) {
-                config.themes[i].screenViews[config.themes[i].screenViews.length] = viewObj;
+            if (config.themes[i].name === themename) {
+                config.themes[i].viewInstances[config.themes[i].viewInstances.length] = viewObj;
                 turnJSONIntoFile(config, "config.json");
                 return true;
             }
         }
-        console.error("Theme '" + themename + "' does not exist in the JSON file!");
+        console.error((new Date()) + ' ' + "Theme '" + themename + "' does not exist in the JSON file!");
         return false;
     } else {
-        console.error("Invalid viewjson");
+        console.error((new Date()) + ' ' + "Invalid viewjson");
         return false;
     }
 }
 
 //TODO: Make the return type Boolean!
-// removes a view from the selected theme given a themename and a viewname
-function removeViewInTheme(themename, viewname) {
+// removes a view from the selected theme given a themename and a viewFolderName
+function removeViewInTheme(themename, viewFolderName) {
 
     assert.notEqual(themename, "", "Themename can't be empty");
     assert.notEqual(themename, undefined, "Themename can't be undefined");
-    assert.notEqual(viewname, "", "Viewname can't be empty");
-    assert.notEqual(viewname, undefined, "Viewname can't be undefined");
+    assert.notEqual(viewFolderName, "", "viewFolderName can't be empty");
+    assert.notEqual(viewFolderName, undefined, "viewFolderName can't be undefined");
 
     var config = getJSONfromPath(configPath);
     var themes = config.themes;
     for (var i = 0; i < themes.length; i++) {
-        if (themes[i].themeName === themename) {
+        if (themes[i].name === themename) {
             var newscreenviews = [];
-            for (var j = 0; j < themes[i].screenViews.length; j++) {
-                if (themes[i].screenViews[j].viewName !== viewname) {
-                    newscreenviews.push(themes[i].screenViews[j]);
+            for (var j = 0; j < themes[i].viewInstances.length; j++) {
+                if (themes[i].viewInstances[j].viewFolderName !== viewFolderName) {
+                    newscreenviews.push(themes[i].viewInstances[j]);
                 }
             }
-            themes[i].screenViews = newscreenviews;
+            themes[i].viewInstances = newscreenviews;
         }
     }
     turnJSONIntoFile(config, "config.json");
-    console.log("Finish!");
     return;
 }
 
@@ -858,13 +817,13 @@ function updateCurrentTheme(themename) {
     // check if themename exists
     var json = getJSONfromPath(configPath);
     for (var i = 0; i < json.themes.length; i++) {
-        if (json.themes[i].themeName === themename) {
+        if (json.themes[i].name === themename) {
             // set theme and return true if found
             selectedTheme = themename;
             return true;
         }
     }
-    console.error(themename + " does not exist");
+    console.error((new Date()) + ' ' + themename + " does not exist");
     // return false if theme does not exist
     return false;
 }
@@ -879,43 +838,41 @@ function updateWindowInfo(themename, ip, windowinfo) {
     var correctScreen;
 
     for (var i = 0; i < themes.length; i++) {
-        if (themes[i].themeName === themename) {
+        if (themes[i].name === themename) {
             correctTheme = themes[i];
         }
     }
     if (correctTheme === undefined) {
-        console.error("Theme is undefined");
+        console.error((new Date()) + ' ' + "Theme is undefined");
         return false;
     }
 
     for (var j = 0; j < screens.length; j++) {
-        if (screens[j].screenAddress === ip) {
+        if (screens[j].address === ip) {
             correctScreen = screens[i];
         }
     }
     if (correctScreen === undefined) {
-        console.error("Screen is undefined");
+        console.error((new Date()) + ' ' + "Screen is undefined");
         return false;
     }
     // Pre-information loading finished
 
-    var configViews = correctTheme.screenViews;
+    var configViews = correctTheme.viewInstances;
     var infoViews = windowinfo.views;
 
     // update Views in JSON
-    console.log("Correct Theme JSON:");
-    console.dir(correctTheme);
 
     var found = false;
     for (var m = 0; m < configViews.length; m++) {
         for (var n = 0; n < infoViews.length; n++) {
-            if (configViews[m].instanceID === infoViews[n].instanceID) {
+            if (configViews[m].id === infoViews[n].id) {
                 found = true;
                 configViews[m].instanceName = infoViews[n].instanceName;
-                for (var k = 0; k < configViews[i].screenComponents.length; k++) {
+                for (var k = 0; k < configViews[i].windowBindings.length; k++) {
                     for (var l = 0; l < infoViews[n].windows.length; l++) {
-                        if (configViews[m].screenComponents[k].componentID === infoViews[n].windows[k].componentID) {
-                            configViews[m].screenComponents[k].dsWindow = infoViews[n].windows[k].dsWindow;
+                        if (configViews[m].windowBindings[k].bindingID === infoViews[n].windows[k].bindingID) {
+                            configViews[m].windowBindings[k].locationID = infoViews[n].windows[k].locationID;
                         }
                     }
                 }
@@ -923,11 +880,10 @@ function updateWindowInfo(themename, ip, windowinfo) {
         }
     }
     if (!found) {
-        console.error("View instance add function not implemented yet, returning FALSE!");
+        console.error((new Date()) + ' ' + "View instance add function not implemented yet, returning FALSE!");
         // Er is een view toegevoegd
         return false;
     }
-    console.log("View instance Edit succesful");
     turnJSONIntoFile(config, "config.json");
     return true;
 }
@@ -944,12 +900,12 @@ function sendModuleList(callback) {
                 var tmplist = list[i];
                 getModuleInformation(list[i], function(moduleinfo) {
                     var obj = {
-                        "moduleFolderName": tmplist,
-                        "moduleName": info.moduleName,
-                        "moduleDescription": info.moduleDescription,
-                        "moduleDeveloper": info.moduleDeveloper,
-                        "moduleLicense": info.moduleLicense,
-                        "moduleViews": moduleinfo
+                        "folderName": tmplist,
+                        "name": info.name,
+                        "description": info.description,
+                        "developer": info.developer,
+                        "license": info.license,
+                        "views": moduleinfo
                     };
                     resolve(obj);
                 });
@@ -970,8 +926,8 @@ function getThemeList() {
     var list = [];
     for (var i = 0; i < themes.length; i++) {
         var listitem = {
-            "name": themes[i].themeName,
-            "description": themes[i].themeDescription
+            "name": themes[i].name,
+            "description": themes[i].description
         };
         list.push(listitem);
     }
@@ -1028,9 +984,9 @@ function getModuleInformation(directory, callback) {
                     var viewinfo = require("./modules/" + directory + "/" + viewdirs[i] + "/info.json");
                     getWindowInformation(directory + "/" + viewdirs[i], function(windows) {
                         var obj = {
-                            "viewName": viewinfo.viewName,
-                            "viewDescription": viewinfo.viewDescription,
-                            "viewJavascriptReference": viewinfo.viewJavascriptReference,
+                            "name": viewinfo.name,
+                            "description": viewinfo.description,
+                            "jsProgramUrl": viewinfo.jsProgramUrl,
                             "windows": windows
                         };
                         resolve(obj);
@@ -1062,9 +1018,9 @@ function getWindowInformation(directory, callback) {
                 try {
                     var viewinfo = require("./modules/" + directory + "/" + windowdirs[j] + "/info.json");
                     var obj = {
-                        "windowName": viewinfo.windowName,
-                        "windowDescription": viewinfo.windowDescription,
-                        "windowHtmlReference": viewinfo.windowHtmlReference
+                        "name": viewinfo.name,
+                        "description": viewinfo.description,
+                        "htmlUrl": viewinfo.htmlUrl
                     };
                     resolve(obj);
                 } catch (e) {
@@ -1090,7 +1046,7 @@ function identifyConnection(co) {
 
     for (var i = 0; i < connectionList.length; i++) {
         if (connectionList[i] && co.address === connectionList[i].address) {
-            console.log("Duplicate IP, Overwriting!");
+            console.log((new Date()) + ' ' + "Duplicate IP, Overwriting!");
             connectionList[i].connection = co.connection;
 
             assert.notEqual(connectionList[i].connection, undefined, "Something went wrong while adding the connection");
@@ -1101,7 +1057,7 @@ function identifyConnection(co) {
         connectionList.push(co);
         return true;
     } else {
-        console.log("Max client limit reached!");
+        console.warn((new Date()) + ' ' + "Max client limit reached!");
         return false;
     }
 }

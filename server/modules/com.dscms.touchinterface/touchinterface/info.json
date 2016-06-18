@@ -1,5 +1,5 @@
 {
-	"viewName":"Touchscreen View",
-	"viewDescription":"Display the touch UI",
-	"viewJavascriptReference":"com.dscms.touchinterface/touchinterface/mainwindow/touch.js"
+	"name":"Touchscreen View",
+	"description":"Display the touch UI",
+	"jsProgramUrl":"com.dscms.touchinterface/touchinterface/mainwindow/touch.js"
 }

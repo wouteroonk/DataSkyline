@@ -1,5 +1,5 @@
 {
-	"viewName":"Tweetbox View",
-	"viewDescription":"Displays a single tweet by a specified user.",
-	"viewJavascriptReference":"com.example.twitter/tweetbox/tb.js"
+	"name":"Tweetbox View",
+	"description":"Displays a single tweet by a specified user.",
+	"jsProgramUrl":"com.example.twitter/tweetbox/tb.js"
 }

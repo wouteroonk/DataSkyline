@@ -1,5 +1,5 @@
 {
-	"windowName":"Avatar Window",
-	"windowDescription":"Displays the profile image of the tweets author.",
-	"windowHtmlReference":"com.example.twitter/tweetbox/avatarwindow/avatar.html"
+	"name":"Avatar Window",
+	"description":"Displays the profile image of the tweets author.",
+	"htmlUrl":"com.example.twitter/tweetbox/avatarwindow/avatar.html"
 }

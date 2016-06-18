@@ -1,5 +1,5 @@
 {
-	"windowName":"Text Window",
-	"windowDescription":"Display the textual part of a tweet",
-	"windowHtmlReference":"com.example.twitter/tweetbox/textwindow/text.html"
+	"name":"Text Window",
+	"description":"Display the textual part of a tweet",
+	"htmlUrl":"com.example.twitter/tweetbox/textwindow/text.html"
 }

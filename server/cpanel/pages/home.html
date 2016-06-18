@@ -39,8 +39,8 @@
             </thead>
             <tbody>
               <tr ng-repeat="module in modules.slice(((modulesTableCurrentPage-1)*modulesTableItemsPerPage), ((modulesTableCurrentPage)*modulesTableItemsPerPage))">
-                <td>{{module.moduleName}}</td>
-                <td>{{module.moduleDeveloper}}</td>
+                <td>{{module.name}}</td>
+                <td>{{module.developer}}</td>
                 <td>
                   <div class="btn-group pull-right" data-toggle="buttons">
                     <button ng-click="openModuleInfoModal(module)" type="button" class="btn btn-xs btn-primary">

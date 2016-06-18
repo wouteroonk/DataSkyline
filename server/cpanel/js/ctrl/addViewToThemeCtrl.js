@@ -4,7 +4,7 @@
   As the name says, this controller contains functionallity for a view instance  to a theme.
   It also subscribes to the websocket connection to get a list of modules and their views.
 */
-dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance, dscmsWebSocket) {
+dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance, dscmsWebSocket, dscmsNotificationCenter) {
     $scope.newView = {};
     $scope.views = [];
     $scope.selectedViewPos = null;
@@ -23,10 +23,10 @@ dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance,
                 }
                 $scope.views = [];
                 $.each(returnedJSON.modules, function(i, module) {
-                  $.each(module.moduleViews, function(i, view) {
-                    view['viewParent'] = module;
+                  $.each(module.views, function(i, view) {
+                    view.viewParent = module;
                   });
-                  $scope.views = $scope.views.concat(module.moduleViews);
+                  $scope.views = $scope.views.concat(module.views);
                 });
                 $scope.$apply();
                 break;
@@ -40,7 +40,11 @@ dscms.app.controller('dscmsAddViewToThemeCtrl', function($scope, $modalInstance,
     };
 
     $scope.addView = function() {
-        $modalInstance.close($scope.newView);
+        if ($scope.views[$scope.selectedViewPos] === undefined) {
+          dscmsNotificationCenter.danger("Whoops!", "You need to select a view to add to the theme.", 2000);
+          return;
+        }
+        $modalInstance.close($scope.views[$scope.selectedViewPos]);
     };
 
     $scope.cancel = function() {

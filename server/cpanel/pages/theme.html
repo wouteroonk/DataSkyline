@@ -13,11 +13,11 @@
           <div class="btn-group pull-right" role="group">
             <div title="Select screen to edit" data-toggle="general-tooltip" class="btn-group" role="group">
               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{screens[selectedScreenPos].screenName}}
+                {{screens[selectedScreenPos].name}}
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu">
-                <li ng-repeat="s in screens"><a ng-click="changeSelectedScreen(s)">{{s.screenName}}</a></li>
+                <li ng-repeat="s in screens"><a ng-click="changeSelectedScreen(s)">{{s.name}}</a></li>
               </ul>
             </div>
             <button type="button" title="Save screen for theme" data-toggle="general-tooltip" class="btn btn-success" ng-click="saveEdit()"><span class="glyphicon glyphicon-floppy-disk"></span></button>
@@ -47,11 +47,11 @@
                     data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false">
-                    {{thisScreenWinInf.views.length === 0 ? "No view instances configured for this screen" : thisScreenWinInf.views[selectedViewPos].viewName}}
+                    {{thisScreenWinInf.views.length === 0 ? "No view instances configured for this screen" : thisScreenWinInf.views[selectedViewPos].instanceName}}
                     <span ng-hide="thisScreenWinInf.views.length === 0" class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.viewName}}</a></li>
+                    <li ng-repeat="v in thisScreenWinInf.views"><a ng-click="changeSelectedView(v)">{{v.instanceName}}</a></li>
                   </ul>
                 </div>
 
@@ -74,8 +74,8 @@
                   <tbody>
                     <tr ng-repeat="window in thisScreenWinInf.views[selectedViewPos].windows">
                       <!-- Make button orange when window is in process of being moved -->
-                      <td><button type="button" class="btn btn-xs btn-{{windowIdToReplace === window.dsWindow ? 'warning' : 'default'}}" ng-click="windowIdToReplace === window.dsWindow ? windowIdToReplace = null : startWindowReplace(window)"><span class="glyphicon glyphicon-pencil"></span></button></td>
-                      <td>{{window.dsWindow}}</td>
+                      <td><button type="button" class="btn btn-xs btn-{{windowIdToReplace === window.locationID ? 'warning' : 'default'}}" ng-click="windowIdToReplace === window.locationID ? windowIdToReplace = null : startWindowReplace(window)"><span class="glyphicon glyphicon-pencil"></span></button></td>
+                      <td>{{window.locationID}}</td>
                       <td>{{window.name}}</td>
                     </tr>
                   </tbody>

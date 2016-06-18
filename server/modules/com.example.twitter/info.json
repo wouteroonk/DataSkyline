@@ -1,6 +1,6 @@
 {
-	"moduleName":"Twitter Test Module",
-	"moduleDescription":"Simulates various types of Twitter feeds.",
-	"moduleDeveloper":"Steyn Potze",
-	"moduleLicense":"WTFPLv2"
+	"name":"Twitter Test Module",
+	"description":"Simulates various types of Twitter feeds.",
+	"developer":"Steyn Potze",
+	"license":"WTFPLv2"
 }
