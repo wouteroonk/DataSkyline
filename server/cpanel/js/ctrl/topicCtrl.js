@@ -432,6 +432,9 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
     dscmsNotificationCenter.info("", "Click on a empty window placeholder in the mini preview to move \"" + win.name + "\".", 3000);
     $scope.windowIdToReplace = win.locationID;
   };
+  $scope.stopWindowReplace = function() {
+    $scope.windowIdToReplace = null;
+  };
 
   // Check if the selected view has configurable options
   $scope.hasViewGotConfig = function(v) {

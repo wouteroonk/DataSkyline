@@ -55,8 +55,8 @@
                   </ul>
                 </div>
 
-                <div class="btn-group pull-right">
-                  <button type="button" title="Delete this view" data-toggle="general-tooltip" class="btn btn-danger" ng-click="deleteView(selectedViewPos)"><span class="glyphicon glyphicon-trash"></span></button>
+                <div ng-class="{'btn-group': thisScreenWinInf.viewInstances.length > 0}" class="pull-right">
+                  <button ng-hide="thisScreenWinInf.viewInstances.length === 0" type="button" title="Delete this view" data-toggle="general-tooltip" class="btn btn-danger" ng-click="deleteView(selectedViewPos)"><span class="glyphicon glyphicon-trash"></span></button>
                   <button type="button" title="Add view to screen" data-toggle="general-tooltip" class="btn btn-default" ng-click="openAddViewModal()"><span class="glyphicon glyphicon-plus"></span></button>
                 </div>
 
@@ -77,7 +77,7 @@
                   <tbody>
                     <tr ng-repeat="window in thisScreenWinInf.viewInstances[selectedViewPos].windows">
                       <!-- Make button orange when window is in process of being moved -->
-                      <td><button type="button" class="btn btn-xs btn-{{windowIdToReplace === window.locationID ? 'warning' : 'default'}}" ng-click="windowIdToReplace === window.locationID ? windowIdToReplace = null : startWindowReplace(window)"><span class="glyphicon glyphicon-pencil"></span></button></td>
+                      <td><button type="button" class="btn btn-xs btn-{{windowIdToReplace === window.locationID ? 'warning' : 'default'}}" ng-click="windowIdToReplace !== null ? (windowIdToReplace === window.locationID ? stopWindowReplace() : startWindowReplace(window)) : startWindowReplace(window)"><span class="glyphicon glyphicon-pencil"></span></button></td>
                       <td>{{window.locationID}}</td>
                       <td>{{window.name}}</td>
                     </tr>
