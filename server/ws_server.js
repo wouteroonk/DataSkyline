@@ -27,6 +27,9 @@ var GetCurrentTopicHandler = require('./messagehandlers/getcurrenttopic.js');
 var GetScreensHandler = require('./messagehandlers/getscreens.js');
 var UpdateTopicScreenHandler = require('./messagehandlers/updatetopicscreen.js');
 
+// Data manager
+var DataManager = require('./datamanager.js');
+
 
 // The selected dataskyline topic
 var configPath = "config.json";
@@ -272,7 +275,7 @@ wsServer.on('request', function(request) {
             // "removemodule" is requested by the control panel, this method will remove a module directory from the file, it will also remove all connections to that module in the JSON configuration file
             case "removemodule":
                 var modulefolder = data.shift();
-                if (!RemoveModuleHandler.removeModule(topicname)) {
+                if (!RemoveModuleHandler.removeModule(modulefolder)) {
                     console.warn((new Date()) + ' Failed removing module ' + modulefolder + '.');
                     connection.send("removemodule 400");
                     return;
@@ -605,15 +608,13 @@ function validateInfoJson(pathToFile, err) {
         if (!info.name || !info.developer) {
             return err("The name and developer are required in the info.json of the module.");
         }
-        sendModuleList(function(json) {
-            var list = json.modules;
-            for (var i = 0; i < list.length; i++) {
-                if (list[i].name == info.name) {
-                    return err("The module name '" + info.name + "' already exists, consider changing the name in the info.json.");
-                }
+        var allModuleInfo = DataManager.getAllModulesFull();
+        for (var i = 0; i < allModuleInfo.length; i++) {
+            if (allModuleInfo[i].name == info.name) {
+                return err("The module name '" + info.name + "' already exists, consider changing the name in the info.json.");
             }
-            return err(undefined);
-        });
+        }
+        return err(undefined);
     } else {
         return err("The module doesn't have a info json file, this file is required. Make sure it's located in the right place.");
     }
