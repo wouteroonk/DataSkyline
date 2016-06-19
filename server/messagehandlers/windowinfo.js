@@ -80,6 +80,7 @@ exports.getWindowInfo = function (ip, topicName) {
       var window = {};
       window.bindingID = windowBinding.bindingID;
       window.name = windowInfoJSON.name;
+      window.folderName = windowBinding.windowFolderName;
       window.shape = windowLocation.shape;
       window.width = windowLocation.width;
       window.height = windowLocation.height;

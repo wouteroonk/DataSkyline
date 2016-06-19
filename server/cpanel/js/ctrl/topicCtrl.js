@@ -302,14 +302,8 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
   // TODO: This needs server side implementation
   // NOTE: Object sent to server is fully compatible with windowinfo message
   $scope.saveEdit = function() {
-    dscmsWebSocket.sendServerMessage(
-      "updatewindowinfo " +
-      $scope.topicName +
-      " " +
-      $scope.screens[$scope.selectedScreenPos].address +
-      " " +
-      angular.toJson($scope.thisScreenWinInf)
-    );
+    dscmsWebSocket.sendServerMessage("updatetopic " + angular.toJson($scope.thisScreenWinInf));
+    $scope.thisScreenWinInfBackup = $scope.thisScreenWinInf;
   };
 
   // Set the windowIdToReplace variable to change window for a view

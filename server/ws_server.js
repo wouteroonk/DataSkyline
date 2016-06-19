@@ -22,11 +22,14 @@ var AddTopicHandler = require('./messagehandlers/addtopic.js');
 var RemoveTopicHandler = require('./messagehandlers/removetopic.js');
 var RemoveModuleHandler = require('./messagehandlers/removemodule.js');
 var GetModulesHandler = require('./messagehandlers/getmodules.js');
+var SetTopicHandler = require('./messagehandlers/settopic.js');
+var GetCurrentTopicHandler = require('./messagehandlers/getcurrenttopic.js');
+var GetScreensHandler = require('./messagehandlers/getscreens.js');
+var UpdateTopicScreenHandler = require('./messagehandlers/updatetopicscreen.js');
 
 
 // The selected dataskyline topic
 var configPath = "config.json";
-var selectedTopic = (getJSONfromPath(configPath).topics[0].topicName || "none");
 
 // list of currently connected clients (users)
 var clients = [];
@@ -189,7 +192,12 @@ wsServer.on('request', function(request) {
                 var ipAddress = data.shift();
                 var specifictopic = data.shift(); // [Optional]
 
-                if (specifictopic === undefined) specifictopic = selectedTopic;
+                if (specifictopic === undefined) specifictopic = GetCurrentTopicHandler.getCurrentTopic();
+                if (specifictopic === undefined) {
+                  console.warn((new Date()) + ' No topic was specified and there is not currentTopic available.');
+                  console.warn((new Date()) + ' Failed sending windowinfo for ' + ipAddress + ' to client.');
+                  return;
+                }
 
                 var windowInfoObject = WindowInfoHandler.getWindowInfo(ipAddress, specifictopic);
                 if (windowInfoObject === undefined) {
@@ -281,28 +289,30 @@ wsServer.on('request', function(request) {
 
             case "settopic":
                 topicname = data.shift();
-                if (updateCurrentTopic(topicname)) {
-                    connection.send("settopic " + "200");
-                    sendSkylineUpdate("settopic");
-                } else {
-                    connection.send("settopic " + "400");
+                if (!SetTopicHandler.setTopic(topicname)) {
+                    console.warn((new Date()) + ' Failed to set topic to \"' + topicname + '\".');
+                    connection.send("settopic 400");
+                    return;
                 }
+                console.log((new Date()) + ' Succeeded setting topic to \"' + topicname + '\".');
+                connection.send("settopic 200");
+                sendSkylineUpdate("settopic");
                 break;
 
             case "getscreens":
-                connection.send("getscreens " + JSON.stringify(getScreenList()));
+                connection.send("getscreens " + JSON.stringify(GetScreensHandler.getScreens()));
                 break;
 
             case "updatetopic":
-                var topic = data.shift();
-                var ip = data.shift();
                 var windowinfo = JSON.parse(data.join(" "));
-                if (updateWindowInfo(topic, ip, windowinfo)) {
-                    connection.send("updatewindowinfo " + "200");
-                    sendSkylineUpdate("updatewindowinfo");
-                } else {
-                    connection.send("updatewindowinfo " + "400");
+                if (!UpdateTopicScreenHandler.updateTopicScreen(windowinfo)) {
+                    console.warn((new Date()) + ' Failed updating topic.');
+                    connection.send("updatetopic 400");
+                    return;
                 }
+                console.log((new Date()) + ' Succeeded updating topic.');
+                connection.send("updatetopic 200");
+                sendSkylineUpdate("updatetopic");
                 break;
 
             // Should not get here (client error)
@@ -790,138 +800,138 @@ function removeDir(path, callback) {
 
 // adds a "view" to the topic given a topicname and a JSON object that needs to be inserted (JSON file should contain a "view")
 // TODO: Test these assertions
-function addViewToTopic(topicname, viewjson) {
-    assert.notEqual(topicname, undefined, "Topicname is undefined");
-    assert.notEqual(topicname, "", "Topicname is empty");
-    assert.notEqual(viewjson, undefined, "view json file is undefined");
-    var viewObj = viewjson;
-    assert.notEqual(viewObj.screenName, undefined, "ScreenName is undefined");
-    assert.notEqual(viewObj.parentModuleFolderName, undefined, "parentModuleFolderName is undefined");
-    assert.notEqual(viewObj.config, undefined, "config is undefined");
-    assert.notEqual(viewObj.windowBindings, undefined, "windowBindings is undefined");
-
-    //TODO: Test this!
-    if (viewjson.hasOwnProperty('screenName') && viewjson.hasOwnProperty('parentModuleFolderName') && viewjson.hasOwnProperty('config') && viewjson.hasOwnProperty('windowBindings')) {
-        var config = getJSONfromPath(configPath);
-        for (var i = 0; i < config.topics.length; i++) {
-            if (config.topics[i].name === topicname) {
-                config.topics[i].viewInstances[config.topics[i].viewInstances.length] = viewObj;
-                turnJSONIntoFile(config, "config.json");
-                return true;
-            }
-        }
-        console.error((new Date()) + ' ' + "Topic '" + topicname + "' does not exist in the JSON file!");
-        return false;
-    } else {
-        console.error((new Date()) + ' ' + "Invalid viewjson");
-        return false;
-    }
-}
+// function addViewToTopic(topicname, viewjson) {
+//     assert.notEqual(topicname, undefined, "Topicname is undefined");
+//     assert.notEqual(topicname, "", "Topicname is empty");
+//     assert.notEqual(viewjson, undefined, "view json file is undefined");
+//     var viewObj = viewjson;
+//     assert.notEqual(viewObj.screenName, undefined, "ScreenName is undefined");
+//     assert.notEqual(viewObj.parentModuleFolderName, undefined, "parentModuleFolderName is undefined");
+//     assert.notEqual(viewObj.config, undefined, "config is undefined");
+//     assert.notEqual(viewObj.windowBindings, undefined, "windowBindings is undefined");
+//
+//     //TODO: Test this!
+//     if (viewjson.hasOwnProperty('screenName') && viewjson.hasOwnProperty('parentModuleFolderName') && viewjson.hasOwnProperty('config') && viewjson.hasOwnProperty('windowBindings')) {
+//         var config = getJSONfromPath(configPath);
+//         for (var i = 0; i < config.topics.length; i++) {
+//             if (config.topics[i].name === topicname) {
+//                 config.topics[i].viewInstances[config.topics[i].viewInstances.length] = viewObj;
+//                 turnJSONIntoFile(config, "config.json");
+//                 return true;
+//             }
+//         }
+//         console.error((new Date()) + ' ' + "Topic '" + topicname + "' does not exist in the JSON file!");
+//         return false;
+//     } else {
+//         console.error((new Date()) + ' ' + "Invalid viewjson");
+//         return false;
+//     }
+// }
 
 //TODO: Make the return type Boolean!
 // removes a view from the selected topic given a topicname and a viewFolderName
-function removeViewInTopic(topicname, viewFolderName) {
-
-    assert.notEqual(topicname, "", "Topicname can't be empty");
-    assert.notEqual(topicname, undefined, "Topicname can't be undefined");
-    assert.notEqual(viewFolderName, "", "viewFolderName can't be empty");
-    assert.notEqual(viewFolderName, undefined, "viewFolderName can't be undefined");
-
-    var config = getJSONfromPath(configPath);
-    var topics = config.topics;
-    for (var i = 0; i < topics.length; i++) {
-        if (topics[i].name === topicname) {
-            var newscreenviews = [];
-            for (var j = 0; j < topics[i].viewInstances.length; j++) {
-                if (topics[i].viewInstances[j].viewFolderName !== viewFolderName) {
-                    newscreenviews.push(topics[i].viewInstances[j]);
-                }
-            }
-            topics[i].viewInstances = newscreenviews;
-        }
-    }
-    turnJSONIntoFile(config, "config.json");
-    return;
-}
+// function removeViewInTopic(topicname, viewFolderName) {
+//
+//     assert.notEqual(topicname, "", "Topicname can't be empty");
+//     assert.notEqual(topicname, undefined, "Topicname can't be undefined");
+//     assert.notEqual(viewFolderName, "", "viewFolderName can't be empty");
+//     assert.notEqual(viewFolderName, undefined, "viewFolderName can't be undefined");
+//
+//     var config = getJSONfromPath(configPath);
+//     var topics = config.topics;
+//     for (var i = 0; i < topics.length; i++) {
+//         if (topics[i].name === topicname) {
+//             var newscreenviews = [];
+//             for (var j = 0; j < topics[i].viewInstances.length; j++) {
+//                 if (topics[i].viewInstances[j].viewFolderName !== viewFolderName) {
+//                     newscreenviews.push(topics[i].viewInstances[j]);
+//                 }
+//             }
+//             topics[i].viewInstances = newscreenviews;
+//         }
+//     }
+//     turnJSONIntoFile(config, "config.json");
+//     return;
+// }
 
 // TODO: Send message to all dislay screens with an update
 // Updates the current selected topic
-function updateCurrentTopic(topicname) {
-    assert.notEqual(topicname, "", "Topicname can't be empty");
-    assert.notEqual(topicname, undefined, "Topicname can't be undefined");
-    // check if topicname exists
-    var json = getJSONfromPath(configPath);
-    for (var i = 0; i < json.topics.length; i++) {
-        if (json.topics[i].name === topicname) {
-            // set topic and return true if found
-            selectedTopic = topicname;
-            return true;
-        }
-    }
-    console.error((new Date()) + ' ' + topicname + " does not exist");
-    // return false if topic does not exist
-    return false;
-}
+// function updateCurrentTopic(topicname) {
+//     assert.notEqual(topicname, "", "Topicname can't be empty");
+//     assert.notEqual(topicname, undefined, "Topicname can't be undefined");
+//     // check if topicname exists
+//     var json = getJSONfromPath(configPath);
+//     for (var i = 0; i < json.topics.length; i++) {
+//         if (json.topics[i].name === topicname) {
+//             // set topic and return true if found
+//             selectedTopic = topicname;
+//             return true;
+//         }
+//     }
+//     console.error((new Date()) + ' ' + topicname + " does not exist");
+//     // return false if topic does not exist
+//     return false;
+// }
 
-function updateWindowInfo(topicname, ip, windowinfo) {
-    // Pre-information loading
-    var config = getJSONfromPath("config.json");
-    var topics = config.topics;
-    var screens = config.screens;
-
-    var correctTopic;
-    var correctScreen;
-
-    for (var i = 0; i < topics.length; i++) {
-        if (topics[i].name === topicname) {
-            correctTopic = topics[i];
-        }
-    }
-    if (correctTopic === undefined) {
-        console.error((new Date()) + ' ' + "Topic is undefined");
-        return false;
-    }
-
-    for (var j = 0; j < screens.length; j++) {
-        if (screens[j].address === ip) {
-            correctScreen = screens[i];
-        }
-    }
-    if (correctScreen === undefined) {
-        console.error((new Date()) + ' ' + "Screen is undefined");
-        return false;
-    }
-    // Pre-information loading finished
-
-    var configViews = correctTopic.viewInstances;
-    var infoViews = windowinfo.views;
-
-    // update Views in JSON
-
-    var found = false;
-    for (var m = 0; m < configViews.length; m++) {
-        for (var n = 0; n < infoViews.length; n++) {
-            if (configViews[m].id === infoViews[n].id) {
-                found = true;
-                configViews[m].instanceName = infoViews[n].instanceName;
-                for (var k = 0; k < configViews[i].windowBindings.length; k++) {
-                    for (var l = 0; l < infoViews[n].windows.length; l++) {
-                        if (configViews[m].windowBindings[k].bindingID === infoViews[n].windows[k].bindingID) {
-                            configViews[m].windowBindings[k].locationID = infoViews[n].windows[k].locationID;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (!found) {
-        console.error((new Date()) + ' ' + "View instance add function not implemented yet, returning FALSE!");
-        // Er is een view toegevoegd
-        return false;
-    }
-    turnJSONIntoFile(config, "config.json");
-    return true;
-}
+// function updateWindowInfo(topicname, ip, windowinfo) {
+//     // Pre-information loading
+//     var config = getJSONfromPath("config.json");
+//     var topics = config.topics;
+//     var screens = config.screens;
+//
+//     var correctTopic;
+//     var correctScreen;
+//
+//     for (var i = 0; i < topics.length; i++) {
+//         if (topics[i].name === topicname) {
+//             correctTopic = topics[i];
+//         }
+//     }
+//     if (correctTopic === undefined) {
+//         console.error((new Date()) + ' ' + "Topic is undefined");
+//         return false;
+//     }
+//
+//     for (var j = 0; j < screens.length; j++) {
+//         if (screens[j].address === ip) {
+//             correctScreen = screens[i];
+//         }
+//     }
+//     if (correctScreen === undefined) {
+//         console.error((new Date()) + ' ' + "Screen is undefined");
+//         return false;
+//     }
+//     // Pre-information loading finished
+//
+//     var configViews = correctTopic.viewInstances;
+//     var infoViews = windowinfo.views;
+//
+//     // update Views in JSON
+//
+//     var found = false;
+//     for (var m = 0; m < configViews.length; m++) {
+//         for (var n = 0; n < infoViews.length; n++) {
+//             if (configViews[m].id === infoViews[n].id) {
+//                 found = true;
+//                 configViews[m].instanceName = infoViews[n].instanceName;
+//                 for (var k = 0; k < configViews[i].windowBindings.length; k++) {
+//                     for (var l = 0; l < infoViews[n].windows.length; l++) {
+//                         if (configViews[m].windowBindings[k].bindingID === infoViews[n].windows[k].bindingID) {
+//                             configViews[m].windowBindings[k].locationID = infoViews[n].windows[k].locationID;
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     if (!found) {
+//         console.error((new Date()) + ' ' + "View instance add function not implemented yet, returning FALSE!");
+//         // Er is een view toegevoegd
+//         return false;
+//     }
+//     turnJSONIntoFile(config, "config.json");
+//     return true;
+// }
 
 //TODO: rename this method (returnModuleList)
 // Returns list with all modules in the modules directory (callback needed for list)
@@ -995,10 +1005,10 @@ function turnJSONIntoFile(jsonObj, filename) {
 }
 
 // returns list with all screens
-function getScreenList() {
-    var config = getJSONfromPath(configPath);
-    return config.screens;
-}
+// function getScreenList() {
+//     var config = getJSONfromPath(configPath);
+//     return config.screens;
+// }
 
 // "Object" for connections
 function ConnectionObject(connection, address) {

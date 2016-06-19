@@ -28,6 +28,9 @@ exports.addTopic = function(name, description) {
   // Add to config
   config.topics.push(topic);
 
+  // Set current topic if it doesn't exist.
+  if (config.currentTopic === undefined) config.currentTopic = name;
+
   // Store in file
   DataManager.storeJSONObjectInFile(config, configLocation);
   return true;

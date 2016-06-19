@@ -39,6 +39,14 @@ exports.getTopic = function (name, config) {
   })[0];
 };
 
+exports.getCurrentTopicName = function (config) {
+  assert.notEqual(config, undefined, "You must specify a config in getCurrentTopicName call (config is undefined)");
+  assert.notEqual(config, null, "You must specify a config in getCurrentTopicName call (config is null)");
+  assert(config.hasOwnProperty('currentTopic'), "The given config object does not have a currentTopic variable");
+
+  var currentTopicName = config.currentTopic;
+};
+
 // Get the window location object for the window location with the given ID on the given screen
 exports.getWindowLocation = function (id, screen) {
   assert.notEqual(id, undefined, "You must specify an id in getWindowLocation call (id is undefined)");
