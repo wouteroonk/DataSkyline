@@ -3,19 +3,26 @@
     <h4 class="modal-title">Add a view</h4>
 </div>
 <div class="modal-body">
-    <div class="list-group">
-      <a ng-click="changeViewPos($index)" ng-repeat="view in views" class="list-group-item" ng-class="{active: views[selectedViewPos] === view}">
-          <span class="badge">{{view.viewParent.name}}</span>
-          <h4 class="list-group-item-heading">{{view.name}}</h4>
-          <p class="list-group-item-text">
-            {{view.description}}
-          </p>
-          <hr class="add-topic-hr" />
-          <p class="list-group-item-text">
-            <small class="add-topic-window-count">View with {{view.windows.length}} window{{(view.windows.length == 0 || view.windows.length > 1 ? 's' : '')}}</small>
-          </p>
-      </a>
-    </ul>
+    <div class="form-group">
+        <label for="viewInstanceNameInput">View instance name</label>
+        <input ng-model="viewInstanceName" type="text" class="form-control" id="viewInstanceNameInput" placeholder="{{views[selectedViewPos].name}}">
+    </div>
+    <div class="form-group">
+      <label for="viewSelector">View type</label>
+      <div id="viewSelector" class="list-group">
+          <a ng-click="changeViewPos($index)" ng-repeat="view in views" class="list-group-item" ng-class="{active: views[selectedViewPos] === view}">
+              <span class="badge">{{view.viewParent.name}}</span>
+              <h4 class="list-group-item-heading">{{view.name}}</h4>
+              <p class="list-group-item-text">
+                  {{view.description}}
+              </p>
+              <hr class="add-topic-hr" />
+              <p class="list-group-item-text">
+                  <small class="add-topic-window-count">View with {{view.windows.length}} window{{(view.windows.length == 0 || view.windows.length > 1 ? 's' : '')}}</small>
+              </p>
+          </a>
+      </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>

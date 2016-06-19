@@ -20,10 +20,15 @@ exports.updateTopicScreen = function(windowinfo) {
     }
 
     // Clear out previous setup for this screen
+    var indexesToRemove = [];
     for (var j in config.topics[i].viewInstances) {
       if (config.topics[i].viewInstances[j].screenID === windowinfo.screenID) {
-        config.topics[i].viewInstances.splice(j, 1);
+        indexesToRemove.push(j);
       }
+    }
+    // Lol
+    for (var indexIndex = indexesToRemove.length-1; indexIndex >= 0; indexIndex--) {
+      config.topics[i].viewInstances.splice(indexesToRemove[indexIndex], 1);
     }
 
     // Create new view instances in config based on windowinfo

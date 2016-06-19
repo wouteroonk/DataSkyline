@@ -35,7 +35,7 @@
               <div id="edit-topic-control-col" class="col-md-8">
 
                 <!-- Select view -->
-                <div class="btn-group pull-left" title="Select view instance to edit" data-toggle="general-tooltip">
+                <div ng-class="{'btn-group': thisScreenWinInf.viewInstances.length > 0}" class="pull-left" title="Select view instance to edit" data-toggle="general-tooltip">
                   <!-- Dropdown with view instances -->
                   <!-- Should only be enabled if any view instances are present -->
                   <!-- Otherwise, instruct user -->
@@ -55,7 +55,10 @@
                   </ul>
                 </div>
 
-                <button type="button" title="Add view to screen" data-toggle="general-tooltip" class="btn btn-default pull-right" ng-click="openAddViewModal()"><span class="glyphicon glyphicon-plus"></span></button>
+                <div class="btn-group pull-right">
+                  <button type="button" title="Delete this view" data-toggle="general-tooltip" class="btn btn-danger" ng-click="deleteView(selectedViewPos)"><span class="glyphicon glyphicon-trash"></span></button>
+                  <button type="button" title="Add view to screen" data-toggle="general-tooltip" class="btn btn-default" ng-click="openAddViewModal()"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
 
                 <div class="clearfix"></div>
 
@@ -86,11 +89,10 @@
 
                 <form>
                   <fieldset ng-repeat="var in thisScreenWinInf.viewInstances[selectedViewPos].config.configItems" class="form-group">
-                    <label for="{{var.name}}Input">{{var.name}}</label>
-                    <input type="text" class="form-control" id="{{var.name}}Input" value="{{var.value}}">
+                    <label for="{{var.key}}Input">{{var.name}}</label>
+                    <input type="text" class="form-control" id="{{var.key}}Input" ng-model="var.value" placeholder="{{var.description}}">
                   </fieldset>
                 </form>
-
               </div>
             </div>
           </div>

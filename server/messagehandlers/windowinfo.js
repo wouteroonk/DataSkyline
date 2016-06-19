@@ -47,7 +47,6 @@ exports.getWindowInfo = function (ip, topicName) {
     // Place data from topic viewInstance in wininfViewInstance
     wininfViewInstance.viewFolderName = viewInstance.viewFolderName;
     wininfViewInstance.instanceName = viewInstance.instanceName;
-    wininfViewInstance.instanceID = viewInstance.id;
     wininfViewInstance.parentModuleFolderName = viewInstance.parentModuleFolderName;
     wininfViewInstance.config = viewInstance.config;
 

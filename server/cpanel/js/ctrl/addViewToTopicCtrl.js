@@ -8,6 +8,7 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
     $scope.newView = {};
     $scope.views = [];
     $scope.selectedViewPos = null;
+    $scope.viewInstanceName = null;
 
     dscmsWebSocket.subscribe(function(message) {
         var commands = message.data.split(' ');
@@ -44,7 +45,11 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
           dscmsNotificationCenter.danger("Whoops!", "You need to select a view to add to the topic.", 2000);
           return;
         }
-        $modalInstance.close($scope.views[$scope.selectedViewPos]);
+
+        $modalInstance.close({
+          "view": $scope.views[$scope.selectedViewPos],
+          "instanceName": $scope.viewInstanceName !== null ? $scope.viewInstanceName : $scope.views[$scope.selectedViewPos].name
+        });
     };
 
     $scope.cancel = function() {

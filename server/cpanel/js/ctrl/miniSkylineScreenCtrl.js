@@ -91,10 +91,10 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
     if (allWindows === undefined) return;
     allWindows.forEach(function(windowObj, j) {
       var id = 'dscms-mini-preview-screen-part-' + j;
-      miniScreen.append("<div class='dscms-mini-screen-window'></div>");
+      miniScreen.append("<div class='dscms-mini-screen-window' data-toggle='mini-window-tooltip'></div>");
       var windowElem = miniScreen.children('.dscms-mini-screen-window').last();
 
-      if (windowObj.type === "ellipse") {
+      if (windowObj.shape === "ellipse") {
         windowElem.addClass("dscmsEllipse");
       }
 
@@ -107,25 +107,32 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
       windowElem.css("top", (windowObj.coordY * mul) + "px");
       windowElem.css("left", (windowObj.coordX * mul) + "px");
 
-      // Color, background, etc
-      var rgb = hexToRgb(windowObj.hue);
-      if (rgb === null) {
-        windowObj.hue = "#FFFFFF";
-        rgb = hexToRgb(windowObj.hue);
-      }
+      // Window type
+      windowElem.addClass('dscms-mini-screen-window-' + windowObj.type);
+
+      // Tooltips
+      windowElem.attr("title", windowObj.hint);
 
       if (windowObj.background !== undefined) {
         windowElem.css("background", "url(" + windowObj.background + ")");
         windowElem.css("background-size", "100% 100%");
-        windowElem.append("<div class='dscms-mini-screen-window-hue' style='background-color: rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25);'></div>");
-      } else {
-        windowElem.css("background", "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ",0.25)");
       }
 
       // Click callback
       windowElem.click(function() {
         windowObj.onClick(windowElem, windowObj.id);
       });
+    });
+
+    $('[data-toggle="mini-window-tooltip"]').tooltip({
+      'selector': '',
+      'trigger': 'hover',
+      'placement': 'top',
+      'container':'body'
+    });
+
+    $('[data-toggle="mini-window-tooltip"]').on('remove', function () {
+      $('[data-toggle="mini-window-tooltip"]').tooltip('hide');
     });
   }
 
@@ -137,4 +144,5 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
       b: parseInt(result[3], 16)
     } : null;
   }
+
 });

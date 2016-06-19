@@ -51,7 +51,6 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
           console.dir(message);
           return;
         }
-        console.dir(returnedWindowJSON);
         addWindowsToPreview(returnedWindowJSON);
         break;
       // Getscreens message for getting the screens and their description
@@ -108,31 +107,30 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
   // =========================
 
   // Reset the colors of the preview windows
-  // Free windows are green, taken windows are orange.
+  // Free windows are empty, taken windows are filled.
   function resetColors() {
-    var allViewWindows = [];
+    var alreadyFilled = [];
     // Make a list of all filled windows
-    for (var i = 0; i < $scope.thisScreenWinInf.viewInstances.length; i++)
-      allViewWindows = allViewWindows.concat($scope.thisScreenWinInf.viewInstances[i].windows);
-
-    // Keep a list of windows that are orange to prevent override
-    var alreadyOrange = [];
-    // Loop through filled windows and color them
-    for (var j = 0; j < allViewWindows.length; j++) {
-      var thisWindow = allViewWindows[j];
-      // Grab the associated bare window and color it
-      // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
-      $.grep($scope.previewConfig.windows, function(e){
-        // We shouldn't do anything if this window is already orange
-        if (alreadyOrange.indexOf(e.id) !== -1) return;
-        if (e.id == thisWindow.locationID) {
-          alreadyOrange.push(e.id);
-          e.hue = "#E8B075";
-        } else {
-          // To reset previously colored windows, make a non-match green again
-          e.hue = "#3DCD95";
-        }
-      });
+    for (var i = 0; i < $scope.thisScreenWinInf.viewInstances.length; i++) {
+      var viewInstance = $scope.thisScreenWinInf.viewInstances[i];
+      for (var j = 0; j < viewInstance.windows.length; j++) {
+        var thisWindow = viewInstance.windows[j];
+        // Grab the associated bare window and color it
+        // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
+        $.grep($scope.previewConfig.windows, function(e){
+          // We shouldn't do anything if this window is already filled
+          if (alreadyFilled.indexOf(e.id) !== -1) return;
+          if (e.id == thisWindow.locationID) {
+            alreadyFilled.push(e.id);
+            e.type = "filled";
+            e.hint = viewInstance.instanceName + " - " + thisWindow.name;
+          } else {
+            // To reset previously colored windows, make a non-match empty again
+            e.type = "empty";
+            e.hint = "Empty window";
+          }
+        });
+      }
     }
   }
 
@@ -158,8 +156,10 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
       var thisWindow = $scope.thisScreenWinInf.viewInstances[$scope.selectedViewPos].windows[j];
       // TODO: Can we move this function somewhere else? It is bad practice to create functions within a loop.
       $.grep($scope.previewConfig.windows, function(e){
-        if (e.id == thisWindow.locationID)
-          e.hue = "#3149E2";
+        if (e.id == thisWindow.locationID) {
+          e.type = "selected";
+          e.hint += " (selected)";
+        }
       });
     }
   }
@@ -183,10 +183,11 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
       miniWindow.pixelHeight = dscmsWindow.height;
       miniWindow.coordX = dscmsWindow.x;
       miniWindow.coordY = dscmsWindow.y;
-      miniWindow.type = dscmsWindow.shape;
+      miniWindow.shape = dscmsWindow.shape;
+      miniWindow.hint = "Empty window";
 
       // Set the hue for an empty window
-      miniWindow.hue = "#3DCD95";
+      miniWindow.type = "empty";
       // TODO: We need preview images (server side)
 
       // On click, check if a window needs replacing. If so, replace it with clicked window.
@@ -202,7 +203,7 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
         // Loop through all windows and check if occupied
         var shouldContinue = true;
         $.grep(allViewWindows, function(e) {
-          if (e.dsWindow === id) {
+          if (e.locationID === id) {
             dscmsNotificationCenter.danger("Oops!", "This window is already occupied.", 1500);
             shouldContinue = false;
           }
@@ -229,6 +230,125 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
 
     // When done, ask for the views associated with this screen (so we can fill the windows)
     dscmsWebSocket.sendServerMessage("requestwindows " + $scope.screens[$scope.selectedScreenPos].address + " " + $scope.topicName);
+  }
+
+  function addViewBasedOnViewObject (viewObj, instanceName) {
+    var newViewInstance = {};
+
+    // Instance identifiers should be unique
+    newViewInstance.instanceName = instanceName;
+    // Fill rest with info from viewObj
+    newViewInstance.viewName = viewObj.name;
+    newViewInstance.viewFolderName = viewObj.folderName;
+    newViewInstance.parentModuleFolderName = viewObj.viewParent.folderName;
+    newViewInstance.jsProgramUrl = viewObj.jsProgramUrl;
+    newViewInstance.config = viewObj.configTemplate;
+
+    newViewInstance.windows = [];
+
+    // We need to find the best fitting windowLocation for this window
+    var availableWindows = getAvailableWindows();
+    for (var i in viewObj.windows) {
+      var windowObj = viewObj.windows[i];
+      var newWindowInstance = {};
+
+      newWindowInstance.bindingID = i;
+      newWindowInstance.name = windowObj.name;
+      newWindowInstance.folderName = windowObj.folderName;
+      newWindowInstance.htmlUrl = windowObj.htmlUrl;
+
+      // If there are no available windows, stop adding and show warning.
+      if (availableWindows.length === 0) {
+        dscmsNotificationCenter.warning("Sorry!", "There is no space for this view at the moment. Please consider removing a view instance or adding the view to another screen.");
+        return;
+      }
+
+      var selectedWindowLocation = null;
+      // Order of importance:
+      //  * shape
+      //  * Aspect ratio
+
+      var windowsWithShape = getWindowsWithShape(availableWindows, windowObj.preferredShape);
+      if (windowsWithShape.length > 0) {
+        var ar1 = windowObj.preferredWidth / windowObj.preferredHeight;
+        var windowsWithShapeAndAR = getWindowsWithSimilarAspectRatio(windowsWithShape, ar1, 0.3);
+        if (windowsWithShapeAndAR.length > 0) {
+          selectedWindowLocation = windowsWithShapeAndAR[0];
+        } else {
+          selectedWindowLocation = windowsWithShape[0];
+        }
+      } else {
+        var ar2 = windowObj.preferredWidth / windowObj.preferredHeight;
+        var windowsWithAR = getWindowsWithSimilarAspectRatio(availableWindows, ar2, 0.3);
+        if (windowsWithAR.length > 0) {
+          selectedWindowLocation = windowsWithAR[0];
+        } else {
+          selectedWindowLocation = availableWindows[0];
+        }
+      }
+
+      newWindowInstance.locationID = selectedWindowLocation.id;
+      newWindowInstance.shape = selectedWindowLocation.shape;
+      newWindowInstance.width = selectedWindowLocation.width;
+      newWindowInstance.height = selectedWindowLocation.height;
+      newWindowInstance.x = selectedWindowLocation.x;
+      newWindowInstance.y = selectedWindowLocation.y;
+
+      newViewInstance.windows.push(newWindowInstance);
+
+      for (var j = 0; j < availableWindows.length; j++) {
+        if (availableWindows[j].id === newWindowInstance.locationID) {
+          availableWindows.splice(j, 1);
+          break;
+        }
+      }
+    }
+
+    $scope.thisScreenWinInf.viewInstances.push(newViewInstance);
+    $scope.selectedViewPos = $scope.thisScreenWinInf.viewInstances.length - 1;
+    resetColors();
+    showSelectedViewInPreview();
+  }
+
+  function getWindowsWithShape(windowlist, shape) {
+    var matches = [];
+    for (var i in windowlist) {
+      if (windowlist[i].shape === shape) matches.push(windowlist[i]);
+    }
+    return matches;
+  }
+
+  function getWindowsWithSimilarAspectRatio(windowlist, aspectRatio, margin) {
+    var matches = [];
+    for (var i in windowlist) {
+      var tempAR = windowlist[i].width / windowlist[i].height;
+      if (tempAR <= aspectRatio + margin && tempAR >= aspectRatio - margin)
+        matches.push(windowlist[i]);
+    }
+    return matches;
+  }
+
+  function getAvailableWindows() {
+    var availableWindows = [];
+    var allViewWindows = [];
+
+    // Make a list of all filled windows
+    for (var i = 0; i < $scope.thisScreenWinInf.viewInstances.length; i++)
+      allViewWindows = allViewWindows.concat($scope.thisScreenWinInf.viewInstances[i].windows);
+
+    // Loop through all windows for selected screen
+    for (var j in $scope.screens[$scope.selectedScreenPos].windows) {
+      var windowLocation = $scope.screens[$scope.selectedScreenPos].windows[j];
+      // Compare window to configured windows for this topic/screen
+      var match = false;
+      for (var k in allViewWindows) {
+        if (windowLocation.id !== allViewWindows[k].locationID) continue;
+        match = true;
+      }
+      // If there is no match, the window is available
+      if (!match) availableWindows.push(windowLocation);
+    }
+    return availableWindows;
   }
 
   // =========================
@@ -309,7 +429,7 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
   // Set the windowIdToReplace variable to change window for a view
   // Also, give user instructions
   $scope.startWindowReplace = function(win) {
-    dscmsNotificationCenter.info("", "Click on a green window placeholder in the mini preview to move \"" + win.name + "\".", 3000);
+    dscmsNotificationCenter.info("", "Click on a empty window placeholder in the mini preview to move \"" + win.name + "\".", 3000);
     $scope.windowIdToReplace = win.locationID;
   };
 
@@ -338,13 +458,22 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
     });
 
     // Modal will probably return view object. Add it to windowinfo and reload preview
-    modalInstance.result.then(function(returnedView) {
+    modalInstance.result.then(function(result) {
       // We need more info before we can do adding
-      console.log("What we have");
-      console.dir(returnedView);
-      console.log("What we need");
-      console.dir($scope.thisScreenWinInf.viewInstances[0]);
+      if (result === undefined) return;
+      addViewBasedOnViewObject(result.view, result.instanceName);
     });
+  };
+
+  $scope.deleteView = function(index) {
+    if ($scope.thisScreenWinInf.viewInstances.length > 1) {
+      $scope.selectedViewPos = 0;
+    } else {
+      $scope.selectedViewPos = null;
+    }
+    $scope.thisScreenWinInf.viewInstances.splice(index, 1);
+    resetColors();
+    showSelectedViewInPreview();
   };
 
   // =========================
