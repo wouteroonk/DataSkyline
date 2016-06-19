@@ -247,6 +247,7 @@ wsServer.on('request', function(request) {
                 }
                 console.log((new Date()) + ' Succeeded adding topic ' + topicname + '.');
                 connection.send("addtopic 200");
+                sendSkylineUpdate("addtopic");
                 break;
 
             // "removetopic" is requested by the control panel, it will remove a topic from the configuration JSON file given a topicname
