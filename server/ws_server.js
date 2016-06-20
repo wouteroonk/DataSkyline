@@ -305,6 +305,7 @@ wsServer.on('request', function(request) {
 
             case "getscreens":
                 connection.send("getscreens " + JSON.stringify(GetScreensHandler.getScreens()));
+                console.log((new Date()) + ' Succeeded sending screens.');
                 break;
 
             case "updatetopic":

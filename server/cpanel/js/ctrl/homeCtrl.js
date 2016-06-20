@@ -8,6 +8,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   $scope.topics = [];
   $scope.modules = [];
+  $scope.screens = [];
 
   // Pagination for tables
   // modules
@@ -51,7 +52,19 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         }
         //Do something with JSON
         $scope.modules = returnedJSON.modules;
-
+        $scope.$apply();
+        break;
+      case "getscreens":
+        var returnedScreenJSON;
+        try {
+          returnedScreenJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
+        } catch (e) {
+          console.log("Server did not return JSON in getscreens message: " + message.data);
+          console.dir(message);
+          return;
+        }
+        //Do something with JSON
+        $scope.screens = returnedScreenJSON;
         $scope.$apply();
         break;
       case "addtopic":
@@ -71,6 +84,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   // Initial server communication
   dscmsWebSocket.sendServerMessage("gettopics");
   dscmsWebSocket.sendServerMessage("getmodules");
+  dscmsWebSocket.sendServerMessage("getscreens");
   dscmsWebSocket.requestOwnLocalIP(function(ip) {
     dscmsWebSocket.sendServerMessage("identification " + ip);
   });
