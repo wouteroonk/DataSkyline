@@ -45,6 +45,7 @@ exports.getCurrentTopicName = function (config) {
   assert(config.hasOwnProperty('currentTopic'), "The given config object does not have a currentTopic variable");
 
   var currentTopicName = config.currentTopic;
+  return currentTopicName;
 };
 
 // Get the window location object for the window location with the given ID on the given screen

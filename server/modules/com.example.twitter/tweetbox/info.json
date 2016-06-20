@@ -11,9 +11,15 @@
 				"value": ""
 			},
 			{
-				"key": "username",
-				"name": "Refresh rate",
-				"description": "Time in seconds",
+				"key": "userimgurl",
+				"name": "Profile picture",
+				"description": "Full url of your profile picture",
+				"value": ""
+			},
+			{
+				"key": "tweettext",
+				"name": "Tweet text",
+				"description": "The text of your tweet (max 140 characters)",
 				"value": ""
 			}
 		]

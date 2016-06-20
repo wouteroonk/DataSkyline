@@ -195,7 +195,7 @@ wsServer.on('request', function(request) {
                 var ipAddress = data.shift();
                 var specifictopic = data.shift(); // [Optional]
 
-                if (specifictopic === undefined) specifictopic = GetCurrentTopicHandler.getCurrentTopic();
+                if (specifictopic === undefined) specifictopic = GetCurrentTopicHandler.getCurrentTopic().name;
                 if (specifictopic === undefined) {
                   console.warn((new Date()) + ' No topic was specified and there is not currentTopic available.');
                   console.warn((new Date()) + ' Failed sending windowinfo for ' + ipAddress + ' to client.');

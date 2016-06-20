@@ -12,6 +12,8 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     }
   };
 
+  console.dir($scope.dscmsView);
+
   // The DSCMSViewTools object is a set of tools that can be used in the views own JS code
   var DSCMSViewTools = {
     // Name of the view type
@@ -21,7 +23,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // List of DOM IDs for this views windows, with window name as key
     myWindows: {},
     // The config file for this view instance as defined on the server
-    myConfig: {},
+    myConfig: $scope.dscmsView.config,
   };
 
   // For some reason the dscms-view element cannot be found without this

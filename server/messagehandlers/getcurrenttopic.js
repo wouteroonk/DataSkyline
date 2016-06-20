@@ -8,7 +8,7 @@ exports.getCurrentTopic = function() {
   var config = DataManager.getJSONObjectFromFilepath(configLocation);
 
   var currentTopicName = DataManager.getCurrentTopicName(config);
-
+  console.log((new Date()) + ' Found currentTopic ' + currentTopicName);
   for (var i in config.topics) {
     if (config.topics[i].name === currentTopicName) return config.topics[i];
   }
