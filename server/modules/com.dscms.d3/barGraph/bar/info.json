@@ -1,0 +1,9 @@
+{
+	"name":"Bar Graph",
+	"description":"Display the bar graph",
+	"htmlUrl":"com.dscms.d3/barGraph/bar/bar.html",
+	"preferredWidth":"1920",
+	"preferredHeight":"1080",
+	"preferredShape":"rectangle",
+	"screenshotUrl":""
+}
