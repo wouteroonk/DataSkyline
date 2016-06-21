@@ -5,21 +5,9 @@
 	"configTemplate": {
 		"configItems": [
 			{
-				"key": "username",
-				"name": "Twitter username",
-				"description": "@username",
-				"value": ""
-			},
-			{
-				"key": "userimgurl",
-				"name": "Profile picture",
-				"description": "Full url of your profile picture",
-				"value": ""
-			},
-			{
-				"key": "tweettext",
-				"name": "Tweet text",
-				"description": "The text of your tweet (max 140 characters)",
+				"key": "widgetid",
+				"name": "Twitter widgetID",
+				"description": "widgetid",
 				"value": ""
 			}
 		]
