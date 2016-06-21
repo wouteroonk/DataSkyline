@@ -1,0 +1,21 @@
+{
+	"name":"Youtube single video",
+	"description":"Displays single youtube video for a given id in repeat.",
+	"jsProgramUrl":"com.example.youtube/youtube-single/yt.js",
+	"configTemplate": {
+		"configItems": [
+			{
+				"key": "videoId",
+				"name": "Youtube video id",
+				"description": "The youtube id of the video",
+				"value": ""
+			},
+			{
+				"key": "muted",
+				"name": "muted",
+				"description": "true if the video should be muted, default: false.",
+				"value": "false"
+			}
+		]
+	}
+}
