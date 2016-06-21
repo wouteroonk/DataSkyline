@@ -18,22 +18,27 @@ body {
 /*	Background colors	*/
 
 .dscms-bgBlue {
+    fill: #06bdea;
     background-color: #06bdea;
     color: #FFF;
 }
 .dscms-bgGreen {
+    fill: #9bb717;
     background-color: #9bb717;
     color: #FFF;
 }
 .dscms-bgPink {
+    fill: #ed1e68;
     background-color: #ed1e68;
     color: #FFF;
 }
 .dscms-bgOrange {
+    fill: #ff912b;
     background-color: #ff912b;
     color: #FFF;
 }
 .dscms-bgPurple {
+    fill: #5c4fd9;
     background-color: #5c4fd9;
     color: #FFF;
 }
