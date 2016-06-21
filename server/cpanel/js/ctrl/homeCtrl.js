@@ -23,12 +23,12 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       case "skylineupdate":
+				//Received update from the server. So we need to reload the topics and modules.
         dscmsWebSocket.sendServerMessage("gettopics");
         dscmsWebSocket.sendServerMessage("getmodules");
         break;
       case "gettopics":
-        // Whatever you want to do
-        //feature
+        // Received JSON for all the topics.
         var returnedJSON;
         try {
           returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -42,6 +42,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         $scope.$apply();
         break;
       case "getmodules":
+				// Received JSON for all the modules.
         var returnedJSON;
         try {
           returnedJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -55,6 +56,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         $scope.$apply();
         break;
       case "getscreens":
+				// Received JSON for all our screens.
         var returnedScreenJSON;
         try {
           returnedScreenJSON = JSON.parse(message.data.substring(message.data.indexOf(' ') + 1));
@@ -68,6 +70,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         $scope.$apply();
         break;
       case "addtopic":
+				// Received confirmation that a topic was added.
         if (message.data.substring(message.data.indexOf(' ') + 1) == 200) {
           console.log("added the topic");
           $('#add-topic-modal').modal('hide');
@@ -99,10 +102,6 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
           return $scope.topics;
         }
       }
-    });
-
-    modalInstance.result.then(function() {
-      // TODO: Refresh topic list
     });
   };
 
@@ -150,7 +149,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
       });
   };
 
-	// Delete a module (first ask for confirmation)
+	// Delete a topic (first ask for confirmation)
   $scope.deleteTopic = function(topic) {
     // Ask for confirmation
     swal(
@@ -163,7 +162,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
         confirmButtonText: "Delete",
         closeOnConfirm: true
       }, function(isConfirm) {
-        // Tell server to delete module if confirmed
+        // Tell server to delete topic if confirmed
         if (isConfirm) {
           dscmsWebSocket.sendServerMessage("removetopic " + topic.name);
         }
