@@ -637,7 +637,7 @@ function verifyWindows(path, res){
   }
   return true;
 }
-
+//validates the info.json of a window, optionnaly add aditional checks for the json file here.
 function validateWindowJson(path, res){
   var info = getJSONfromPath(path);
   if(!info.name || !info.description){
@@ -675,7 +675,7 @@ function verifyViews(path, res){
     }
     return true;
 }
-
+//validates a json of a view, optionnaly add aditional checks for the json file of a view here.
 function validateViewJson(path, res){
   var info = getJSONfromPath(path);
   if(!info.name || !info.description){
@@ -687,7 +687,7 @@ function validateViewJson(path, res){
     return false;
   }
   if(!info.configTemplate || !info.configTemplate.configItems){
-    res.end("The info.json of the view needs to have the configTemplate attribute. This attribute has a array named configItems. If theres noting to configure, use an empty array.");
+    res.end("The info.json of the view needs to have the configTemplate attribute. This attribute has a array named configItems. If theres nothing to configure, use an empty array.");
     return false;
   }
   return true;
