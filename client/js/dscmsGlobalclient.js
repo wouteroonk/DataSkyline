@@ -37,7 +37,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   var callbackIterator = 0;
 
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
-  var ws = new WebSocket("ws://192.168.1.100:8080", "echo-protocol");
+  var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
   var hasConnection = false;
   var hasDisconnected = false;
 
