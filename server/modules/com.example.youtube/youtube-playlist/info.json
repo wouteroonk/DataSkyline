@@ -13,8 +13,8 @@
 			{
 				"key": "muted",
 				"name": "muted",
-				"description": "true if the video should be muted, default: false.",
-				"value": "false"
+				"description": "true if the video should be muted, default: true.",
+				"value": "true"
 			}
 		]
 	}
