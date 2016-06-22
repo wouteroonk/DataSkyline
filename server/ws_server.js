@@ -14,6 +14,7 @@ var rmdir = require("rmdir");
 var mkdirp = require("mkdirp");
 var assert = require('assert'); // For assertions
 var Promise = require('promise');
+var archiver = require('archiver');
 
 // Message handlers
 var WindowInfoHandler = require('./messagehandlers/windowinfo.js');
@@ -557,9 +558,19 @@ function handleModuleDownload(req, res){
   assert.notEqual(res, undefined, "res can't be undefined");
   assert.notEqual(req, undefined, "req can't be undefined");
 
-  var zip = new AdmZip();
-  zip.addLocalFolder("./modules/" + req.url.split('?')[1], "./" +req.url.split('?')[1] + "/");
-  res.end(zip.toBuffer(),'application/x-zip-compressed');
+  //var zip = new AdmZip();
+  //zip.addLocalFolder("./modules/" + req.url.split('?')[1], "./" +req.url.split('?')[1] + "/");
+  //res.end(zip.toBuffer(),'application/x-zip-compressed');
+  var archive = archiver('zip');
+  archive.on('error', function(err){
+    console.log((new Date()) + ' ' +err);
+  });
+
+  archive.pipe(res);
+  archive.bulk([
+      { expand: true, cwd: "./modules/" + req.url.split('?')[1], src: ['**'], dest: req.url.split('?')[1]}
+  ]);
+  archive.finalize();
 }
 
 //register the zip format.
