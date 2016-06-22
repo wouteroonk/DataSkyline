@@ -110,15 +110,15 @@ dscms.app.factory('dscmsWebSocket', function($location) {
     });
   };
 
-  functions.setTheme = function(theme) {
+  functions.setTopic = function(topic) {
     waitForWS(function() {
-      ws.send("settheme " + theme);
+      ws.send("settopic " + topic);
     });
   };
 
-  functions.getThemes = function(){
+  functions.getTopics = function(){
     waitForWS(function(){
-      ws.send("getthemes");
+      ws.send("gettopics");
     });
   };
 
