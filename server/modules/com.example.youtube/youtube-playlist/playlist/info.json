@@ -1,0 +1,6 @@
+{
+	"name":"Youtube playlist",
+	"description":"Display a playlist from youtube in repeat",
+	"htmlUrl":"com.example.youtube/youtube-playlist/playlist/player.html",
+	"preferredShape":"rectangle"
+}

@@ -1,0 +1,6 @@
+{
+	"name":"D3 Module",
+	"description":"Generate a graph with the D3 library",
+	"developer":"Wouter Oonk",
+	"license":"WTFPLv2"
+}

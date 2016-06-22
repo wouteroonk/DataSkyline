@@ -1,0 +1,33 @@
+{
+	"name":"Bar graph View",
+	"description":"Displays a D3 Bar graph",
+	"jsProgramUrl":"com.dscms.d3/barGraph/graph.js",
+	"configTemplate": {
+		"configItems": [
+			{
+				"key": "jsonurl",
+				"name": "Json URL",
+				"description": "The URL of the Json file",
+				"value": ""
+			},
+			{
+				"key": "listname",
+				"name": "Listname",
+				"description": "The name of de list for the bars",
+				"value": ""
+			},
+			{
+				"key": "label",
+				"name": "Label",
+				"description": "The label of the bar",
+				"value": ""
+			},
+			{
+				"key": "value",
+				"name": "Tweet text",
+				"description": "The value of the bar",
+				"value": ""
+			}
+		]
+	}
+}
