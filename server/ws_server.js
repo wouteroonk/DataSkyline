@@ -583,7 +583,7 @@ function unzipFile(fileName, res) {
     if (splitFileName[splitFileName.length - 1] != 'zip') {
         //the file uploaded is not a zip file.
         removeFile(fromPath);
-        res.end(splitFileName[splitFileName.length - 1] + ' type is not supported, only zip type files are currently supported(see documentation' + ' for more information).');
+        res.end(splitFileName[splitFileName.length - 1] + ' type is not supported, only zip type files are currently supported (see documentation' + ' for more information).');
         return;
     }
     //the file is a zip
@@ -601,14 +601,14 @@ function unzipFile(fileName, res) {
 }
 
 //validate the Info.json file.
-function validateInfoJson(pathToFile, err) {
+function validateModuleInfoJson(pathToFile, err) {
     assert.notEqual(pathToFile, "", "pathToFile can't be empty");
     assert.notEqual(pathToFile, undefined, "pathToFile can't be undefined");
 
     var info = getJSONfromPath(pathToFile + "info.json");
     if (info) {
-        if (!info.name || !info.developer) {
-            return err("The name and developer are required in the info.json of the module.");
+        if (!info.name || !info.developer || !info.description || !info.license) {
+            return err("The name, developer, description, license are required attributes in the info.json of the module.");
         }
         var allModuleInfo = DataManager.getAllModulesFull();
         for (var i = 0; i < allModuleInfo.length; i++) {
@@ -618,8 +618,86 @@ function validateInfoJson(pathToFile, err) {
         }
         return err(undefined);
     } else {
-        return err("The module doesn't have a info json file, this file is required. Make sure it's located in the right place.");
+        return err("The module doesn't have a info json file or it has errors, this file is required. Make sure it's located in the right place and it's valid.");
     }
+}
+function verifyWindows(path, res){
+  var dirs = getDirectories(path);
+  for(var i = 0; i < dirs.length; i++){
+    var files = fs.readdirSync(pathing.join(path, dirs[i]));
+    for(var j = 0; j < files.length; j++){
+      if(files[j] == "info.json"){
+        console.log((new Date())+' ' +'window  info.json found!');
+        var valid = validateWindowJson(pathing.join(pathing.join(path, dirs[i]), files[j]), res);
+        if(!valid){
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function validateWindowJson(path, res){
+  var info = getJSONfromPath(path);
+  if(!info.name || !info.description){
+    res.end("The info.json of a window needs to have the name and description attribute.");
+    return false;
+  }
+  if(!info.preferredShape || !info.htmlUrl){
+    res.end("The preferredShape and htmlUrl attribute are required in the info.json of a window.");
+    return false;
+  }
+  return true;
+}
+
+function verifyViews(path, res){
+    var viewArray = [];
+    var dirs = getDirectories(path);
+    for(var i = 0; i < dirs.length; i++){
+      var files = fs.readdirSync(pathing.join(path, dirs[i]));
+      for(var j = 0; j < files.length; j++){
+        if(files[j] == "info.json"){
+          console.log((new Date())+' ' +'view found info.json found!');
+          var valid = validateViewJson(pathing.join(pathing.join(path, dirs[i]), files[j]), res);
+          if(!valid){
+            return false;
+          }
+          viewArray.push(pathing.join(path, dirs[i]));
+        }
+      }
+    }
+    for(var i = 0; i < viewArray.length; i++){
+      var success = verifyWindows(viewArray[i], res);
+      if(!success){
+        return false;
+      }
+    }
+    return true;
+}
+
+function validateViewJson(path, res){
+  var info = getJSONfromPath(path);
+  if(!info.name || !info.description){
+    res.end("The info.json of the view doesn't have the name and/or description attribute, make sure this info.json file is valid.");
+    return false;
+  }
+  if(!info.jsProgramUrl){
+    res.end("The info.json of the view needs to have a jsProgramUrl attribute, if the view doesn't use a js file then use a empty string ('jsProgramUrl' : '').");
+    return false;
+  }
+  if(!info.configTemplate || !info.configTemplate.configItems){
+    res.end("The info.json of the view needs to have the configTemplate attribute. This attribute has a array named configItems. If theres noting to configure, use an empty array.");
+    return false;
+  }
+  return true;
+
+}
+
+function getDirectories(srcpath) {
+  return fs.readdirSync(srcpath).filter(function(file) {
+    return fs.statSync(pathing.join(srcpath, file)).isDirectory();
+  });
 }
 
 //validates a module for a given path
@@ -637,7 +715,7 @@ function validateModule(pathToModule, res) {
         }
         //Checks to see if it the module is in one top folder.
         if (files.length != 1) {
-            console.error((new Date()) + ' ' + "Error invalid module structure: files are not in the same folder.");
+            console.error((new Date()) + ' ' + "Error invalid module structure: files are not in the same folder. Make sure there weren't any extra folders created in the top level.");
             removeDir(pathToModule, function(success) {
 
             });
@@ -645,7 +723,7 @@ function validateModule(pathToModule, res) {
             return;
         }
         //check the info json of the module..
-        validateInfoJson(pathToModule + "/" + files[0] + "/", function(err) {
+        validateModuleInfoJson(pathToModule + "/" + files[0] + "/", function(err) {
             if (err) {
                 console.error((new Date()) + ' ' + "Incompatible info.json");
                 res.end(err);
@@ -653,6 +731,14 @@ function validateModule(pathToModule, res) {
 
                 });
                 return;
+            }
+            var ok = verifyViews(pathToModule + "/" + files[0] + "/", res);
+            if(!ok){
+              console.error((new Date()) + ' ' + "Incompatible info.json in view or window");
+              removeDir(pathToModule, function(success) {
+
+              });
+              return;
             }
             //check to see if the module folder already exists in the system.
             fs.stat('modules/' + files[0], function(err, stats) {
