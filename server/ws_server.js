@@ -57,7 +57,6 @@ var server = http.createServer(function(request, response) {
 
     // We need to filter the url because browsers might send parameters, which we don't support.
     var filteredUrl = request.url.split('?')[0];
-
     //Handles all the post messages sent to the server.
     if (request.method == 'POST') {
         //for now there is no check for which path, it is assumed that all post requests are module uploads.
@@ -68,6 +67,9 @@ var server = http.createServer(function(request, response) {
             console.warn((new Date()) + ' Received unhandled POST request from ' + request.connection.remoteAddress);
         }
 
+    }
+    else if (filteredUrl === '/downloadmodule'){
+      handleModuleDownload(request, response);
     }
     // Serve control panel when root is accessed
     else if (filteredUrl === '/') {
@@ -549,6 +551,15 @@ function handleModuleUpload(req, res) {
         unzipFile(req.file.filename, res);
         return;
     });
+}
+
+function handleModuleDownload(req, res){
+  assert.notEqual(res, undefined, "res can't be undefined");
+  assert.notEqual(req, undefined, "req can't be undefined");
+
+  var zip = new AdmZip();
+  zip.addLocalFolder("./modules/" + req.url.split('?')[1], "./" +req.url.split('?')[1] + "/");
+  res.end(zip.toBuffer(),'application/x-zip-compressed');
 }
 
 //register the zip format.
