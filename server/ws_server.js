@@ -558,7 +558,7 @@ function handleModuleDownload(req, res){
   assert.notEqual(req, undefined, "req can't be undefined");
 
   var zip = new AdmZip();
-  zip.addLocalFolder("./modules/" + req.url.split('?')[1], "/" + req.url.split('?')[1]);
+  zip.addLocalFolder("./modules/" + req.url.split('?')[1], "./" +req.url.split('?')[1] + "/");
   res.end(zip.toBuffer(),'application/x-zip-compressed');
 }
 
