@@ -73,7 +73,7 @@ ul {
 /** This class is applied to the child element of a dscms-mini-screen-window element that creates the hue */
 
 .dscms-mini-screen-window-filled {
-  border: 3px solid #ECF0F1;
+  border: 3px solid #D7DADB;
 }
 
 .dscms-mini-screen-window-selected {
@@ -81,7 +81,7 @@ ul {
 }
 
 .dscms-mini-screen-window-empty {
-  border: 3px dashed #ECF0F1;
+  border: 3px dashed #D7DADB;
 }
 
 /** Transform an element to an ellipse */
@@ -102,11 +102,11 @@ ul {
   width: 1px;
 }
 
-#edit-topic-preview-col {
+#edit-topic-preview-col, #edit-screen-preview-col {
   padding-left: 0;
 }
 
-#edit-topic-control-col {
+#edit-topic-control-col, #edit-screen-control-col {
   padding-right: 0;
 }
 

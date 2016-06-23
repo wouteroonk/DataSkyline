@@ -22,6 +22,10 @@ dscms.app.config(function($routeProvider) {
     templateUrl: 'cpanel/pages/topic.html',
     controller: 'dscmsTopicCtrl'
   }).
+  when('/screens/:screen', {
+    templateUrl: 'cpanel/pages/screen.html',
+    controller: 'dscmsScreenCtrl'
+  }).
   when('/documentation', {
     templateUrl: 'cpanel/pages/documentation.html',
     controller: 'dscmsDocumentationCtrl'

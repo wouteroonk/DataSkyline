@@ -22,6 +22,7 @@ exports.addScreen = function(screenObj) {
     }
   }
   screenObj.id = maxId + 1;
+  if (screenObj.windows === undefined) screenObj.windows = [];
 
   // Add to config
   config.screens.push(screenObj);
