@@ -1,0 +1,33 @@
+{
+	"name":"Simple number display",
+	"description":"Simple number display",
+	"jsProgramUrl":"nl.dscms.data.display/simpleNumber/js/javascript.js",
+	"configTemplate": {
+		"configItems": [
+			{
+				"key": "default",
+				"name": "Default Value",
+				"description": "Example: 0",
+				"value": ""
+			},
+			{
+				"key": "title",
+				"name": "Title",
+				"description": "Example: Title",
+				"value": ""
+			},
+			{
+				"key": "textcolor",
+				"name": "Text color",
+				"description": "Example: #FFFFFF, leave empty for default-black color",
+				"value": ""
+			},
+			{
+				"key": "bgcolor",
+				"name": "Background color",
+				"description": "Example: #FFFFFF, leave empty voor transparent background",
+				"value": ""
+			}
+		]
+	}
+}

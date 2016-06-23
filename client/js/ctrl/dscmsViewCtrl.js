@@ -1,7 +1,7 @@
 // Created by Steyn Potze
 // The dscmsViewCtrl controller is used to instantiate and run a view.
 // Views will run inside of the controller scope.
-dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile, dscmsWebSocket) {
+dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, $compile, dscmsWebSocket, dscmsTools) {
   $scope.dscmsView = $scope.dscmsDataObject[$scope.dscmsViewId];
 
   // Contains the run code for this view.
@@ -66,7 +66,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // Get the views Javascript file from the server and instantiate it
     $http({
       method: 'GET',
-      url: "http://localhost:8080/modules/" + $scope.dscmsView.jsProgramUrl
+      url: dscmsTools.serverAddress + "/modules/" + $scope.dscmsView.jsProgramUrl
     }).then(function success(response) {
       dscmsRunJS(response.data);
     }, function error(response) {
@@ -129,7 +129,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
   function dscmsAddHTMLToWindow(windowId, htmlUrl) {
     $http({
       method: 'GET',
-      url: "http://localhost:8080/modules/" + htmlUrl
+      url: dscmsTools.serverUrl + "/modules/" + htmlUrl
     }).then(function success(response) {
       $('#' + windowId).append($compile(response.data)($scope));
     }, function error(response) {
