@@ -29,7 +29,7 @@ dscms.app.config(function($routeProvider) {
   Keeps a connection to the Dataskyline websocket server and
   provides functions and callbacks for interacting with this server.
 */
-dscms.app.factory('dscmsWebSocket', function($location) {
+dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
   var functions = {};
   // TODO: Provide methods for sending commands to WS
   // TODO: Implement stuff on server so we can do something here
@@ -37,7 +37,7 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   var callbackIterator = 0;
 
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
-  var ws = new WebSocket("ws://localhost:8080", "echo-protocol");
+  var ws = new WebSocket("ws://" + dscmsTools.serverAddress + ":8080", "echo-protocol");
   var hasConnection = false;
   var hasDisconnected = false;
 
@@ -145,4 +145,13 @@ dscms.app.factory('dscmsWebSocket', function($location) {
   };
 
   return functions;
+});
+
+dscms.app.factory('dscmsTools', function() {
+  var vars = {};
+
+  vars.serverAddress = '192.168.1.100';
+  vars.serverUrl = 'http://' + vars.serverAddress + ':8080';
+
+  return vars;
 });
