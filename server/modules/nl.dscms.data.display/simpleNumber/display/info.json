@@ -1,0 +1,9 @@
+{
+	"name":"Number Data Window",
+	"description":"Used to display simple Digit data",
+	"htmlUrl":"com.dscms.data.display/simpleNumber/display/data.html",
+	"preferredWidth":"500",
+	"preferredHeight":"500",
+	"preferredShape":"rectangle",
+	"screenshotUrl":""
+}
