@@ -7,7 +7,7 @@ $scope.textcolor;
 $scope.bgcolor;
 
 DSCMSView.run = function() {
-	
+
 	var defaultVal = $.grep(DSCMSViewTools.myConfig.configItems, function(item) {
         return item.key === "default";
     })[0].value;
@@ -20,7 +20,7 @@ DSCMSView.run = function() {
 	var textcolor = $.grep(DSCMSViewTools.myConfig.configItems, function(item) {
 		return item.key === "textcolor";
     })[0].value;
-	
+
 	if(defaultVal !== "") {
 		$scope.currentValue = parseInt(defaultVal);
 	}
@@ -28,7 +28,7 @@ DSCMSView.run = function() {
 	if(title !== "") {
 		$scope.titleValue = title;
 	}
-	
+
 	if(bgcolor !== "" || textcolor !== "") {
 		updateColors(textcolor, bgcolor);
 	}
@@ -46,10 +46,10 @@ $scope.autoupdate = function(finalValue, interval) {
 	} else {
 		console.error("System is already calculating");
 	}
-}
+};
 
 $scope.$apply();
-}
+};
 
 function updateColors(textcolor, bgcolor) {
 	$scope.textcolor = {"color":textcolor};
@@ -72,7 +72,7 @@ function stopUpdate(iid) {
 }
 
 function giveNewValue(currentValue, finalValue) {
-	var newval = currentValue - finalValue
+	var newval = currentValue - finalValue;
 	if(newval < 0) { // ophogen
 		newval = Math.abs(newval);
 		if(newval > 100) {

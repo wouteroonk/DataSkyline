@@ -1,12 +1,16 @@
-.active {
-    border: 10px solid #FFF;
-}
 .button {
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     border-radius: 50%;
     box-shadow: 0 0 20px 0px rgba(0, 0, 0, 0.15), 0 0 20px 0px rgba(0, 0, 0, 0.17);
     text-align: center;
-    line-height: 200px;
+    line-height: 300px;
     font-size: 30px;
+}
+
+.active {
+    border: 10px solid #FFF;
+    line-height: 280px;
+    width: 300px;
+    height: 300px;
 }

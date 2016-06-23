@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "websocket": "latest",
+    "promise": "latest",
     "http": "latest",
     "fs": "latest",
     "request": "latest",
@@ -14,6 +15,6 @@
     "adm-zip": "latest",
     "rmdir": "latest",
     "mkdirp": "latest",
-    "promise": "latest"
+    "archiver": "latest"
   }
 }
