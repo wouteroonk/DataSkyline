@@ -662,6 +662,10 @@ function verifyWindows(path, res){
 //validates the info.json of a window, optionnaly add aditional checks for the json file here.
 function validateWindowJson(path, res){
   var info = getJSONfromPath(path);
+  if(!info){
+    res.end("The info.json of the window contains errors, please validate this file and try again!");
+    return false;    
+  }
   if(!info.name || !info.description){
     res.end("The info.json of a window needs to have the name and description attribute.");
     return false;
@@ -700,6 +704,10 @@ function verifyViews(path, res){
 //validates a json of a view, optionnaly add aditional checks for the json file of a view here.
 function validateViewJson(path, res){
   var info = getJSONfromPath(path);
+  if(!info){
+    res.end("The info.json of the view contains errors please validate this file.");
+    return false;
+  }
   if(!info.name || !info.description){
     res.end("The info.json of the view doesn't have the name and/or description attribute, make sure this info.json file is valid.");
     return false;

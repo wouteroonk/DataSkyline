@@ -1,0 +1,21 @@
+{
+	"name": "image slideshow",
+	"description":"Display a slideshow of images",
+	"jsProgramUrl": "com.dscms.slideshow/slideshow-view/code.js",
+	"configTemplate": {
+		"configItems": [
+			{
+				"key": "urls",
+				"name": "Urls for the images",
+				"description": "Divide urls by comma for a slideshow, eg: url, url, etc.",
+				"value": ""
+			},
+			{
+				"key": "time",
+				"name": "Time between images",
+				"description": "Time in ms between images",
+				"value": ""
+			}
+		]
+	}
+}
