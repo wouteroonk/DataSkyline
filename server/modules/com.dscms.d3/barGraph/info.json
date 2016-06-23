@@ -24,7 +24,7 @@
 			},
 			{
 				"key": "value",
-				"name": "Tweet text",
+				"name": "Value",
 				"description": "The value of the bar",
 				"value": ""
 			}
