@@ -1,7 +1,7 @@
 {
 	"name":"Simple number display",
 	"description":"Simple number display",
-	"jsProgramUrl":"nl.dscms.data.display/simpleNumber/js/javascript.js",
+	"jsProgramUrl":"com.dscms.data.display/simpleNumber/js/javascript.js",
 	"configTemplate": {
 		"configItems": [
 			{
