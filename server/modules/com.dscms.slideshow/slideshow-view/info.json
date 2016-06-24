@@ -1,5 +1,5 @@
 {
-	"name": "image slideshow",
+	"name": "Image Slideshow",
 	"description":"Display a slideshow of images",
 	"jsProgramUrl": "com.dscms.slideshow/slideshow-view/code.js",
 	"configTemplate": {

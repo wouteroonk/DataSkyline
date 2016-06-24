@@ -1,0 +1,15 @@
+{
+	"name":"Random Color disco",
+	"description":"Updates the screen background every x seconds",
+	"jsProgramUrl":"com.dscms.discomode/randomcolors/js/javascript.js",
+	"configTemplate": {
+		"configItems": [
+			{
+				"key": "speed",
+				"name": "Disco Speed",
+				"description": "Example: 200 (200 ms)",
+				"value": ""
+			}
+		]
+	}
+}
