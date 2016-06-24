@@ -28,6 +28,7 @@ var GetCurrentTopicHandler = require('./messagehandlers/getcurrenttopic.js');
 var GetScreensHandler = require('./messagehandlers/getscreens.js');
 var UpdateTopicScreenHandler = require('./messagehandlers/updatetopicscreen.js');
 var AddScreenHandler = require('./messagehandlers/addscreen.js');
+var UpdateScreenHandler = require('./messagehandlers/updatescreen.js');
 
 // Data manager
 var DataManager = require('./datamanager.js');
@@ -323,6 +324,18 @@ wsServer.on('request', function(request) {
                 connection.send("addscreen 200");
                 sendSkylineUpdate("addscreen");
                 break;
+
+              case "updatescreen":
+                  var newScreenObj = JSON.parse(data.join(" "));
+                  if (!UpdateScreenHandler.updateScreen(newScreenObj)) {
+                      console.warn((new Date()) + ' Failed updating screen.');
+                      connection.send("updatescreen 400");
+                      return;
+                  }
+                  console.log((new Date()) + ' Succeeded updating screen.');
+                  connection.send("updatescreen 200");
+                  sendSkylineUpdate("updatescreen");
+                  break;
 
             case "updatetopic":
                 var windowinfo = JSON.parse(data.join(" "));
