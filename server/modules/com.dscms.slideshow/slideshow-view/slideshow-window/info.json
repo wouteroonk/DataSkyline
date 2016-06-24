@@ -1,0 +1,6 @@
+{
+	"name" : "slideshow-window",
+	"description" : "Display a slideshow for a set of images",
+	"htmlUrl" : "com.dscms.slideshow/slideshow-view/slideshow-window/window.html",
+	"preferredShape": "rectangle"
+}

@@ -208,10 +208,12 @@ DSCMSView.run = function(DSCMSViewTools) {
 
         var elements = $(tweets[index].author);
         var image = $('.Avatar', elements);
+        var imageSrc = image.attr('src').replace('_bigger', '');
 
-        $('#' + DSCMSViewTools.myWindows['Avatar Window'] + " #user-image").attr('src', image.attr('src'));
+        $('#' + DSCMSViewTools.myWindows['Avatar Window'] + " #user-image").attr('src', imageSrc);
         $('#' + DSCMSViewTools.myWindows['Text Window'] + " #user-name").html(tweets[index].author);
         $('#' + DSCMSViewTools.myWindows['Text Window'] + " #tweet-text").html(tweets[index].tweet);
+        $('#' + DSCMSViewTools.myWindows['Text Window'] + " .Avatar").remove();
         var index = 1;
 
         var maxIndex = tweets.length;
@@ -219,10 +221,12 @@ DSCMSView.run = function(DSCMSViewTools) {
 
             var elements = $(tweets[index].author);
             var image = $('.Avatar', elements);
+            var imageSrc = image.attr('src').replace('_bigger', '');
 
-            $('#' + DSCMSViewTools.myWindows['Avatar Window'] + " #user-image").attr('src', image.attr('src'));
+            $('#' + DSCMSViewTools.myWindows['Avatar Window'] + " #user-image").attr('src', imageSrc);
             $('#' + DSCMSViewTools.myWindows['Text Window'] + " #user-name").html(tweets[index].author);
             $('#' + DSCMSViewTools.myWindows['Text Window'] + " #tweet-text").html(tweets[index].tweet);
+            $('#' + DSCMSViewTools.myWindows['Text Window'] + " .Avatar").remove();
             index++;
             if (index >= maxIndex) {
                 index = 0;
