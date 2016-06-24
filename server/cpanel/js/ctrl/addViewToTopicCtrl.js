@@ -14,7 +14,7 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
     $scope.viewTableItemsPerPage = 3;
     $scope.viewTableCurrentPage = 1;
 
-    dscmsWebSocket.subscribe(function(message) {
+    var subID = dscmsWebSocket.subscribe(function(message) {
         var commands = message.data.split(' ');
         switch (commands.shift()) {
             case "getmodules":
@@ -36,6 +36,10 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
                 $scope.$apply();
                 break;
         }
+    });
+
+    $scope.$watch('views', function() {
+      
     });
 
     $scope.$on("$destroy", function() {
