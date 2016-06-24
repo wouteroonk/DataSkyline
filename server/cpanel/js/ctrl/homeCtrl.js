@@ -3,7 +3,7 @@
   This controller loads various items on the home page, such as a list of modules
   and a list of topics. It also instantiates the module upload and topic creation modals.
 */
-dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location, $modal) {
+dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, dscmsNotificationCenter, $location, $modal) {
   $scope.pageClass = "dscms-page-home";
 
   $scope.topics = [];
@@ -19,14 +19,9 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
   $scope.topicsTableItemsPerPage = 5;
   $scope.topicsTableCurrentPage = 1;
 
-  dscmsWebSocket.subscribe(function(message) {
+  var subID = dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
-      case "skylineupdate":
-				//Received update from the server. So we need to reload the topics and modules.
-        dscmsWebSocket.sendServerMessage("gettopics");
-        dscmsWebSocket.sendServerMessage("getmodules");
-        break;
       case "gettopics":
         // Received JSON for all the topics.
         var returnedJSON;
@@ -79,18 +74,67 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
           alert("Something went wrong Error: " + message.data);
         }
         return;
+      case 'skylineupdate':
+        skylineUpdateHandler(commands.shift());
+        break;
       default:
         break;
     }
   });
 
+  $scope.$on("$destroy", function() {
+    dscmsWebSocket.unsubscribe(subID);
+  });
+
+  // Handle updates from the server
+  function skylineUpdateHandler(type) {
+    switch (type) {
+      case 'addtopic':
+        dscmsNotificationCenter.info('', 'A new topic was added.');
+        dscmsWebSocket.sendServerMessage("gettopics");
+        break;
+      case 'removetopic':
+        dscmsNotificationCenter.info('', 'A topic was removed.');
+        dscmsWebSocket.sendServerMessage("gettopics");
+        break;
+      case 'settopic':
+        dscmsNotificationCenter.info('', 'A user changed the selected topic.');
+        // TODO: Update the full preview
+        break;
+      case 'updatetopic':
+        dscmsNotificationCenter.info('', 'A topic was updated.');
+        dscmsWebSocket.sendServerMessage("gettopics");
+        break;
+      case 'uploadmodule':
+        dscmsNotificationCenter.info('', 'A new module was uploaded.');
+        dscmsWebSocket.sendServerMessage("gettopics");
+        break;
+      case 'removemodule':
+        dscmsNotificationCenter.info('', 'A module was removed.');
+        dscmsWebSocket.sendServerMessage("getmodules");
+        break;
+      case 'addscreen':
+        dscmsNotificationCenter.info('', 'A new screen was added.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'updatescreen':
+        dscmsNotificationCenter.info('', 'A screen was updated.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'removescreen':
+        dscmsNotificationCenter.info('', 'A screen was removed.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+
+      default:
+        // We don't need to handle this
+    }
+  }
+
   // Initial server communication
   dscmsWebSocket.sendServerMessage("gettopics");
   dscmsWebSocket.sendServerMessage("getmodules");
   dscmsWebSocket.sendServerMessage("getscreens");
-  dscmsWebSocket.requestOwnLocalIP(function(ip) {
-    dscmsWebSocket.sendServerMessage("identification " + ip);
-  });
 
   // Start a modal for adding a topic
   $scope.openAddTopicModal = function() {
@@ -144,7 +188,21 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   // Delete a screen (first ask for confirmation)
   $scope.deleteScreen = function(screen) {
-    dscmsWebSocket.sendServerMessage('removescreen ' + screen.id);
+    swal(
+      {
+        title: "Are you sure?",
+        text: "This will delete \"" + screen.name + "\" forever.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Delete",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        // Tell server to delete topic if confirmed
+        if (isConfirm) {
+          dscmsWebSocket.sendServerMessage('removescreen ' + screen.id);
+        }
+      });
   };
 
   $scope.editScreen = function(screen) {

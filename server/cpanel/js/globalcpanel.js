@@ -77,6 +77,10 @@ dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
   ws.onopen = function() {
     // TODO: Should we do something here?
     console.log("Connected to socket");
+    functions.requestOwnLocalIP(function(ip) {
+      functions.sendServerMessage("identification " + ip);
+      console.log("Subscribed to skylineupdate messages");
+    });
   };
 
   ws.onmessage = function(message) {

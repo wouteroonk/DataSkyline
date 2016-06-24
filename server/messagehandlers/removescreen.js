@@ -13,7 +13,7 @@ exports.removeScreen = function(id) {
 
   // Loop through screens and change screen with id in screen object
   for (var i = config.screens.length - 1; i >= 0; i--) {
-    if (config.screens[i].id !== screenObj.id) {
+    if (config.screens[i].id !== id) {
       continue;
     }
 
@@ -24,7 +24,7 @@ exports.removeScreen = function(id) {
       for (var k = config.topics[j].viewInstances.length -1; k >= 0; k--) {
         var viewInstance = config.topics[j].viewInstances[k];
         // We should only modify view instances for this screen
-        if (viewInstance.screenID !== screenObj.id) continue;
+        if (viewInstance.screenID !== id) continue;
 
         // Delete the view instance if we got here
         config.topics[j].viewInstances.splice(k, 1);
@@ -39,7 +39,7 @@ exports.removeScreen = function(id) {
     return true;
   }
   // If we got here, we didn't find the specified screen id.
-  console.error((new Date()) + ' Tried to remove screen with non-existing id \"' + screenObj.id + '\"!');
+  console.error((new Date()) + ' Tried to remove screen with non-existing id \"' + id + '\"!');
   return false;
 
 };

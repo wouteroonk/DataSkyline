@@ -6,7 +6,7 @@
 dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $location, dscmsWebSocket, dscmsNotificationCenter) {
   $scope.pageClass = "dscms-page-screen";
   $scope.screenName = $routeParams.screen;
-  $scope.screens = [];
+  $scope.screens = null;
   $scope.selectedScreenPos = null;
   $scope.selectedBackup = null;
   $scope.selectedWindowPos = null;
@@ -20,7 +20,7 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
   // =========================
 
   // Subscribe to the WebSocket to listen for updates
-  dscmsWebSocket.subscribe(function(message) {
+  var subID = dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       // Getscreens message for getting the screen to edit
@@ -38,12 +38,37 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
         $scope.screens = returnedScreenJSON;
         $scope.$apply();
         break;
+      case "skylineupdate":
+        skylineUpdateHandler(commands.shift());
+        break;
     }
   });
+
+  $scope.$on("$destroy", function() {
+    dscmsWebSocket.unsubscribe(subID);
+  });
+
+  // Handle updates from the server
+  function skylineUpdateHandler(type) {
+    switch (type) {
+      case 'updatescreen':
+        dscmsNotificationCenter.info('', 'A screen was updated.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'removescreen':
+        dscmsNotificationCenter.info('', 'A screen was removed.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+
+      default:
+        // We don't need to handle this
+    }
+  }
 
   dscmsWebSocket.sendServerMessage('getscreens');
 
   $scope.$watch('screens', function() {
+    if ($scope.screens === null) return;
     $.each($scope.screens, function(i, screen) {
       if (screen.name === $scope.screenName) {
         $scope.selectedScreenPos = i;
@@ -55,6 +80,10 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
         return;
       }
     });
+    if ($scope.selectedScreenPos === null) {
+      dscmsNotificationCenter.warning('Whoops!', 'The screen you are trying to edit does not exist anymore.');
+      $location.path('/');
+    }
   });
 
   $scope.changeSelectedWindowPos = function(i) {
@@ -66,22 +95,21 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
   $scope.cancelEdit = function() {
     // Warn the user when changes have not been saved
     if (angular.toJson($scope.screens[$scope.selectedScreenPos]) !== angular.toJson($scope.selectedBackup)) {
-      swal(
-        {
-          title: "Are you sure?",
-          text: "You have unsaved changes. Canceling will discard them.",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Cancel anyway",
-          closeOnConfirm: true
-        }, function(isConfirm) {
-          // If the user still wants to go to home page, do it
-          if (isConfirm) {
-            $location.path('/');
-            $scope.$apply();
-          }
-        });
+      swal({
+        title: "Are you sure?",
+        text: "You have unsaved changes. Canceling will discard them.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Cancel anyway",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        // If the user still wants to go to home page, do it
+        if (isConfirm) {
+          $location.path('/');
+          $scope.$apply();
+        }
+      });
     } else {
       // When there are no changes, just go to home
       $location.path('/');
@@ -117,13 +145,28 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
   };
 
   $scope.removeWindow = function(index) {
-    if ($scope.screens[$scope.selectedScreenPos].windows.length > 1) {
-      $scope.selectedWindowPos = 0;
-    } else {
-      $scope.selectedWindowPos = null;
-    }
-    $scope.screens[$scope.selectedScreenPos].windows.splice(index, 1);
-    updatePreviewConfig();
+    swal(
+      {
+        title: "Are you sure?",
+        text: "This will delete \"Window " + $scope.screens[$scope.selectedScreenPos].windows[index].id + "\" forever.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Delete",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        // Tell server to delete topic if confirmed
+        if (isConfirm) {
+          if ($scope.screens[$scope.selectedScreenPos].windows.length > 1) {
+            $scope.selectedWindowPos = 0;
+          } else {
+            $scope.selectedWindowPos = null;
+          }
+          $scope.screens[$scope.selectedScreenPos].windows.splice(index, 1);
+          updatePreviewConfig();
+          $scope.$apply();
+        }
+      });
   };
 
   $scope.updatePreview = function() {
@@ -131,7 +174,7 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
   };
 
   // Converts screen info to dscms-mini-screen format and asks server for windowinfo
-  function updatePreviewConfig(){
+  function updatePreviewConfig() {
     // Fail-safe
     if ($scope.selectedScreenPos === null) return;
 
@@ -152,7 +195,7 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $
       miniWindow.shape = dscmsWindow.shape;
       miniWindow.hint = "Window " + dscmsWindow.id;
       miniWindow.onClick = function(e, id) {
-        $.each($scope.screens[$scope.selectedScreenPos].windows, function (j, w) {
+        $.each($scope.screens[$scope.selectedScreenPos].windows, function(j, w) {
           if (w.id === id) $scope.changeSelectedWindowPos(j);
           $scope.$apply();
         });

@@ -66,7 +66,7 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
     // Get the views Javascript file from the server and instantiate it
     $http({
       method: 'GET',
-      url: dscmsTools.serverAddress + "/modules/" + $scope.dscmsView.jsProgramUrl
+      url: dscmsTools.serverUrl + "/modules/" + $scope.dscmsView.jsProgramUrl
     }).then(function success(response) {
       dscmsRunJS(response.data);
     }, function error(response) {

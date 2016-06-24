@@ -9,7 +9,7 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket)
 
   $scope.screens = [];
 
-  dscmsWebSocket.subscribe(function(message) {
+  var subID = dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       // Windowinfo message for getting the views that are associated with the selected screen
@@ -38,6 +38,37 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket)
         }
         // Fill the list of screens
         $scope.screens = returnedScreenJSON;
+        break;
+      case "skylineupdate":
+        skylineUpdateHandler(commands.shift());
+        break;
     }
   });
+
+  $scope.$on("$destroy", function() {
+    dscmsWebSocket.unsubscribe(subID);
+  });
+
+  // Handle updates from the server
+  function skylineUpdateHandler(type) {
+    switch (type) {
+      case 'removetopic':
+        break;
+      case 'settopic':
+        break;
+      case 'updatetopic':
+        break;
+      case 'removemodule':
+        break;
+      case 'addscreen':
+        break;
+      case 'updatescreen':
+        break;
+      case 'removescreen':
+        break;
+
+      default:
+        // We don't need to handle this
+    }
+  }
 });

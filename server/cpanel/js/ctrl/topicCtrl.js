@@ -37,7 +37,7 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
   // =========================
 
   // Subscribe to the WebSocket to listen for updates
-  dscmsWebSocket.subscribe(function(message) {
+  var subID = dscmsWebSocket.subscribe(function(message) {
     var commands = message.data.split(' ');
     switch (commands.shift()) {
       // Windowinfo message for getting the views that are associated with the selected screen
@@ -70,8 +70,48 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
         if ($scope.screens.length > 0) $scope.selectedScreenPos = 0;
         $scope.$apply();
         break;
+      case "skylineupdate":
+        skylineUpdateHandler(commands.shift());
+        break;
     }
   });
+
+  $scope.$on("$destroy", function() {
+    dscmsWebSocket.unsubscribe(subID);
+  });
+
+  // Handle updates from the server
+  function skylineUpdateHandler(type) {
+    switch (type) {
+      case 'removetopic':
+        dscmsNotificationCenter.warning('Warning!', 'A topic was removed. To make sure bad stuff doesn\'t happen, we will cancel your edits and try to reload.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'updatetopic':
+        dscmsNotificationCenter.info('', 'A topic was updated. Make sure this was you!');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'removemodule':
+        dscmsNotificationCenter.warning('Warning!', 'A module was removed. To make sure bad stuff doesn\'t happen, we will cancel your edits and try to reload.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'addscreen':
+        dscmsNotificationCenter.warning('Warning!', 'A screen was added. To make sure bad stuff doesn\'t happen, we will cancel your edits and try to reload.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'updatescreen':
+        dscmsNotificationCenter.warning('Warning!', 'A screen was updated. To make sure bad stuff doesn\'t happen, we will cancel your edits and try to reload.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+      case 'removescreen':
+        dscmsNotificationCenter.warning('Warning!', 'A screen was removed. To make sure bad stuff doesn\'t happen, we will cancel your edits and try to reload.');
+        dscmsWebSocket.sendServerMessage("getscreens");
+        break;
+
+      default:
+        // We don't need to handle this
+    }
+  }
 
   // =========================
   // Method calls
@@ -469,14 +509,29 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
   };
 
   $scope.deleteView = function(index) {
-    if ($scope.thisScreenWinInf.viewInstances.length > 1) {
-      $scope.selectedViewPos = 0;
-    } else {
-      $scope.selectedViewPos = null;
-    }
-    $scope.thisScreenWinInf.viewInstances.splice(index, 1);
-    resetColors();
-    showSelectedViewInPreview();
+    swal(
+      {
+        title: "Are you sure?",
+        text: "This will delete \"" + $scope.thisScreenWinInf.viewInstances[index].instanceName + "\" forever.",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Delete",
+        closeOnConfirm: true
+      }, function(isConfirm) {
+        // Tell server to delete topic if confirmed
+        if (isConfirm) {
+          if ($scope.thisScreenWinInf.viewInstances.length > 1) {
+            $scope.selectedViewPos = 0;
+          } else {
+            $scope.selectedViewPos = null;
+          }
+          $scope.thisScreenWinInf.viewInstances.splice(index, 1);
+          resetColors();
+          showSelectedViewInPreview();
+          $scope.$apply();
+        }
+      });
   };
 
   // =========================

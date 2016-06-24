@@ -405,37 +405,27 @@ function sendSkylineUpdate(change) {
   }
 }
 
-// Send update message to all "identified" Displays
-function sendSkylineUpdateDisplays(change) {
-  if (change === undefined) change = "undefined";
-  for (var i = 0; i < connectionList.length; i++) {
-    if (connectionList[i] && connectionList[i].connection !== undefined) {
-      if (isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
-    }
-  }
-}
+// // Send update message to all "identified" Displays
+// function sendSkylineUpdateDisplays(change) {
+//   if (change === undefined) change = "undefined";
+//   for (var i = 0; i < connectionList.length; i++) {
+//     if (connectionList[i] && connectionList[i].connection !== undefined) {
+//       if (isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
+//     }
+//   }
+// }
 
-// Send update message to all "identified" Control panels
-function sendSkylineUpdateCpanel(change) {
-  if (change === undefined) change = "undefined";
-  for (var i = 0; i < connectionList.length; i++) {
-    if (connectionList[i] && connectionList[i].connection !== undefined) {
-      if (!isDisplayScreen(connectionList[i].address)) connectionList[i].connection.send("skylineupdate " + change);
-    }
-  }
-}
-
-function isDisplayScreen(ip) {
-  assert.notEqual(ip, undefined, "ip can't be undefined");
-  assert.notEqual(ip, "", "ip can't be empty");
-
-  var iplist = getScreenIPs();
-
-  for (var i = 0; i < iplist.length; i++) {
-    if (iplist[i] === ip) return true;
-  }
-  return false;
-}
+// function isDisplayScreen(ip) {
+//   assert.notEqual(ip, undefined, "ip can't be undefined");
+//   assert.notEqual(ip, "", "ip can't be empty");
+//
+//   var iplist = getScreenIPs();
+//
+//   for (var i = 0; i < iplist.length; i++) {
+//     if (iplist[i] === ip) return true;
+//   }
+//   return false;
+// }
 
 // Given a file name, return a json object
 function getJSONfromPath(filename) {
@@ -824,7 +814,7 @@ function validateModule(pathToModule, res) {
             } else {
               //module is added to the system
               res.end("200");
-              sendSkylineUpdateCpanel();
+              sendSkylineUpdate('uploadmodule');
             }
             removeDir(pathToModule, function(success) {
 
