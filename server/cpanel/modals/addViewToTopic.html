@@ -10,7 +10,8 @@
     <div class="form-group">
       <label for="viewSelector">View type</label>
       <div id="viewSelector" class="list-group">
-          <a ng-click="changeViewPos($index)" ng-repeat="view in views" class="list-group-item" ng-class="{active: views[selectedViewPos] === view}">
+				<div ng-repeat="view in views.slice(((viewTableCurrentPage-1)*viewTableItemsPerPage), ((viewTableCurrentPage)*viewTableItemsPerPage))">
+          <a ng-click="changeViewPos($index + ((viewTableCurrentPage - 1) * viewTableItemsPerPage))" ng-class="{active: views[selectedViewPos] === view}" class="list-group-item">
               <span class="badge">{{view.viewParent.name}}</span>
               <h4 class="list-group-item-heading">{{view.name}}</h4>
               <p class="list-group-item-text">
@@ -21,8 +22,10 @@
                   <small class="add-topic-window-count">View with {{view.windows.length}} window{{(view.windows.length == 0 || view.windows.length > 1 ? 's' : '')}}</small>
               </p>
           </a>
-      </div>
+				</div>
+			</div>
     </div>
+	<pager ng-hide="views.length <= viewTableItemsPerPage" total-items="views.length" ng-model="viewTableCurrentPage" items-per-page="viewTableItemsPerPage"></pager>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
