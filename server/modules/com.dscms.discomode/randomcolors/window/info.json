@@ -1,0 +1,9 @@
+{
+	"name":"Disco Window",
+	"description":"The disco Window",
+	"htmlUrl":"com.dscms.discomode/randomcolors/window/data.html",
+	"preferredWidth":"500",
+	"preferredHeight":"500",
+	"preferredShape":"rectangle",
+	"screenshotUrl":""
+}
