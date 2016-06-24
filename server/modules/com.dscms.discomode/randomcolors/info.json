@@ -1,7 +1,7 @@
 {
 	"name":"Random Color disco",
 	"description":"Updates the screen background every x seconds",
-	"jsProgramUrl":"nl.dscms.data.display/simpleNumber.circle/js/javascript.js",
+	"jsProgramUrl":"com.dscms.discomode/randomcolors/js/javascript.js",
 	"configTemplate": {
 		"configItems": [
 			{
