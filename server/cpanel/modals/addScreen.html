@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title">Add a new screen</h4>
+</div>
+<div class="modal-body">
+  <fieldset class="form-group">
+    <label for="newScreenNameInput">Screen name</label>
+    <input maxlength="20" ng-model="newScreenName" ng-enter="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="text" class="form-control" id="newScreenNameInput">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="newScreenAddressInput">Screen address</label>
+    <input maxlength="20" ng-model="newScreenAddress" ng-enter="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="text" class="form-control" id="newScreenAddressInput">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="newScreenDescriptionInput">Screen description</label>
+    <input maxlength="150" ng-model="newScreenDescription" ng-enter="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="text" class="form-control" id="newScreenDescriptionInput">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="newScreenWidthInput">Screen width (px)</label>
+    <input maxlength="150" ng-model="newScreenWidth" ng-enter="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="text" class="form-control" id="newScreenWidthInput">
+  </fieldset>
+  <fieldset class="form-group">
+    <label for="newScreenHeightInput">Screen height (px)</label>
+    <input maxlength="150" ng-model="newScreenHeight" ng-enter="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="text" class="form-control" id="newScreenHeightInput">
+  </fieldset>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+  <button ng-click="addScreen(newScreenName, newScreenAddress, newScreenDescription, newScreenWidth, newScreenHeight)" type="button" class="btn btn-success">Add screen</button>
+</div>

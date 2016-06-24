@@ -1,0 +1,6 @@
+{
+	"name" : "SlideShow Module",
+	"developer" : "Hugo van der Geest",
+	"license": "WTFPLv2",
+	"description": "This is a slideshow module for displaying images."
+}

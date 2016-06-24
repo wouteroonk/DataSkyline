@@ -10,6 +10,10 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
     $scope.selectedViewPos = null;
     $scope.viewInstanceName = null;
 
+    // Pagination for Views
+    $scope.viewTableItemsPerPage = 3;
+    $scope.viewTableCurrentPage = 1;
+
     dscmsWebSocket.subscribe(function(message) {
         var commands = message.data.split(' ');
         switch (commands.shift()) {
