@@ -3,12 +3,13 @@
   This controller is linked to the edit topic or "/screen/x" page and gets screen
   information from the server.
 */
-dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $location, dscmsWebSocket, dscmsNotificationCenter) {
+dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $modal, $location, dscmsWebSocket, dscmsNotificationCenter) {
   $scope.pageClass = "dscms-page-screen";
   $scope.screenName = $routeParams.screen;
   $scope.screens = [];
   $scope.selectedScreenPos = null;
   $scope.selectedBackup = null;
+  $scope.selectedWindowPos = null;
 
   // List of "empty" windows for the selected screen
   // This list is used as the config json for mini-skyline-screen.
@@ -43,16 +44,23 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $location
   dscmsWebSocket.sendServerMessage('getscreens');
 
   $scope.$watch('screens', function() {
-    console.log('screens updated');
     $.each($scope.screens, function(i, screen) {
       if (screen.name === $scope.screenName) {
         $scope.selectedScreenPos = i;
-        $scope.selectedBackup = $scope.screens[$scope.selectedScreenPos];
+        $scope.selectedBackup = JSON.parse(angular.toJson($scope.screens[$scope.selectedScreenPos]));
+        if ($scope.screens[i].windows.length > 0) {
+          $scope.selectedWindowPos = 0;
+        }
         updatePreviewConfig();
         return;
       }
     });
   });
+
+  $scope.changeSelectedWindowPos = function(i) {
+    $scope.selectedWindowPos = i;
+    updatePreviewConfig();
+  };
 
   // Cancel topic edit (go back to home)
   $scope.cancelEdit = function() {
@@ -80,6 +88,48 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $location
     }
   };
 
+  $scope.saveEdit = function() {
+    dscmsWebSocket.sendServerMessage('updatescreen ' + angular.toJson($scope.screens[$scope.selectedScreenPos]));
+    $scope.selectedBackup = JSON.parse(angular.toJson($scope.screens[$scope.selectedScreenPos]));
+  };
+
+  $scope.addWindow = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/addWindowToScreen.html',
+      controller: 'dscmsAddWindowToScreenCtrl',
+      resolve: {
+        screens: function() {
+          return $scope.screens;
+        }
+      }
+    });
+
+    // Modal will probably return view object. Add it to windowinfo and reload preview
+    modalInstance.result.then(function(result) {
+      // We need more info before we can do adding
+      if (result === undefined) return;
+      $scope.screens[$scope.selectedScreenPos].windows.push(result);
+      if ($scope.screens[$scope.selectedScreenPos].windows.length === 1)
+        $scope.selectedWindowPos = 0;
+
+      updatePreviewConfig();
+    });
+  };
+
+  $scope.removeWindow = function(index) {
+    if ($scope.screens[$scope.selectedScreenPos].windows.length > 1) {
+      $scope.selectedWindowPos = 0;
+    } else {
+      $scope.selectedWindowPos = null;
+    }
+    $scope.screens[$scope.selectedScreenPos].windows.splice(index, 1);
+    updatePreviewConfig();
+  };
+
+  $scope.updatePreview = function() {
+    updatePreviewConfig();
+  };
+
   // Converts screen info to dscms-mini-screen format and asks server for windowinfo
   function updatePreviewConfig(){
     // Fail-safe
@@ -101,9 +151,18 @@ dscms.app.controller('dscmsScreenCtrl', function($scope, $routeParams, $location
       miniWindow.coordY = dscmsWindow.y;
       miniWindow.shape = dscmsWindow.shape;
       miniWindow.hint = "Window " + dscmsWindow.id;
+      miniWindow.onClick = function(e, id) {
+        $.each($scope.screens[$scope.selectedScreenPos].windows, function (j, w) {
+          if (w.id === id) $scope.changeSelectedWindowPos(j);
+          $scope.$apply();
+        });
+      };
 
       // Set the hue for an empty window
-      miniWindow.type = "empty";
+
+      if (i === $scope.selectedWindowPos) miniWindow.type = "selected";
+      else miniWindow.type = "empty";
+
       // TODO: We need preview images (server side)
 
       // Add the created window to the miniscreen configuration object

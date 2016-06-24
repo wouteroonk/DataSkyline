@@ -1,0 +1,54 @@
+<div class="modal-header">
+    <button type="button" class="close" ng-click="cancel()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">Add a window</h4>
+</div>
+<div class="modal-body">
+  <div>
+    <div class="row">
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowIDInput">ID</label>
+          <input type="text" class="form-control" id="WindowIDInput" ng-model="newWindow.id" placeholder="Window ID (e.g. 1.1)">
+        </fieldset>
+      </div>
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowShapeInput">Shape</label>
+          <input type="text" class="form-control" id="WindowShapeInput" ng-model="newWindow.shape" placeholder="Window shape (rectangle or ellipse)">
+        </fieldset>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowWidthInput">Width (px)</label>
+          <input type="text" class="form-control" id="WindowWidthInput" ng-model="newWindow.width" placeholder="Window width (e.g. 150)">
+        </fieldset>
+      </div>
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowHeightInput">Height (px)</label>
+          <input type="text" class="form-control" id="WindowHeightInput" ng-model="newWindow.height" placeholder="Window height (e.g. 150)">
+        </fieldset>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowXInput">X position (px)</label>
+          <input type="text" class="form-control" id="WindowXInput" ng-model="newWindow.x" placeholder="Window X position (e.g. 10)">
+        </fieldset>
+      </div>
+      <div class="col-md-6">
+        <fieldset class="form-group">
+          <label for="WindowYInput">Y position (px)</label>
+          <input type="text" class="form-control" id="WindowYInput" ng-model="newWindow.y" placeholder="Window Y position (e.g. 10)">
+        </fieldset>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+    <button ng-click="addWindow()" type="button" class="btn btn-success">Add screen</button>
+</div>
