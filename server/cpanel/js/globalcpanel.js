@@ -22,6 +22,10 @@ dscms.app.config(function($routeProvider) {
     templateUrl: 'cpanel/pages/topic.html',
     controller: 'dscmsTopicCtrl'
   }).
+  when('/screens/:screen', {
+    templateUrl: 'cpanel/pages/screen.html',
+    controller: 'dscmsScreenCtrl'
+  }).
   when('/documentation', {
     templateUrl: 'cpanel/pages/documentation.html',
     controller: 'dscmsDocumentationCtrl'
@@ -220,7 +224,7 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
 dscms.app.factory('dscmsTools', function() {
   var vars = {};
 
-  vars.serverAddress = '192.168.1.100';
+  vars.serverAddress = 'localhost';
   vars.serverUrl = 'http://' + vars.serverAddress + ':8080';
 
   return vars;

@@ -105,6 +105,19 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
     });
   };
 
+  // Start a modal for adding a screen
+  $scope.openAddScreenModal = function() {
+    var modalInstance = $modal.open({
+      templateUrl: 'cpanel/modals/addScreen.html',
+      controller: 'dscmsAddScreenCtrl',
+      resolve: {
+        screens: function() {
+          return $scope.screens;
+        }
+      }
+    });
+  };
+
   // Start a modal with info about a specified module
   $scope.openModuleInfoModal = function(module) {
     var modalInstance = $modal.open({
@@ -127,6 +140,15 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
       }
     });
+  };
+
+  // Delete a screen (first ask for confirmation)
+  $scope.deleteScreen = function(screen) {
+    dscmsNotificationCenter.warning('Sorry.', 'This feature is not yet implemented.', 2000);
+  };
+
+  $scope.editScreen = function(screen) {
+    $location.path('/screens/' + screen.name);
   };
 
   // Delete a module (first ask for confirmation)
