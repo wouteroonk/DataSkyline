@@ -144,7 +144,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, $location
 
   // Delete a screen (first ask for confirmation)
   $scope.deleteScreen = function(screen) {
-    dscmsNotificationCenter.warning('Sorry.', 'This feature is not yet implemented.', 2000);
+    dscmsWebSocket.sendServerMessage('removescreen ' + screen.id);
   };
 
   $scope.editScreen = function(screen) {
