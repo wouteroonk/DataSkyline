@@ -17,6 +17,7 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
     var subID = dscmsWebSocket.subscribe(function(message) {
         var commands = message.data.split(' ');
         switch (commands.shift()) {
+            // When modules are received, convert them to a list of views
             case "getmodules":
                 var returnedJSON;
                 try {
@@ -33,15 +34,13 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
                   });
                   $scope.views = $scope.views.concat(module.views);
                 });
+                // Make the list appear on screen
                 $scope.$apply();
                 break;
         }
     });
 
-    $scope.$watch('views', function() {
-      
-    });
-
+    // Unsubscribe when page is destroyed
     $scope.$on("$destroy", function() {
       dscmsWebSocket.unsubscribe(subID);
     });
@@ -53,6 +52,7 @@ dscms.app.controller('dscmsAddViewToTopicCtrl', function($scope, $modalInstance,
     };
 
     $scope.addView = function() {
+        // Something should be selected
         if ($scope.views[$scope.selectedViewPos] === undefined) {
           dscmsNotificationCenter.danger("Whoops!", "You need to select a view to add to the topic.", 2000);
           return;

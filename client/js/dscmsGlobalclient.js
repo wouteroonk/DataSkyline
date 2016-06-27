@@ -147,6 +147,7 @@ dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
   return functions;
 });
 
+// Tools for application wide variables, currently only server IP/Url
 dscms.app.factory('dscmsTools', function() {
   var vars = {};
 

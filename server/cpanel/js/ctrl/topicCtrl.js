@@ -4,6 +4,7 @@
   information from the server. The controller is very large and should probably
   be split up. But eh...
 */
+// TODO: This file needs rework
 dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter, dscmsTools) {
   $scope.pageClass = "dscms-page-topic";
 
