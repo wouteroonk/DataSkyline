@@ -7,9 +7,9 @@
           <h3 class="panel-title">Preview for selected topic</h3>
         </div>
         <div class="panel-body">
-          <ul>
+          <ul class="dscms-all-screens-preview">
             <li ng-repeat="screen in previewScreens">
-              <mini-skyline-screen class="edit-topic-screen-preview" windows="previewConfigs[screen.screenName]"></mini-skyline-screen>
+              <mini-skyline-screen class="all-screen-preview-single" windows="previewConfigs[screen.name]"></mini-skyline-screen>
             </li>
           </ul>
         </div>

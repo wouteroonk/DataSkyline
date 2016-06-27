@@ -10,7 +10,7 @@
 
 dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $timeout) {
   // Set the mini-skyline-screen object to block (default is inline)
-  $element.css('display', 'block');
+  $element.css('display', 'inline-block');
 
   // Watch the windows variable for changes and update the element accordingly
   // Third argument is true to check for value equality instead of reference equality.
@@ -19,7 +19,7 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
   $(window).resize(regenerate);
 
   function regenerate() {
-    if ($scope.windows === null) return;
+    if ($scope.windows === null || $scope.windows === undefined) return;
     $element.empty();
     addWindowsToElement($scope.windows, $element);
   }
