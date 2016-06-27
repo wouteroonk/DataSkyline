@@ -7,6 +7,7 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, dscms
 
     $scope.$on('$routeChangeSuccess', function(newRoute, oldRoute) {
 
+        angular.element(document.querySelector('#dscms-global-info-nav')).addClass('active');
         $scope.gotoId($location.hash());
 
     });
@@ -33,6 +34,8 @@ dscms.app.controller('dscmsDocumentationCtrl', function($scope, $location, dscms
 
         // This scrolling function
         // is from http://www.itnewb.com/tutorial/Creating-the-Smooth-Scroll-Effect-with-JavaScript
+
+        eID = eID === "" ? "#dscms-global-info-nav" : eID;
 
         var startY = currentYPosition();
         var stopY = elmYPosition(eID) - 80;
