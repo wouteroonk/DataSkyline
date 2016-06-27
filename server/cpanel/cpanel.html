@@ -2,110 +2,115 @@
 <html lang="en" ng-app="dscmsDataskylineControlApp">
 
 <head>
-  <title ng-bind="title">Dataskyline control panel</title>
+    <title ng-bind="title">Dataskyline control panel</title>
 
-  <!-- ========= -->
-  <!-- Libraries -->
-  <!-- ========= -->
+    <!-- Favicon stuff -->
+    <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <!-- ========= -->
+    <!-- Libraries -->
+    <!-- ========= -->
 
-  <!-- AngularJS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>
+    <!-- AngularJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-animate.min.js"></script>
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/flatly/bootstrap.min.css">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min.js"></script>
 
-  <!-- Notify -->
-  <script src="cpanel/libs/notify/bootstrap-notify.min.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.6/flatly/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-  <!-- Animate -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <!-- Notify -->
+    <script src="cpanel/libs/notify/bootstrap-notify.min.js"></script>
 
-  <!-- Sweetalert -->
-  <script src="cpanel/libs/swal/sweetalert.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="cpanel/libs/swal/sweetalert.css">
+    <!-- Animate -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
 
-  <!-- =========== -->
-  <!-- Stylesheets -->
-  <!-- =========== -->
+    <!-- Sweetalert -->
+    <script src="cpanel/libs/swal/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="cpanel/libs/swal/sweetalert.css">
 
-  <!-- Open Sans Font -->
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <!-- =========== -->
+    <!-- Stylesheets -->
+    <!-- =========== -->
 
-  <!-- ============ -->
-  <!-- Custom stuff -->
-  <!-- ============ -->
+    <!-- Open Sans Font -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="cpanel/css/cpanel.css">
+    <!-- ============ -->
+    <!-- Custom stuff -->
+    <!-- ============ -->
 
-  <!-- Javascript -->
-  <script type="text/javascript" src="cpanel/js/globalcpanel.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/addTopicCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/uploadModuleCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/addViewToTopicCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/addWindowToScreenCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/addScreenCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/moduleInfoCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/homeCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/topicCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/screenCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/documentationCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/bigHomePreviewCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/ctrl/miniSkylineScreenCtrl.js"></script>
-  <script type="text/javascript" src="cpanel/js/directives.js"></script>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="cpanel/css/cpanel.css">
+
+    <!-- Javascript -->
+    <script type="text/javascript" src="cpanel/js/globalcpanel.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/addTopicCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/uploadModuleCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/addViewToTopicCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/addWindowToScreenCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/addScreenCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/moduleInfoCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/homeCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/topicCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/screenCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/documentationCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/bigHomePreviewCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/ctrl/miniSkylineScreenCtrl.js"></script>
+    <script type="text/javascript" src="cpanel/js/directives.js"></script>
 
 </head>
 
 <body>
-  <!-- ============ -->
-  <!-- Notification -->
-  <!-- ============ -->
+    <!-- ============ -->
+    <!-- Notification -->
+    <!-- ============ -->
 
-  <notification-center></notification-center>
+    <notification-center></notification-center>
 
-  <!-- ========== -->
-  <!-- Navigation -->
-  <!-- ========== -->
+    <!-- ========== -->
+    <!-- Navigation -->
+    <!-- ========== -->
 
-  <nav class="navbar navbar-default navbar-static-top navbar-fixed-top" ng-controller="dscmsNavigationCtrl">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#/">Dataskyline control</a>
-      </div>
-      <a type="button" class="btn btn-link navbar-btn pull-right" href="#/documentation" ><span class="glyphicon glyphicon-question-sign"></span></a>
-      <!-- Main content for navbar, will be hidden on mobile -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <!-- Left aligned -->
-        <ul class="nav navbar-nav">
-          <!-- <li ng-class="{active: isActive('/modules')}"><a href="#/modules">Modules</a></li> -->
-          <!-- <li ng-class="{active: isActive('/screens')}"><a href="#/screens">Screens</a></li> -->
-        </ul>
-        <!-- Right aligned -->
-      </div>
+    <nav class="navbar navbar-default navbar-static-top navbar-fixed-top" ng-controller="dscmsNavigationCtrl">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">Dataskyline control</a>
+            </div>
+            <a type="button" class="btn btn-link navbar-btn pull-right" href="#/documentation"><span class="glyphicon glyphicon-question-sign"></span></a>
+            <!-- Main content for navbar, will be hidden on mobile -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!-- Left aligned -->
+                <ul class="nav navbar-nav">
+                    <!-- <li ng-class="{active: isActive('/modules')}"><a href="#/modules">Modules</a></li> -->
+                    <!-- <li ng-class="{active: isActive('/screens')}"><a href="#/screens">Screens</a></li> -->
+                </ul>
+                <!-- Right aligned -->
+            </div>
+        </div>
+    </nav>
+    <!-- ============ -->
+    <!-- Main content -->
+    <!-- ============ -->
+
+    <div id="wrap">
+        <div class="dscmsPage {{pageClass}}" ng-view></div>
     </div>
-  </nav>
-  <!-- ============ -->
-  <!-- Main content -->
-  <!-- ============ -->
-
-  <div id="wrap">
-    <div class="dscmsPage {{pageClass}}" ng-view></div>
-  </div>
 
 </body>
 

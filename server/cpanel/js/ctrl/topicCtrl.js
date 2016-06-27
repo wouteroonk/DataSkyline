@@ -4,7 +4,7 @@
   information from the server. The controller is very large and should probably
   be split up. But eh...
 */
-dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter) {
+dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location, $modal, dscmsWebSocket, dscmsNotificationCenter, dscmsTools) {
   $scope.pageClass = "dscms-page-topic";
 
   $scope.topicName = $routeParams.topic;
@@ -164,6 +164,13 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
             alreadyFilled.push(e.id);
             e.type = "filled";
             e.hint = viewInstance.instanceName + " - " + thisWindow.name;
+            if (
+              thisWindow.screenshotUrl !== undefined &&
+              thisWindow.screenshotUrl !== null &&
+              thisWindow.screenshotUrl !== ""
+            ) {
+              e.background = dscmsTools.serverUrl + "/modules/" + thisWindow.screenshotUrl;
+            }
           } else {
             // To reset previously colored windows, make a non-match empty again
             e.type = "empty";
@@ -296,6 +303,7 @@ dscms.app.controller('dscmsTopicCtrl', function($scope, $routeParams, $location,
       newWindowInstance.name = windowObj.name;
       newWindowInstance.folderName = windowObj.folderName;
       newWindowInstance.htmlUrl = windowObj.htmlUrl;
+      newWindowInstance.screenshotUrl = windowObj.screenshotUrl;
 
       // If there are no available windows, stop adding and show warning.
       if (availableWindows.length === 0) {

@@ -113,9 +113,11 @@ dscms.app.controller('dscmsMiniSkylineScreenCtrl', function($scope, $element, $t
       // Tooltips
       windowElem.attr("title", windowObj.hint);
 
-      if (windowObj.background !== undefined) {
+      if (windowObj.background !== undefined && windowObj.background !== null && windowObj.background !== "") {
         windowElem.css("background", "url(" + windowObj.background + ")");
-        windowElem.css("background-size", "100% 100%");
+        windowElem.css("background-size", "auto 100%");
+        windowElem.css("background-position", "center");
+        windowElem.css("background-repeat", "no-repeat");
       }
 
       // Click callback

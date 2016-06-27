@@ -5,7 +5,7 @@
   Using this feature, the user is able to see what the Dataskyline is showing,
   without being on location.
 */
-dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket) {
+dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket, dscmsTools) {
 
   $scope.previewScreens = [];
   $scope.previewConfigs = {};
@@ -59,18 +59,25 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket)
   function skylineUpdateHandler(type) {
     switch (type) {
       case 'removetopic':
+        fillScreensWithWindowLocations();
         break;
       case 'settopic':
+        fillScreensWithWindowLocations();
         break;
       case 'updatetopic':
+        fillScreensWithWindowLocations();
         break;
       case 'removemodule':
+        fillScreensWithWindowLocations();
         break;
       case 'addscreen':
+        fillScreensWithWindowLocations();
         break;
       case 'updatescreen':
+        fillScreensWithWindowLocations();
         break;
       case 'removescreen':
+        fillScreensWithWindowLocations();
         break;
 
       default:
@@ -133,9 +140,17 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket)
               alreadyFilled.push(e.id);
               e.type = "filled";
               e.hint = windowinfo.viewInstances[j].instanceName + " - " + windowinfo.viewInstances[j].windows[k].name;
+              if (
+                windowinfo.viewInstances[j].windows[k].screenshotUrl !== undefined &&
+                windowinfo.viewInstances[j].windows[k].screenshotUrl !== null &&
+                windowinfo.viewInstances[j].windows[k].screenshotUrl !== ""
+              ) {
+                e.background = dscmsTools.serverUrl + "/modules/" + windowinfo.viewInstances[j].windows[k].screenshotUrl;
+              }
             } else {
               e.type = "empty";
               e.hint = "Empty window (" + e.id + ")";
+              e.background = null;
             }
           });
         }

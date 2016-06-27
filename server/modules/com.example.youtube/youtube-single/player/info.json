@@ -2,5 +2,6 @@
 	"name":"Youtube single video player",
 	"description":"Display a single video from youtube in repeat",
 	"htmlUrl":"com.example.youtube/youtube-single/player/player.html",
-	"preferredShape":"rectangle"
+	"preferredShape":"rectangle",
+	"screenshotUrl":"com.example.youtube/youtube-single/player/screen.png"
 }

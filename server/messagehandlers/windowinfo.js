@@ -87,6 +87,7 @@ exports.getWindowInfo = function (ip, topicName) {
       window.x = windowLocation.x;
       window.y = windowLocation.y;
       window.htmlUrl = windowInfoJSON.htmlUrl;
+      window.screenshotUrl = windowInfoJSON.screenshotUrl;
 
       wininfViewInstance.windows.push(window);
     }

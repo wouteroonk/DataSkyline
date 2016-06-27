@@ -76,10 +76,10 @@
                   <div class="clearfix"></div>
 <pre>
 {
-	"moduleName": "My Module",
-	"moduleDescription": "This module is used to display general info",
-	"moduleDeveloper": "Amelia Pond",
-	"moduleLicense": "MIT"
+	"name": "My Module",
+	"description": "This module is used to display general info",
+	"developer": "Amelia Pond",
+	"license": "MIT"
 }
 </pre>
                   <hr class="hr-dashed" />
@@ -96,15 +96,25 @@
                   </p>
                   <p>
                     Just like a module, a view also has its own <code>info.json</code> file. This file not only contains information
-                    like the view's name and description, but also the location of the views Javscript program. A filled <code>info.json</code>
-                    file looks like this:
+                    like the view's name and description, but also the location of the view's Javscript program, and a configuration template.
+                    More on both later. A filled <code>info.json</code> file looks like this:
                   </p>
                   <div class="clearfix"></div>
 <pre>
 {
-	"viewName":"My View",
-	"viewDescription":"Display various graphs of general info",
-	"viewJavascriptReference":"com.example.module/myview/code.js"
+	"name":"My View",
+	"vdescription":"Display various graphs of general info",
+	"jsProgramUrl":"com.example.module/myview/code.js",
+  "configTemplate": {
+    "configItems": [
+      {
+        "key": "config_item_key",
+        "name": "human readable title",
+        "description": "more information",
+        "value": ""
+      }
+    ]
+  }
 }
 </pre>
                   <hr class="hr-dashed" />
@@ -118,14 +128,19 @@
                   </p>
                   <p>
                     A window's <code>info.json</code> file contains information needed to identify the window. It also contains a
-                    reference to the window's HTML file. A filled <code>info.json</code> file looks like this:
+                    reference to the window's HTML file. If you want users to see a screenshot of your window in the control panel, you can configure that here as well.
+                    A filled <code>info.json</code> file looks like this:
                   </p>
                   <div class="clearfix"></div>
 <pre>
 {
-	"windowName":"My Window",
-	"windowDescription":"Display a pie chart",
-	"windowHtmlReference":"com.example.module/myview/mywindow/win.html"
+	"name": "My Window",
+	"description": "Display a pie chart",
+	"htmlUrl": "com.example.module/myview/mywindow/win.html",
+  "preferredWidth": "1920",
+  "preferredHeight": "1080",
+  "preferredShape": "rectangle",
+  "screenshotUrl": "com.example.module/myview/mywindow/screen.png"
 }
 </pre>
                   <hr class="hr-solid" />
@@ -204,6 +219,13 @@ DSCMSView.run = function() {
                         you specified in the view's <code>info.json</code> file.
                       </p>
                     </li>
+                    <li>
+                      <h5>myAddress</h5>
+                      <p>
+                        The myAddress property contains the path to the view's folder on the server. This is very handy to have
+                        if you want to include images or stylesheets.
+                      </p>
+                    </li>
                   </ul>
                   <h4>$http</h4>
                   <p>
@@ -229,7 +251,9 @@ DSCMSView.run = function() {
                           You can only use certain aspects of Angular.JS in your program:
                           <ul>
                             <li>
-                              The $scope, avoiding the use of the "dscms" namespace.
+                              The $scope, avoiding the use of the "dscms" namespace. Please note that your application is not executed
+                              in the same thread as Angular.JS. When changing $scope variables you'll have to call
+                              <code>$scope.$apply()</code> to update the web page.
                             </li>
                             <li>
                               The $http API.
@@ -253,6 +277,10 @@ DSCMSView.run = function() {
                     Windows are <mark>not</mark> full web pages. You shouln't use <code>&lt;html&gt;</code>,
                     <code>&lt;body&gt;</code>, etc tags in your windows.
                   </p>
+                  <p>
+                    You are free to do whatever you want inside a window's HTML file, but please avoid linking css files or writing inline Javascript.
+                    The Dataskyline will probably handle this correctly, but you could very easily be stepping into other views' functionality.
+                  </p>
                 </div>
             </div>
 
@@ -261,13 +289,33 @@ DSCMSView.run = function() {
                     <h3 class="panel-title">Topics</h3>
                 </div>
                 <div class="panel-body">
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
-
-                  Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia.
-
-                  Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean ut eros et nisl sagittis vestibulum. Nullam nulla eros, ultricies sit amet, nonummy id, imperdiet feugiat, pede. Sed lectus. Donec mollis hendrerit risus. Phasellus nec sem in justo pellentesque facilisis. Etiam imperdiet imperdiet orci. Nunc nec neque. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.
-
-                  Curabitur ligula sapien, tincidunt non, euismod vitae, posuere imperdiet, leo. Maecenas malesuada. Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed aliquam, nisi quis porttitor congue, elit erat euismod orci, ac placerat dolor lectus quis orci. Phasellus consectetuer vestibulum elit. Aenean tellus metus, bibendum sed, posuere ac, mattis non, nunc. Vestibulum fringilla pede sit amet augue. In turpis. Pellentesque posuere. Praesent turpis.                </div>
+                  <p>
+                    Topics allow the operator to group several modules so they can create a layout for a screen that shows
+                    different views that belong together thematically. For instance: the “Weather” topic could use modules that
+                    display a map of a city with a weather forecast, bar charts with temperature per hour or wind speed.
+                  </p>
+                  <h2>Creating a topic</h2>
+                  <p>
+                    To create a new topic all you need to do is click on the “+” on the top of the table of topics. In the popup that
+                    opens up, you need to enter a name for your topic and a description. Neither of these fields can be empty and
+                    there can not be an existing topic with the same name. After entering the name and description you can click
+                    the “Add topic” button. And you’re done, simple as that!
+                  </p>
+                  <h2>Configuring a topic</h2>
+                  <p>
+                    Now for the exciting part. After creating a new topic, you get to configure it. To start doing so, click
+                    on the edit button next to your topic. (It’s the button with the pencil on it). In the top-right corner you’ll
+                    find a dropdown menu from where you can select the screen you wish to edit. If you’re editing a new topic,
+                    you’ll see there are no instances configured fort his screen. To add a new instance you can click the “+”
+                    button on the right of the screen. A popup window will show from where you can pick a view (You will have to
+                    have at least one module installed, since the views shown are loaded from the installed modules). You’ll also
+                    need to name the instance of your view before clicking the “Add view” button to add the view to the screen.
+                    The window table will now show the window(s) you just added to the screen. To change the position of a window,
+                    you have to click the pencil button to the left of the window you want to edit and pick an empty window on the
+                    left side of the screen. Keep doing this until you’re satisfied with the screen and move on to the next screen!
+                    Don’t forget to save your topic when you’re done, by clicking the save button in the top right corner.
+                  </p>
+                </div>
             </div>
         </div>
     </div>

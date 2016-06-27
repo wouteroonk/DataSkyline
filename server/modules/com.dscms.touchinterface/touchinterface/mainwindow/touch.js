@@ -6976,6 +6976,9 @@
 
 DSCMSView.run = function(DSCMSViewTools) {
 
+    $scope.cssUrl = DSCMSViewTools.myAddress + "/mainwindow/touch.css";
+    $scope.$apply();
+
     dscmsWebSocket.shouldReloadOnWindowInfo = false;
 
     var clickedButton;
