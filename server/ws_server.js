@@ -72,7 +72,7 @@ var server = http.createServer(function(request, response) {
     }
 
   } else if (filteredUrl === '/downloadmodule') {
-    handleModuleDownload(request, response);
+    handleModuleDownload(request, response, request.url.split('?')[1]);
   }
   // Serve control panel when root is accessed
   else if (filteredUrl === '/') {
@@ -582,7 +582,7 @@ function handleModuleUpload(req, res) {
   });
 }
 
-function handleModuleDownload(req, res) {
+function handleModuleDownload(req, res, fileName) {
   assert.notEqual(res, undefined, "res can't be undefined");
   assert.notEqual(req, undefined, "req can't be undefined");
 
@@ -593,7 +593,10 @@ function handleModuleDownload(req, res) {
   archive.on('error', function(err) {
     console.log((new Date()) + ' ' + err);
   });
-
+  res.writeHead(200, {
+     "Content-Disposition": "attachment;filename=" + fileName + ".zip",
+     'Content-Type':   'application/x-zip-compressed',
+   });
   archive.pipe(res);
   archive.bulk([{
     expand: true,
