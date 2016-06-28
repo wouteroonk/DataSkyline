@@ -104,7 +104,8 @@ var server = http.createServer(function(request, response) {
           '.png': 'image/png',
           '.gif': 'image/gif',
           '.css': 'text/css',
-          '.js': 'text/javascript'
+          '.js': 'text/javascript',
+          '.zip': 'application/zip'
         }[filteredUrl.substr(dotoffset)];
         // Set the content type and write the file
         response.setHeader('Content-type', mimetype);

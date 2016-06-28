@@ -110,7 +110,7 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket,
         previewWindow.coordX = windowLocation.x;
         previewWindow.coordY = windowLocation.y;
         previewWindow.shape = windowLocation.shape;
-        previewWindow.hint = "Empty window (" + windowLocation.id + ")";
+        previewWindow.hint = $scope.previewScreens[i].name + " - Empty window (" + windowLocation.id + ")";
         previewWindow.type = "empty";
 
         // Add to windows list
@@ -139,7 +139,7 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket,
             if (e.id == windowinfo.viewInstances[j].windows[k].locationID) {
               alreadyFilled.push(e.id);
               e.type = "filled";
-              e.hint = windowinfo.viewInstances[j].instanceName + " - " + windowinfo.viewInstances[j].windows[k].name;
+              e.hint = windowinfo.screenName + " - " + windowinfo.viewInstances[j].instanceName + " - " + windowinfo.viewInstances[j].windows[k].name;
               if (
                 windowinfo.viewInstances[j].windows[k].screenshotUrl !== undefined &&
                 windowinfo.viewInstances[j].windows[k].screenshotUrl !== null &&
@@ -149,7 +149,7 @@ dscms.app.controller('dscmsBigHomePreviewCtrl', function($scope, dscmsWebSocket,
               }
             } else {
               e.type = "empty";
-              e.hint = "Empty window (" + e.id + ")";
+              e.hint = windowinfo.screenName + " - Empty window (" + e.id + ")";
               e.background = null;
             }
           });

@@ -200,7 +200,7 @@ ul {
 
 /* All screens preview */
 .dscms-all-screens-preview {
-  text-align: center;
+  text-align: justify;
 
   width: 100%;
   overflow-x: auto;
