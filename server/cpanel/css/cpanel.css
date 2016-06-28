@@ -1,16 +1,20 @@
+/* Font as specified by Dataskyline style guide */
 h1, h2, h3, h4, h5, h6, p, div, span {
   font-family: 'Open Sans', sans-serif;
 }
 
+/* Fix for floating images */
 ul {
     padding-left: 1.2em;
     overflow: hidden;
 }​
 
+/* Make the navigation menu hover above rest */
 .nav {
   z-index: 9998;
 }
 
+/* Logo in the navigation bar (create a nice white circle around the image) */
 .navbar-logo {
   height: 54px;
   float:left;
@@ -21,10 +25,10 @@ ul {
   border: 2px #D7DADB solid;
 }
 
+/* Help button for certain parts of the website */
 .btn-link-help {
   color: #CECECE;
 }
-
 .btn-link-help:hover {
   color: #AEAEAE;
 }
@@ -69,76 +73,64 @@ ul {
   z-index: 8999;
 }
 
-/** Change the style for a dscms-mini-screen element */
+/* Styling for the preview screen */
 
 .dscms-mini-screen {
   background-color: #FFF;
+  /* Border color as per the bootstrap theme */
   border: 1px solid #ECF0F1;
   border-radius: 3px;
 }
+/* Make cursor a pointer when hovering over a window in the preview screen */
 .dscms-mini-screen-window {
   cursor: pointer;
 }
 
-/** This class is applied to the child element of a dscms-mini-screen-window element that creates the hue */
-
+/* Window in preview screen, filled but not selected */
 .dscms-mini-screen-window-filled {
   border: 3px solid #D7DADB;
 }
 
+/* Window in preview screen, filled and selected */
 .dscms-mini-screen-window-selected {
   border: 3px solid #18bc9c;
 }
 
+/* Window in preview screen, not filled */
 .dscms-mini-screen-window-empty {
   border: 3px dashed #D7DADB;
 }
 
-/** Transform an element to an ellipse */
-
+/* Class applied to ellipsical windows */
 .dscmsEllipse {
   border-radius: 50%;
 }
 
+/* Size for the preview screen on the edit topic page */
 .edit-topic-screen-preview {
   width: 100%;
 }
+
+/* Center the title text in a panel title with a button */
 .panel-title-with-button {
   line-height: 45px;
   font-size: 17px;
 }
+/* Make sure the first column in the table with windows on the topic page is just wide enough */
 #edit-topic-config-table tr td:first-child {
   white-space: nowrap;
   width: 1px;
 }
 
+/* Prevent double padding */
 #edit-topic-preview-col, #edit-screen-preview-col {
   padding-left: 0;
 }
-
 #edit-topic-control-col, #edit-screen-control-col {
   padding-right: 0;
 }
 
-notification-center {
-  height: 20%;
-  width: 100%;
-  position: fixed;
-  top: -20%;
-  z-index: 9999;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  text-align: center;
-  -webkit-transition: width 1s, height 1s, top 1s, -webkit-transform 1s;
-  transition: width 1s, height 1s, top 1s, transform 1s;
-}
-notification-center strong {
-  font-size: 1.5em;
-  line-height: 3em;
-}
-
-/** Module upload **/
-
+/* Hide default upload button */
 #module-upload-file-input {
   display: none;
 }
@@ -146,6 +138,7 @@ notification-center strong {
   position: relative;
   overflow: hidden;
 }
+/* Create large upload button */
 .btn-file input[type=file] {
   position: absolute;
   top: 0;
@@ -166,7 +159,6 @@ notification-center strong {
 .pager li>a{
   background-color: #18bc9c;
 }
-
 .pager .disabled>a{
   background-color: #ecf0f1 !important;
 }

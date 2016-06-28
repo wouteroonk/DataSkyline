@@ -14,6 +14,7 @@ dscms.app.controller('dscmsAddWindowToScreenCtrl', function($scope, $modalInstan
   };
 
   $scope.addWindow = function() {
+    // All fields have to be filled in
     if (
       $scope.newWindow.id === undefined || $scope.newWindow.id === null || $scope.newWindow.id.trim().length === 0 ||
       $scope.newWindow.shape === undefined || $scope.newWindow.shape === null || $scope.newWindow.shape.trim().length === 0 ||
@@ -26,6 +27,7 @@ dscms.app.controller('dscmsAddWindowToScreenCtrl', function($scope, $modalInstan
       return;
     }
 
+    // Prevent from adding window with existing ID
     var plsDontAdd = false;
     $.each(screens, function(i, screen) {
       $.each(screen.windows, function(i, window) {
@@ -38,6 +40,7 @@ dscms.app.controller('dscmsAddWindowToScreenCtrl', function($scope, $modalInstan
       dscmsNotificationCenter.warning("Sorry!", "This window ID is taken.");
       return;
     }
+    // If all is OK, tell the caller of this modal to add this window
     $modalInstance.close($scope.newWindow);
   };
 

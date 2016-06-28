@@ -14,10 +14,14 @@ dscms.app.controller('dscmsViewCtrl', function($scope, $attrs, $http, $timeout, 
 
   // The DSCMSViewTools object is a set of tools that can be used in the views own JS code
   var DSCMSViewTools = {
-    // Name of the view type
-    myName: $scope.dscmsView.name,
+    // Name of the view instance
+    myInstanceName: $scope.dscmsView.instanceName,
+    // Name of the view
+    myViewName: $scope.dscmsView.viewName,
+    // Name of the view's folder on the server
+    myViewFolderName: $scope.dscmsView.viewFolderName,
     // Name of the parent module
-    mywidth: $scope.dscmsView.parentModuleFolderName,
+    myParentModule: $scope.dscmsView.parentModuleFolderName,
     // List of DOM IDs for this views windows, with window name as key
     myWindows: {},
     // The config file for this view instance as defined on the server
