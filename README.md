@@ -3,23 +3,6 @@
 # Dataskyline CMS
 Dataskyline CMS biedt een content management systeem voor de Dataskyline, waarmee eenvoudig weergaves aan de Dataskyline toegevoegd kunnen worden. Dataskyline CMS verzorgt ook een omgeving voor eindgebruikers, waarmee zij kunnen kiezen welke thema's er op de schermen verschijnen.
 
-## Server - client structuur
-<img src="http://wouteroonk.nl/git_img/systemdiagram.png?raw=true" alt="Systeem diagram" width="50%" align="right"/>
-
-1. Clients connecten met centrale NodeJS server via websockets
-2. Een client haalt zijn pagina van de NodeJS server. Op basis van het ip adres bepaalt de server welke pagina er terug wordt gestuurd.
-3. Het Touchscreen stuurt messages naar de server om het thema te kunnen wijzigen, bijv:
-
-  ```
-  functions.setTheme = function(theme) {
-    waitForWS(function() {
-      ws.send("settheme " + theme);
-    });
-  };
-  ```
-
-4. De client toont vervolgens de terug gekregen pagina.
-
 ## Data Skyline config panel
 De Data Skyline heeft een simpele configuratie pagina waar alle schermen in aangepast kunnnen worden.
 
@@ -41,4 +24,4 @@ De Data Skyline heeft een simpele configuratie pagina waar alle schermen in aang
 8. Ga op de client in Google Chrome naar de lokaal gehoste website.
 
 Dataskyline
-Laatst geupdated: 7 Juni 2016 15:08
+Laatst geupdated: 28 Juni 2016 19:22
