@@ -29,7 +29,7 @@ dscms.app.config(function($routeProvider) {
   Keeps a connection to the Dataskyline websocket server and
   provides functions and callbacks for interacting with this server.
 */
-dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
+dscms.app.factory('dscmsWebSocket', function($location, $timeout, dscmsTools) {
   var functions = {};
   // TODO: Provide methods for sending commands to WS
   // TODO: Implement stuff on server so we can do something here
@@ -37,7 +37,32 @@ dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
   var callbackIterator = 0;
 
   // TODO: Reference to real server (configure skyline screens to have hostname "dscms" route to skyline IP?)
-  var ws = new WebSocket("ws://" + dscmsTools.serverAddress + ":8080", "echo-protocol");
+  var ws = getWebSocket();
+  function getWebSocket() {
+    var socket = new WebSocket("ws://" + dscmsTools.serverAddress + ":8080", "echo-protocol");
+
+    socket.onopen = function() {
+      hasConnection = true;
+      console.log("Connected to socket");
+    };
+
+    socket.onclose = function() {
+      hasConnection = false;
+      hasDisconnected = true;
+      console.log("Disconnected from socket");
+      ws = getWebSocket();
+    };
+
+    socket.onmessage = function(message) {
+      // Execute all callback methods and pass message to them
+      // TODO: Pre-processing?
+      for (var i in callbackMethods) {
+        callbackMethods[i](message);
+      }
+    };
+
+    return socket;
+  }
   var hasConnection = false;
   var hasDisconnected = false;
 
@@ -59,24 +84,6 @@ dscms.app.factory('dscmsWebSocket', function($location, dscmsTools) {
       }, 5);
   };
 
-  ws.onopen = function() {
-    hasConnection = true;
-    console.log("Connected to socket");
-  };
-
-  ws.onclose = function() {
-    hasConnection = false;
-    hasDisconnected = true;
-    console.log("Disconnected from socket");
-  };
-
-  ws.onmessage = function(message) {
-    // Execute all callback methods and pass message to them
-    // TODO: Pre-processing?
-    for (var i in callbackMethods) {
-      callbackMethods[i](message);
-    }
-  };
 
   functions.subscribe = function(callback) {
     // Add callback to list and add one to iterator.
