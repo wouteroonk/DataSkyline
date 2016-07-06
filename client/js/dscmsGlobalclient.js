@@ -44,6 +44,10 @@ dscms.app.factory('dscmsWebSocket', function($location, $timeout, dscmsTools) {
     socket.onopen = function() {
       hasConnection = true;
       console.log("Connected to socket");
+      functions.requestOwnLocalIP(function(ip) {
+          // Ask server to send window info, handled by callback defined above
+          functions.sendServerMessage("identification " + ip);
+      });
     };
 
     socket.onclose = function() {
