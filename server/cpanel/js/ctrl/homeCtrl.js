@@ -107,7 +107,7 @@ dscms.app.controller('dscmsHomeCtrl', function($scope, dscmsWebSocket, dscmsNoti
         break;
       case 'uploadmodule':
         dscmsNotificationCenter.info('', 'A new module was uploaded.');
-        dscmsWebSocket.sendServerMessage("gettopics");
+        dscmsWebSocket.sendServerMessage("getmodules");
         break;
       case 'removemodule':
         dscmsNotificationCenter.info('', 'A module was removed.');
