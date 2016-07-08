@@ -228,7 +228,7 @@ dscms.app.factory('dscmsNotificationCenter', function($timeout) {
 dscms.app.factory('dscmsTools', function() {
   var vars = {};
 
-  vars.serverAddress = 'localhost';
+  vars.serverAddress = '192.168.1.100';
   vars.serverUrl = 'http://' + vars.serverAddress + ':8080';
 
   return vars;

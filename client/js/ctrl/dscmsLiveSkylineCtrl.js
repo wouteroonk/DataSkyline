@@ -55,12 +55,6 @@ dscms.app.controller('dscmsLiveSkylineCtrl', function($scope, $rootScope, $compi
         }
     });
 
-    // Subscribe to update messages
-    dscmsWebSocket.requestOwnLocalIP(function(ip) {
-        // Ask server to send window info, handled by callback defined above
-        dscmsWebSocket.sendServerMessage("identification " + ip);
-    });
-
     // Ask for window information for this screen
     dscmsWebSocket.requestOwnLocalIP(function(ip) {
         // Ask server to send window info, handled by callback defined above
