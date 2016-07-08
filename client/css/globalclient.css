@@ -27,20 +27,25 @@ body {
 .dscms-bgBlue {
     background-color: #06bdea;
     color: #FFF;
+    fill: #06bdea;
 }
 .dscms-bgGreen {
     background-color: #9bb717;
     color: #FFF;
+    fill: #9bb717;
 }
 .dscms-bgPink {
     background-color: #ed1e68;
     color: #FFF;
+    fill: #ed1e68;
 }
 .dscms-bgOrange {
     background-color: #ff912b;
     color: #FFF;
+    fill: #ff912b;
 }
 .dscms-bgPurple {
     background-color: #5c4fd9;
     color: #FFF;
+    fill: #5c4fd9;
 }
