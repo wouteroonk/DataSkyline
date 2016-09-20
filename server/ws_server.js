@@ -780,7 +780,20 @@ function validateModule(pathToModule, res) {
       return;
     }
     //Checks to see if it the module is in one top folder.
-    if (files.length != 1) {
+		// Little workaround added 2016-09-20 by Steyn Potze:
+		// Sometimes computers add some hidden files and folders to the file system
+		// to store user preferences or indexing data. Though we do not permit other
+		// folders than the module itself in the root of the zip file, we cannot ask
+		// the user to remove these hidden files and folders himself. The code below
+		// filters out these files and folders. Should you come across other automatically
+		// generated hidden files, you can add them to the if statement below.
+		var filteredFiles = [];
+		for (var i in files) {
+			if (files[i] !== "__MACOSX" && files[i] !== ".DS_Store" && files[i] !== "thumbs.db" && files[i] !== "desktop.ini") {
+				filteredFiles.push(files[i]);
+			}
+		}
+    if (filteredFiles.length != 1) {
       console.error((new Date()) + ' ' + "Error invalid module structure: files are not in the same folder. Make sure there weren't any extra folders created in the top level.");
       removeDir(pathToModule, function(success) {
 
@@ -789,7 +802,7 @@ function validateModule(pathToModule, res) {
       return;
     }
     //check the info json of the module..
-    validateModuleInfoJson(pathToModule + "/" + files[0] + "/", function(err) {
+    validateModuleInfoJson(pathToModule + "/" + filteredFiles[0] + "/", function(err) {
       if (err) {
         console.error((new Date()) + ' ' + "Incompatible info.json");
         res.end(err);
@@ -798,7 +811,7 @@ function validateModule(pathToModule, res) {
         });
         return;
       }
-      var ok = verifyViews(pathToModule + "/" + files[0] + "/", res);
+      var ok = verifyViews(pathToModule + "/" + filteredFiles[0] + "/", res);
       if (!ok) {
         console.error((new Date()) + ' ' + "Incompatible info.json in view or window");
         removeDir(pathToModule, function(success) {
@@ -807,10 +820,10 @@ function validateModule(pathToModule, res) {
         return;
       }
       //check to see if the module folder already exists in the system.
-      fs.stat('modules/' + files[0], function(err, stats) {
+      fs.stat('modules/' + filteredFiles[0], function(err, stats) {
         if (err) {
           //succes module doesnt exist.
-          fs.rename(pathToModule + '/' + files[0], 'modules/' + files[0], function(err) { //optionnaly change to name in info.json
+          fs.rename(pathToModule + '/' + filteredFiles[0], 'modules/' + filteredFiles[0], function(err) { //optionnaly change to name in info.json
             if (err) {
               console.error((new Date()) + ' ' + err);
               res.end("An error has occured while uploading your module. Error-code: UP04");
@@ -832,7 +845,7 @@ function validateModule(pathToModule, res) {
         removeDir(pathToModule, function(success) {
 
         });
-        res.end("A module with the folder name " + files[0] + " already exists, consider renaming the folder with the contents of the module.");
+        res.end("A module with the folder name " + filteredFiles[0] + " already exists, consider renaming the folder with the contents of the module.");
 
       });
 
